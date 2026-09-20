@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VESPER — Unified Command & Control Center</title>
+  <meta name="description" content="Project VESPER: City-Wide Multi-Camera ANPR Trajectory Tracking & Urban Mobile Sensing Platform">
+  <meta name="theme-color" content="#0a0e17">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23213d77'/><text x='50' y='68' font-size='52' font-family='Arial,sans-serif' font-weight='900' fill='%23fb792b' text-anchor='middle'>IR</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-irctc">
+
+  <!-- ═══════════ GOVERNMENT NATIONAL COMMAND UTILITY BAR ═══════════ -->
+  <div id="irctc-utility-bar" class="irctc-utility-bar">
+    <div class="iub-left">
+      <span class="iub-emblem" style="font-weight:900;letter-spacing:1px;font-size:10px;color:#ffffff;background:#213d77;padding:2px 6px;border-radius:3px;border:1px solid #fb792b;">CRIS / IRCTC</span>
+      <div class="iub-gov-text">
+        <span class="iub-hi">भारत सरकार · रक्षा मंत्रालय · भारत इलेक्ट्रॉनिक्स</span>
+        <span class="iub-en">GOVERNMENT OF INDIA · MINISTRY OF DEFENCE · BHARAT ELECTRONICS (BEL)</span>
+      </div>
+      <span class="iub-divider">|</span>
+      <div class="iub-police-text">
+        <span class="iub-hi">दिल्ली पुलिस एवं राज्य परिवहन नियंत्रण केंद्र</span>
+        <span class="iub-en">DELHI POLICE &amp; STATE TRANSIT COMMAND</span>
+      </div>
+    </div>
+    <div class="iub-center">
+      <div class="irctc-marquee-wrap">
+        <span class="im-badge">NATIONAL COMMAND ADVISORY</span>
+        <div class="im-ticker-track">
+          <span class="im-ticker-text">Integrated Smart City ANPR &amp; AIS-140 Public Transit Mobile Sensing Mesh Operational · 150,000+ Buses Monitored · 96.5% Municipal Capex Reduction · Certified under Bharatiya Sakshya Adhiniyam (BSA) 2023 §63 · Production Core APIs: 6/6 Live (12.4ms) · National Emergency Helpline: 112 · Traffic Control: 1095</span>
+        </div>
+      </div>
+    </div>
+    <div class="iub-right">
+      <div class="iub-font-ctrls" title="Accessibility: Adjust Font Size">
+        <button class="iub-btn" id="btn-font-dec" title="Decrease Font Size">A-</button>
+        <button class="iub-btn active" id="btn-font-reset" title="Normal Font Size">A</button>
+        <button class="iub-btn" id="btn-font-inc" title="Increase Font Size">A+</button>
+      </div>
+      <div class="iub-lang-ctrl" id="btn-lang-toggle" title="Select Portal Language">
+        <span class="iub-lang active" id="lang-en">English</span> | <span class="iub-lang" id="lang-hi">हिन्दी</span>
+      </div>
+      <button class="iub-theme-toggle" id="btn-theme-toggle" title="Toggle between Government Portal Style and Tactical Cyberpunk Mode">
+        <span class="theme-icon" style="font-weight:700;font-size:10px;">THEME</span>
+        <span id="theme-btn-label">Theme: Government Portal</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════ TOP BAR / NATIONAL COMMAND BRAND HEADER ═══════════ -->
+  <header id="top-bar">
+    <div class="top-bar-left">
+      <div class="irctc-logo-group">
+        <div class="irctc-round-crest">
+          <span class="irctc-crest-symbol" style="font-weight:900;letter-spacing:1px;font-size:10px;color:#ffffff;background:#fb792b;padding:2px 6px;border-radius:3px;">IRCTC</span>
+          <span class="irctc-crest-glow"></span>
+        </div>
+        <div class="irctc-text-col">
+          <div class="irctc-title-line">
+            <span class="irctc-name-hi">भारत इलेक्ट्रॉनिक्स</span>
+            <span class="irctc-name-en">BHARAT ELECTRONICS</span>
+            <span class="irctc-pipe">|</span>
+            <span class="irctc-sub-name">A GOVT. OF INDIA ENTERPRISE · MINISTRY OF DEFENCE</span>
+          </div>
+          <div class="irctc-vesper-line">
+            <span class="vesper-tag-badge">PROJECT VESPER</span>
+            <span class="vesper-full-title">Unified Multi-Camera ANPR Trajectory Tracking &amp; Urban Transit Mobile Sensing Platform</span>
+          </div>
+        </div>
+      </div>
+      <div class="system-status irctc-status">
+        <span class="status-dot online"></span>
+        <span class="status-label">BEL / DELHI POLICE MESH ONLINE</span>
+      </div>
+    </div>
+    <div class="top-bar-center">
+      <div class="clock" id="system-clock">--:--:--</div>
+      <div class="clock-label">IST (UTC+5:30) — NTP SYNCHRONIZED</div>
+    </div>
+    <div class="top-bar-right">
+      <button class="top-bar-action api-status-action" id="btn-api-modal" title="Production API Integrations, Keys & Health"><span class="api-live-dot"></span> <span id="nav-api-label">APIS: 6/6 LIVE</span> <span class="nav-api-lat" id="nav-api-lat">12.4ms</span></button>
+      <button class="top-bar-action alert" id="btn-trigger-hotlist">ALERT: PURSUIT BROADCAST</button>
+      <button class="top-bar-action" id="btn-audio-toggle" title="Toggle Audio Sound">SOUND: ON</button>
+      <button class="top-bar-action" id="btn-fullscreen-toggle" title="Toggle Fullscreen">FULLSCREEN</button>
+      <div class="stat-pill"><span class="pill-val" id="stat-nodes">0</span><span class="pill-label">Active Nodes</span></div>
+      <div class="stat-pill"><span class="pill-val" id="stat-detections">0</span><span class="pill-label">Detections</span></div>
+      <div class="stat-pill accent"><span class="pill-val" id="stat-alerts">0</span><span class="pill-label">Alerts</span></div>
+    </div>
+  </header>
+
+  <!-- ═══════════ NAVIGATION TABS ═══════════ -->
+  <nav id="window-nav">
+    <div class="nav-tabs-group">
+      <button class="nav-tab active" data-window="home" id="nav-home">
+        
+        <span class="nav-label">Mission Brief</span>
+      </button>
+      <button class="nav-tab" data-window="surveillance" id="nav-surveillance">
+        
+        <span class="nav-label">Dual Surveillance</span>
+      </button>
+      <button class="nav-tab" data-window="gis" id="nav-gis">
+        
+        <span class="nav-label">Tactical GIS</span>
+      </button>
+      <button class="nav-tab" data-window="dossier" id="nav-dossier">
+        
+        <span class="nav-label">Evidence Dossier</span>
+      </button>
+      <button class="nav-tab" data-window="ps124" id="nav-ps124">
+        
+        <span class="nav-label">Urban Traffic Analytics</span>
+      </button>
+      <button class="nav-tab" data-window="grid" id="nav-grid">
+        
+        <span class="nav-label">Command Grid</span>
+      </button>
+    </div>
+    <div class="nav-search-group" id="nav-plate-search-group">
+      <span class="ns-icon" style="font-weight:800;font-size:10px;color:var(--accent-blue);">PLATE:</span>
+      <input type="text" id="global-plate-input" class="global-plate-input" placeholder="Manual Plate Search (e.g. DL 1C AE 4921)..." autocomplete="off" spellcheck="false" />
+      <button id="btn-global-plate-search" class="global-plate-btn" title="Search Sightings, View GPS & Connect Expected Trajectory">TRACE GPS SIGHTINGS</button>
+    </div>
+    <div class="layout-toggle-group">
+      <span class="layout-label">LAYOUT:</span>
+      <button class="layout-btn active" data-layout="tabs" id="btn-layout-tabs" title="Single Full Tab Mode">TABS</button>
+      <button class="layout-btn" data-layout="split5025" id="btn-layout-split" title="50 | 25 | 25 Tri-Pane Mode">50:25:25 SPLIT</button>
+    </div>
+  </nav>
+
+  <!-- ═══════════ MAIN WINDOWS CONTAINER ═══════════ -->
+  <main id="windows-container">
+
+    <!-- Draggable Splitters for 50:25:25 Command Grid Mode -->
+    <div id="split-gutter-v" class="split-gutter vertical" title="Drag horizontally to resize Left / Right window width"></div>
+    <div id="split-gutter-h" class="split-gutter horizontal" title="Drag vertically to resize Surveillance / PS124 window height"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- WINDOW 1: HOMEPAGE / MISSION BRIEF & DEMO GUIDE                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="window-panel active" id="window-home">
+    <div class="window-folder-header">
+      <div class="wfh-title-group">
+        
+        <span class="wfh-title">VESPER // MISSION BRIEF &amp; SYSTEM ARCHITECTURE GUIDE</span>
+        <span class="wfh-tag">ACTIVE MISSION</span>
+      </div>
+      <div class="wfh-controls">
+        <button class="wfh-btn btn-win-maximize" title="Maximize / Restore Window">MAX</button>
+      </div>
+    </div>
+    <div class="home-hero">
+      <div class="hero-content">
+        <div class="hero-badge">DELHI POLICE TACTICAL COMMAND · MUNICIPAL TRANSIT SENSING MESH</div>
+        <h1 class="hero-title">Project <span class="gradient-text">VESPER</span></h1>
+        <p class="hero-subtitle">Vehicle Surveillance &amp; Predictive Engagement via Real-time tracking</p>
+        <p class="hero-desc">Turning India's 150,000+ public transit buses into a city-wide opportunistic mobile ANPR surveillance mesh — eliminating 80% blind-spot corridors at 90% lower cost than new CCTV poles.</p>
+        <div class="hero-cta-group">
+          <button class="hero-cta" id="btn-launch-ops" onclick="switchWindow('surveillance')">
+            <span>LAUNCH LIVE OPERATIONS</span>
+            
+          </button>
+          <button class="hero-cta accent-split" id="btn-hero-split-launch" onclick="setLayoutMode('split5025')">
+            <span>50 : 25 : 25 COMMAND CENTER</span>
+            
+          </button>
+          <button class="hero-cta secondary" id="btn-demo-stolen-alert">
+            <span>BROADCAST PURSUIT ALERT</span>
+          </button>
+        </div>
+      </div>
+      <div class="hero-stats-grid">
+        <div class="hero-stat-card">
+          <div class="hs-val">12</div>
+          <div class="hs-label">Fixed ANPR Junctions</div>
+          <div class="hs-sub">DeepStream TRT INT8 · 45 FPS</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hs-val">4</div>
+          <div class="hs-label">Mobile Bus Nodes</div>
+          <div class="hs-sub">AIS-140 Hailo-8 NPU · 180B MQTT</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hs-val">3</div>
+          <div class="hs-label">Active Tracked Vehicles</div>
+          <div class="hs-sub">Plate + Re-ID + Spatiotemporal</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hs-val">&lt;5ms</div>
+          <div class="hs-label">Hotlist Lookup</div>
+          <div class="hs-sub">Redis Bloom · 50K+ Records</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE API MICROSERVICES HEALTH & EXECUTION BANNER -->
+    <div class="hero-api-banner">
+      <div class="hab-left">
+        <div class="hab-status-pill"><span class="api-live-dot"></span> <span id="hab-health-text">6/6 MICROSERVICES LIVE</span></div>
+        <div class="hab-title">Production Edge &amp; Cloud API Mesh (FIPS 140-3 TLS 1.3)</div>
+        <div class="hab-desc">NVIDIA DeepStream Cloud · MoRTH VAHAN 4.0 · CCTNS Hotlist · FastReID OSNet · AWS IoT MQTT · CartoDB CDN</div>
+      </div>
+      <div class="hab-right">
+        <button class="hero-cta primary-glow" id="btn-hero-call-apis">
+          <span>AUTHENTICATE ALL APIS</span>
+          <span class="hab-lat-tag" id="hab-lat-tag">12.4ms</span>
+        </button>
+        <button class="hero-cta secondary" id="btn-hero-open-api-modal">
+          <span>MANAGE API KEYS</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- OPERATIONAL WORKFLOW GUIDE -->
+    <div class="home-guide-section">
+      <h2 class="section-title-large">Operational Workflow and Quick Start Guide</h2>
+      <div class="guide-steps-grid">
+        <div class="guide-step" onclick="switchWindow('surveillance')">
+          <div class="gs-num">1</div>
+          <div class="gs-content">
+            <h3>Dual Live Surveillance</h3>
+            <p>Watch <strong>Fixed Junction ANPR</strong> and <strong>Mobile Bus Dashcam</strong> feeds running side-by-side. See the bus actively following the suspect vehicle through a blind corridor.</p>
+          </div>
+          <div class="gs-arrow"><span class="gs-action-badge">VIEW</span></div>
+        </div>
+        <div class="guide-step" onclick="switchWindow('gis')">
+          <div class="gs-num">2</div>
+          <div class="gs-content">
+            <h3>Tactical GIS & Trajectory</h3>
+            <p>Full GIS map with real-time vehicle movement, approaching ANPR nodes, reachability cones, and camera-switching handoff animation.</p>
+          </div>
+          <div class="gs-arrow"><span class="gs-action-badge">VIEW</span></div>
+        </div>
+        <div class="guide-step" onclick="switchWindow('dossier')">
+          <div class="gs-num">3</div>
+          <div class="gs-content">
+            <h3>Evidentiary Dossier</h3>
+            <p>Complete gallery of all captured shots. SHA-256 certified, BSA §63 court-admissible. Side-by-side Fixed vs Mobile crop comparison.</p>
+          </div>
+          <div class="gs-arrow"><span class="gs-action-badge">VIEW</span></div>
+        </div>
+        <div class="guide-step" onclick="switchWindow('ps124')">
+          <div class="gs-num">4</div>
+          <div class="gs-content">
+            <h3>Municipal Transit Sensing</h3>
+            <p>Because the bus NPU is already deployed: pothole detection, BRTS lane enforcement, and mobile air quality monitoring — at zero additional infrastructure cost.</p>
+          </div>
+          <div class="gs-arrow"><span class="gs-action-badge">VIEW</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFRASTRUCTURE ARCHITECTURE COMPARISON -->
+    <div class="home-problem-section">
+      <div class="problem-card danger">
+        <div class="pc-header">
+          <span class="pc-icon" style="font-weight:800;color:#dc2626">[CRITICAL]</span>
+          <div>
+            <h3 class="pc-title">Traditional Fixed-Pole Infrastructure Limitations</h3>
+            <span class="pc-badge">CONVENTIONAL CCTV DEPLOYMENT</span>
+          </div>
+        </div>
+        <ul class="pc-list">
+          <li><strong>80%+ Blind Spot Vulnerability:</strong> Inter-junction arterial corridors (2-6 km) have zero optical coverage. Suspects vanish immediately.</li>
+          <li><strong>Rs 3.5-5 Lakhs per pole:</strong> Fixed camera poles require road excavation, civil foundation, electrical drops, and fiber backhaul.</li>
+          <li><strong>4+ Hour Manual Video Scrubbing:</strong> Disconnected NVR DVR tapes across police stations lack automated spatiotemporal trajectory stitching.</li>
+        </ul>
+      </div>
+      <div class="problem-card success">
+        <div class="pc-header">
+          <span class="pc-icon" style="font-weight:800;color:var(--accent-orange)">[STREAM]</span>
+          <div>
+            <h3 class="pc-title">VESPER Autonomous Transit Edge Mesh</h3>
+            <span class="pc-badge success-badge">DEPLOYED ARCHITECTURE</span>
+          </div>
+        </div>
+        <ul class="pc-list">
+          <li><strong>AIS-140 Public Fleet Integration:</strong> Retrofits existing transit buses with edge NPUs (Hailo-8 / Jetson) for Rs 12,000 (90%+ capex reduction).</li>
+          <li><strong>Unbroken Trajectory Recovery:</strong> Dynamic spatiotemporal reachability cones + bus handoff restore missing route segments in real-time.</li>
+          <li><strong>Sub-2 Second Journey Stitching:</strong> PostGIS + pgRouting + HMM Viterbi map-matching across Delhi's OpenStreetMap topology graph.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- WINDOW 2: DUAL LIVE SURVEILLANCE FEEDS                            -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="window-panel" id="window-surveillance" data-pane="surv">
+    <div class="window-folder-header">
+      <div class="wfh-title-group">
+        
+        <span class="wfh-title">VESPER // DUAL LIVE SURVEILLANCE [FEED 01/02]</span>
+        <span class="wfh-tag pane-split-badge">TOP 25% PANE</span>
+      </div>
+      <div class="wfh-controls">
+        <div class="surv-view-mode-pills">
+          <button class="wfh-btn btn-surv-mode active" data-surv-mode="feeds" id="btn-surv-mode-feeds" title="Feeds Focus (Default)"> Feeds</button>
+          <button class="wfh-btn btn-surv-mode" data-surv-mode="split" id="btn-surv-mode-split" title="Balanced 50:50 View"> 50:50</button>
+          <button class="wfh-btn btn-surv-mode accent-green" data-surv-mode="bigmap" id="btn-surv-mode-bigmap" title="Big Map Focus: Makes video feeds short &amp; map huge!"> Big Map</button>
+        </div>
+        <button class="wfh-btn btn-surv-map-toggle" id="btn-toggle-surv-map" title="Toggle Surveillance Mini-Map"> Mini-Map: ON</button>
+        <button class="wfh-btn btn-win-reset" title="Reset 50:25:25 Window Split">Reset</button>
+        <button class="wfh-btn btn-win-minimize" title="Minimize / Compact Window">MIN</button>
+        <button class="wfh-btn btn-win-maximize pane-btn-expand" title="Maximize / Expand Pane">EXPAND</button>
+        <button class="wfh-btn btn-win-close pane-btn-close pane-btn-collapse" id="btn-surv-close" title="Close Window / Return to Mission Brief (Esc)">CLOSE</button>
+      </div>
+    </div>
+    <div class="surv-layout">
+      <!-- Vehicle Target Lock HUD -->
+      <div class="surv-target-hud">
+        <div class="sth-left">
+          <span class="sth-icon"></span>
+          <span class="sth-label">TARGET LOCK:</span>
+          <span class="sth-plate" id="surv-target-plate">DL 1C AE 4921</span>
+          <span class="sth-meta" id="surv-target-meta">Sedan · Maruti Swift Dzire · White</span>
+        </div>
+        <div class="sth-right">
+          <div class="sth-controls">
+            <button class="sth-toggle-btn" id="btn-night-vision"> Night IR: OFF</button>
+            <button class="sth-toggle-btn active" id="btn-blur-boost"> OCR Enhance: ON</button>
+          </div>
+          <div class="sth-stat"><span class="sth-stat-lbl">Re-ID</span><span class="sth-stat-val" id="surv-reid">a4f891b2</span></div>
+          <div class="sth-stat"><span class="sth-stat-lbl">Speed</span><span class="sth-stat-val" id="surv-speed">42 km/h</span></div>
+          <div class="sth-stat"><span class="sth-stat-lbl">Distance</span><span class="sth-stat-val" id="surv-distance">1.2 km</span></div>
+          <div class="sth-stat"><span class="sth-stat-lbl">Status</span><span class="sth-stat-val green" id="surv-status">TRACKING</span></div>
+        </div>
+      </div>
+
+      <!-- Recorded Archive & Mode Control Strip -->
+      <div class="surv-playback-strip" id="surv-playback-strip">
+        <div class="sps-mode-toggle">
+          <button class="sps-btn active" id="btn-surv-stream-live" data-stream-mode="live"> LIVE STREAM</button>
+          <button class="sps-btn" id="btn-surv-stream-rec" data-stream-mode="rec"> RECORDED ARCHIVE</button>
+        </div>
+        <div class="sps-rec-controls hidden" id="surv-rec-controls">
+          <button class="sps-ctrl-btn" id="btn-rec-rewind" title="Rewind 10 Seconds"> -10s</button>
+          <button class="sps-ctrl-btn active" id="btn-rec-playpause" title="Play/Pause Recording"> Pause</button>
+          <button class="sps-ctrl-btn" id="btn-rec-forward" title="Fast Forward 10 Seconds">+10s </button>
+          <input type="range" id="surv-rec-scrubber" min="0" max="100" value="70" class="sps-slider" title="Scrub Footage Timeline" />
+          <span class="sps-time" id="surv-rec-timestamp">ARCHIVE: 2026-09-19 10:24:18 IST</span>
+          <span class="sps-hint"> Click any car in footage to track it!</span>
+        </div>
+        <div class="sps-live-indicator" id="surv-live-indicator">
+          <span class="live-dot-pulse"></span>
+          <span class="sps-live-text">STREAMING LIVE 45 FPS FROM DELHI ANPR &amp; DTC BUS FLEET · CLICK ANY CAR TO LOCK &amp; TRACK</span>
+        </div>
+      </div>
+
+      <!-- Dual Camera Grid -->
+      <div class="surv-dual-grid">
+        <!-- Feed 1: Fixed Junction ANPR -->
+        <div class="surv-feed-card">
+          <div class="sfc-header">
+            <div class="sfc-title-row">
+              <span class="sfc-badge cyan">FIXED ANPR</span>
+              <span class="sfc-cam-id" id="surv-fixed-cam-id">CAM-JNC-04</span>
+            </div>
+            <div class="sfc-meta" id="surv-fixed-meta">Karol Bagh Crossing · DeepStream TRT INT8 · 45 FPS</div>
+          </div>
+          <div class="sfc-canvas-wrap">
+            <canvas id="surv-canvas-fixed" width="640" height="360"></canvas>
+            <div class="sfc-overlay-top">
+              <span class="sfc-rec-dot"></span> REC
+              <span class="sfc-fps" id="surv-fixed-fps">45 FPS</span>
+            </div>
+            <div class="sfc-overlay-bottom">
+              <span id="surv-fixed-timestamp">--:--:--.---</span>
+              <span id="surv-fixed-gps">GPS: ---, ---</span>
+            </div>
+          </div>
+          <div class="sfc-telemetry-bar">
+            <div class="stb-item"><span class="stb-lbl">OCR Conf:</span><span class="stb-val" id="surv-fixed-conf">96%</span></div>
+            <div class="stb-item"><span class="stb-lbl">Model:</span><span class="stb-val">YOLOv8 + PARSeq</span></div>
+            <div class="stb-item"><span class="stb-lbl">Laplacian:</span><span class="stb-val" id="surv-fixed-blur">285</span></div>
+          </div>
+        </div>
+
+        <!-- Feed 2: Mobile Bus Dashcam -->
+        <div class="surv-feed-card bus-feed">
+          <div class="sfc-header">
+            <div class="sfc-title-row">
+              <span class="sfc-badge amber">MOBILE BUS DASHCAM</span>
+              <span class="sfc-cam-id" id="surv-bus-cam-id">BUS-DTC-419</span>
+            </div>
+            <div class="sfc-meta" id="surv-bus-meta">Route 419 DOWN · Hailo-8 NPU · STN Dewarp Active</div>
+          </div>
+          <div class="sfc-canvas-wrap">
+            <canvas id="surv-canvas-bus" width="640" height="360"></canvas>
+            <div class="sfc-overlay-top bus-overlay">
+              <span class="sfc-rec-dot amber"></span> FOLLOWING
+              <span class="sfc-fps" id="surv-bus-fps">30 FPS</span>
+            </div>
+            <div class="sfc-overlay-bottom bus-bottom">
+              <span id="surv-bus-timestamp">--:--:--.---</span>
+              <span id="surv-bus-gps">GPS: ---, ---</span>
+              <span class="stn-badge">STN  ACTIVE</span>
+            </div>
+          </div>
+          <div class="sfc-telemetry-bar bus-telem">
+            <div class="stb-item"><span class="stb-lbl">OCR Conf:</span><span class="stb-val" id="surv-bus-conf">82%</span></div>
+            <div class="stb-item"><span class="stb-lbl">Bus Speed:</span><span class="stb-val" id="surv-bus-speed">38 km/h</span></div>
+            <div class="stb-item"><span class="stb-lbl">Telemetry:</span><span class="stb-val">180B MQTT </span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANPR Handoff HUD -->
+      <div class="surv-handoff-hud">
+        <div class="shh-left">
+          <span class="shh-tag"> ANPR HANDOFF ENGINE</span>
+          <div class="shh-flow">
+            <span class="shh-node" id="surv-hud-prev">CAM-JNC-04</span>
+            <span class="shh-arrow">-</span>
+            <span class="shh-zone" id="surv-hud-gap"><span class="pulse-dot-amber"></span> BLIND CORRIDOR (3.8 km)</span>
+            <span class="shh-arrow">-</span>
+            <span class="shh-node active" id="surv-hud-curr">BUS-DTC-419 (MOBILE)</span>
+            <span class="shh-arrow">-</span>
+            <span class="shh-node next" id="surv-hud-next">CAM-JNC-01</span>
+          </div>
+        </div>
+        <div class="shh-right">
+          <div class="shh-metric"><span class="shm-lbl">REACHABILITY CONE</span><span class="shm-val" id="surv-cone">r = 3.5 km | dt = 4 min</span></div>
+          <div class="shh-metric"><span class="shm-lbl">SWITCHING PROTOCOL</span><span class="shm-val" id="surv-proto">AIS-140 Opportunistic Relay</span></div>
+        </div>
+      </div>
+
+      <!-- Resizer Splitter between Camera Feeds and Map -->
+      <div id="surv-inner-splitter" class="surv-inner-splitter" title="Drag vertically to resize Surveillance Feeds vs Map"><span class="sis-grip">...</span></div>
+
+      <!-- Map preview for tracked vehicle -->
+      <div class="surv-map-strip" id="surv-map-strip">
+        <div id="surv-mini-map" style="width:100%;height:100%;"></div>
+        <div class="smm-overlay">
+          <span class="smm-badge">LIVE POSITION · <span id="surv-map-plate">DL 1C AE 4921</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="window-resize-grip" title="Resize Window Corner"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- WINDOW 3: TACTICAL GIS & TRAJECTORY RECONSTRUCTION                -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="window-panel" id="window-gis" data-pane="gis">
+    <div class="window-folder-header">
+      <div class="wfh-title-group">
+        
+        <span class="wfh-title">VESPER // TACTICAL GIS &amp; TRAJECTORY RECONSTRUCTION</span>
+        <span class="wfh-tag pane-split-badge main">MAIN 50% PANE</span>
+      </div>
+      <div class="wfh-controls">
+        <button class="wfh-btn btn-win-reset" title="Reset 50:25:25 Window Split">Reset</button>
+        <button class="wfh-btn btn-win-minimize" title="Minimize / Compact Window">MIN</button>
+        <button class="wfh-btn btn-win-maximize pane-btn-expand" title="Maximize / Expand Pane">EXPAND</button>
+        <button class="wfh-btn btn-win-close pane-btn-close pane-btn-collapse" id="btn-gis-close" title="Close Window / Return to Mission Brief (Esc)">CLOSE</button>
+      </div>
+    </div>
+    <div class="gis-layout">
+      <!-- Left sidebar: vehicles + controls -->
+      <aside class="gis-sidebar">
+        <!-- Target Acquisition & Re-ID Suite -->
+        <div class="panel-section target-acquisition-suite">
+          <div class="section-header-row">
+            <h2 class="panel-title">Target Acquisition</h2>
+            <span class="badge-mini cyan">RE-ID ENGINE</span>
+          </div>
+          
+          <div class="acq-tabs">
+            <button class="acq-tab active" data-acq-tab="plate" id="tab-acq-plate">Plate</button>
+            <button class="acq-tab" data-acq-tab="features" id="tab-acq-features">Features</button>
+            <button class="acq-tab" data-acq-tab="footage" id="tab-acq-footage">Footage</button>
+          </div>
+
+          <!-- Tab 1: Numberplate -->
+          <div class="acq-content active" id="acq-content-plate">
+            <div class="acq-input-group">
+              <input type="text" id="acq-plate-input" class="acq-input" placeholder="Enter Plate (e.g. DL 1C AE 4921)..." autocomplete="off" spellcheck="false" />
+              <button class="acq-btn primary" id="btn-acq-track-plate" title="Search ANPR Sightings &amp; Connect Trajectory">Track &amp; Trace</button>
+            </div>
+            <button class="acq-btn secondary" id="btn-acq-open-chain-modal" style="margin-top:6px;width:100%">Sighting Chain &amp; GPS Ledger</button>
+            
+            <div class="acq-sighting-summary-card" id="acq-sighting-summary-card">
+              <div class="assc-header">
+                <span class="assc-title">ANPR Sighting Interconnection Chain</span>
+                <span class="assc-badge" id="assc-badge">5 HITS FOUND</span>
+              </div>
+              <div class="assc-body">
+                <div class="assc-row"><span class="assc-lbl">Target:</span> <strong id="assc-plate" class="cyan">DL 1C AE 4921</strong></div>
+                <div class="assc-row"><span class="assc-lbl">Sensors:</span> <span id="assc-sensors">3 Fixed CCTV + 2 DTC Buses</span></div>
+                <div class="assc-row"><span class="assc-lbl">Last GPS:</span> <span id="assc-last-gps" class="amber">28.61545, 77.24843</span></div>
+                <div class="assc-row"><span class="assc-lbl">Expected Corridor:</span> <span id="assc-corridor">Mathura Rd - Ring Road</span></div>
+              </div>
+              <div class="assc-actions">
+                <button class="assc-btn primary" id="btn-assc-connect-map">Connect Sightings</button>
+                <button class="assc-btn secondary" id="btn-assc-build-trajectory">Build Trajectory</button>
+              </div>
+            </div>
+            <div class="acq-quick-plates">
+              <span class="acq-hint">Quick Select Target:</span>
+              <button class="acq-chip active" data-plate="DL 1C AE 4921">DL 1C AE 4921 (Swift · White)</button>
+              <button class="acq-chip stolen" data-plate="UP 16 AB 7843">[ALERT] UP 16 AB 7843 (Fortuner · Black)</button>
+              <button class="acq-chip" data-plate="HR 26 DK 9912">HR 26 DK 9912 (i20 · Red)</button>
+              <button class="acq-chip hotlist" data-plate="MH 12 FG 3391">MH 12 FG 3391 (Hit &amp; Run)</button>
+              <button class="acq-chip hotlist" data-plate="RJ 14 CA 0055">RJ 14 CA 0055 (Arms Act)</button>
+            </div>
+          </div>
+
+          <!-- Tab 2: Physical Features -->
+          <div class="acq-content" id="acq-content-features">
+            <div class="acq-form-grid">
+              <div class="acq-field">
+                <label>Vehicle Type</label>
+                <select id="acq-feat-type" class="acq-select">
+                  <option value="Sedan">Sedan (Dzire, City, Verna)</option>
+                  <option value="SUV">SUV (Fortuner, Scorpio, Creta)</option>
+                  <option value="Hatchback">Hatchback (i20, Swift, Baleno)</option>
+                  <option value="Auto">Auto-rickshaw (Tuk-tuk)</option>
+                  <option value="Bus">DTC Electric / Low-floor Bus</option>
+                  <option value="Truck">Commercial Truck</option>
+                  <option value="Motorcycle">Motorcycle / Two-wheeler</option>
+                </select>
+              </div>
+              <div class="acq-field">
+                <label>Color</label>
+                <select id="acq-feat-color" class="acq-select">
+                  <option value="White">White / Pearl</option>
+                  <option value="Black">Black / Midnight</option>
+                  <option value="Red">Red / Crimson</option>
+                  <option value="Silver">Silver / Metallic Grey</option>
+                  <option value="Blue">Blue / Navy</option>
+                  <option value="Yellow">Yellow (Commercial)</option>
+                </select>
+              </div>
+              <div class="acq-field full-width">
+                <label>Make &amp; Model</label>
+                <input type="text" id="acq-feat-make" class="acq-input" placeholder="e.g. Maruti Swift Dzire, Toyota Fortuner..." list="make-suggestions" />
+                <datalist id="make-suggestions">
+                  <option value="Maruti Swift Dzire"></option>
+                  <option value="Toyota Fortuner"></option>
+                  <option value="Hyundai i20"></option>
+                  <option value="Mahindra Scorpio-N"></option>
+                  <option value="Tata Nexon EV"></option>
+                  <option value="Honda City"></option>
+                  <option value="Kia Seltos"></option>
+                  <option value="Bajaj Auto RE"></option>
+                </datalist>
+              </div>
+              <div class="acq-field full-width">
+                <label>Distinctive Physical Attributes</label>
+                <input type="text" id="acq-feat-trait" class="acq-input" placeholder="e.g. Dark tinted windows, yellow plate..." />
+              </div>
+            </div>
+            <button class="acq-btn feature-btn" id="btn-acq-track-features">Deploy AI Match &amp; Track</button>
+          </div>
+
+          <!-- Tab 3: Footage Selector -->
+          <div class="acq-content" id="acq-content-footage">
+            <div class="acq-footage-hint">
+              
+              <div class="afh-text">
+                <strong>Click Any Vehicle on Video Feed</strong>
+                <span>Hovering over any car in the live CCTV or recorded playback displays target reticle. Click to lock &amp; track!</span>
+              </div>
+            </div>
+            <div class="acq-footage-controls">
+              <button class="acq-btn secondary" id="btn-arm-footage-target">Arm Target Crosshair</button>
+              <button class="acq-btn popout" id="btn-open-live-cam-modal-acq">View Live Camera</button>
+            </div>
+            <div class="acq-footage-mode-bar">
+              <span class="afm-label">Footage Mode:</span>
+              <button class="afm-btn active" id="btn-footage-mode-live" data-mode="live">[LIVE]</button>
+              <button class="afm-btn" id="btn-footage-mode-rec" data-mode="rec"> RECORDED</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-section">
+          <div class="section-header-row">
+            <h2 class="panel-title">Active Targets</h2>
+            <span class="badge-mini" id="gis-target-count">3 TRACKED</span>
+          </div>
+          <div id="gis-vehicle-list"></div>
+        </div>
+        <div class="panel-section">
+          <div class="section-header-row">
+            <h2 class="panel-title">Hotlist</h2>
+            <span class="badge-mini red">REDIS BLOOM &lt;5ms</span>
+          </div>
+          <div id="gis-hotlist"></div>
+        </div>
+        <div class="panel-section">
+          <div class="section-header-row">
+            <h2 class="panel-title">Anomaly Feed</h2>
+            <span class="badge-mini warning">SPATIOTEMPORAL</span>
+          </div>
+          <div id="gis-anomaly-feed"></div>
+        </div>
+      </aside>
+
+      <!-- Center: Full GIS map -->
+      <div class="gis-center">
+        <div class="gis-map-container" id="gis-map-wrapper">
+          <div id="gis-map"></div>
+          <!-- In-Map ANPR Sighting Chain & Expected Trajectory HUD -->
+          <div id="gis-sighting-chain-hud" class="gis-sighting-chain-hud">
+            <div class="gsch-header">
+              <div class="gsch-title-col">
+                <span class="gsch-tag">ANPR SIGHTING INTERCONNECTION CHAIN</span>
+                <h4 class="gsch-plate" id="gsch-plate-display">DL 1C AE 4921</h4>
+              </div>
+              <button class="gsch-close-btn" id="btn-close-gsch" title="Dismiss HUD">CLOSE</button>
+            </div>
+            <div class="gsch-stats-grid">
+              <div class="gsch-stat">
+                <span class="gsch-stat-lbl">CONFIRMED GPS SIGHTINGS</span>
+                <span class="gsch-stat-val cyan" id="gsch-hits-count">5 Captures</span>
+              </div>
+              <div class="gsch-stat">
+                <span class="gsch-stat-lbl">SENSOR MESH RATIO</span>
+                <span class="gsch-stat-val" id="gsch-sensor-ratio">3 Fixed / 2 Bus</span>
+              </div>
+              <div class="gsch-stat">
+                <span class="gsch-stat-lbl">LAST CONFIRMED GPS</span>
+                <span class="gsch-stat-val green" id="gsch-last-coords">28.61545, 77.24843</span>
+              </div>
+              <div class="gsch-stat">
+                <span class="gsch-stat-lbl">EXPECTED TRAJECTORY</span>
+                <span class="gsch-stat-val amber" id="gsch-trajectory-status">Corridor Active</span>
+              </div>
+            </div>
+            <div class="gsch-actions">
+              <button class="gsch-action-btn cyan" id="btn-gsch-replay">Animate Sighting Chronology</button>
+              <button class="gsch-action-btn amber" id="btn-gsch-view-ledger">Open Sighting Ledger &amp; GPS</button>
+              <button class="gsch-action-btn red" id="btn-gsch-intercept"> Dispatch Intercept Roadblock</button>
+            </div>
+          </div>
+          <canvas id="gis-radar-canvas" class="gis-radar-canvas hidden"></canvas>
+
+          <!-- Switching HUD Banner (overlaid on map) -->
+          <div id="gis-switching-hud">
+            <div class="hud-left">
+              <span class="hud-tag">ANPR HANDOFF ENGINE</span>
+              <div class="hud-flow">
+                <span class="hud-node" id="gis-hud-prev">CAM-JNC-04</span>
+                <span class="hud-arrow">-</span>
+                <span class="hud-zone" id="gis-hud-gap"><span class="pulse-dot-amber"></span> BLIND CORRIDOR (3.8 km)</span>
+                <span class="hud-arrow">-</span>
+                <span class="hud-node active" id="gis-hud-curr">BUS-DTC-419 (MOBILE)</span>
+                <span class="hud-arrow">-</span>
+                <span class="hud-node next" id="gis-hud-next">CAM-JNC-01</span>
+              </div>
+            </div>
+            <div class="hud-right">
+              <div class="hud-metric"><span class="hm-lbl">REACHABILITY CONE</span><span class="hm-val" id="gis-cone-val">r = 3.5 km | dt = 4 min</span></div>
+              <div class="hud-metric"><span class="hm-lbl">SWITCHING PROTOCOL</span><span class="hm-val" id="gis-proto-val">AIS-140 Opportunistic Relay</span></div>
+            </div>
+          </div>
+
+          <div id="gis-map-overlay-top">
+            <button class="overlay-chip-btn active" id="btn-map-follow" title="Toggle Camera Tracking Lock"><span id="map-follow-text">Camera: Lock Target</span></button>
+            <button class="overlay-chip-btn" id="btn-map-fit-route" title="Fit Entire Route to Screen">Fit Route</button>
+            <button class="overlay-chip-btn" id="btn-map-fit-india" title="Strictly Lock &amp; Fit Subcontinent India Bounds">India Bounds</button>
+            <button class="overlay-chip-btn" id="btn-map-fit-delhi" title="Reset View to Delhi NCT Grid">Delhi Focus</button>
+            <button class="overlay-chip-btn" id="btn-map-layer" title="Switch Basemap Layer"><span id="map-layer-text">Basemap</span></button>
+            <button class="overlay-chip-btn accent-cyan" id="btn-open-live-cam" title="View Tracked Camera Live HD Feed"><span id="live-cam-badge">Live Camera Feed</span></button>
+            <button class="overlay-chip-btn godseye-mode-chip" id="btn-godseye-mapmode" title="Toggle GodsEye Tactical Recon Mapping on Main Map"><span id="godseye-mode-label">GodsEye Recon: OFF</span></button>
+            <button class="overlay-chip-btn godseye-btn" id="btn-godseye" title="Activate Fullscreen GodsEye Orbital Surveillance View">Fullscreen HUD</button>
+            <div class="overlay-chip"><span class="chip-label">Coverage</span><span class="chip-val" id="gis-coverage">0%</span></div>
+            <div class="overlay-chip"><span class="chip-label">Mobile</span><span class="chip-val" id="gis-buses">0</span></div>
+            <div class="overlay-chip"><span class="chip-label">Fixed</span><span class="chip-val" id="gis-fixed">0</span></div>
+            <div class="overlay-chip accent"><span class="chip-label">Tracking</span><span class="chip-val" id="gis-tracking">0</span></div>
+          </div>
+
+          <div id="gis-map-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#00e5ff"></span> Fixed ANPR</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ffc107"></span> Mobile Bus</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ff1744"></span> Target Vehicle</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#69f0ae"></span> Trajectory</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#7c4dff;border:2px dashed #b388ff"></span> Reachability Cone</div>
+          </div>
+        </div>
+
+        <!-- Trajectory Timeline -->
+        <div class="gis-timeline">
+          <div class="timeline-header-row">
+            <h3 class="timeline-title">
+              Trajectory -
+              <span id="gis-timeline-plate">Select a vehicle</span>
+              <span class="target-sub-badge" id="gis-timeline-sub">Sedan · Maruti Swift · White</span>
+            </h3>
+            <div class="timeline-actions">
+              <button class="tl-action-btn" id="btn-gis-prev">Back</button>
+              <button class="tl-action-btn active" id="btn-gis-play">Play</button>
+              <button class="tl-action-btn" id="btn-gis-next">Next </button>
+              <button class="tl-action-btn primary" id="btn-gis-pause">Pause</button>
+              <div class="tl-speed-group">
+                <button class="tl-speed-btn active" data-speed="1">1x</button>
+                <button class="tl-speed-btn" data-speed="2">2x</button>
+                <button class="tl-speed-btn" data-speed="4">4x</button>
+              </div>
+            </div>
+          </div>
+          <div id="gis-timeline-track">
+            <div id="gis-timeline-nodes"></div>
+            <div id="gis-timeline-progress"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right sidebar: camera + nearby + confidence -->
+      <aside class="gis-right-sidebar">
+        <div class="panel-section camera-section">
+          <div class="section-header-row">
+            <h2 class="panel-title">Active Feed</h2>
+            <button class="btn-popout-cam" id="btn-gis-cam-popout" title="Open Full Live Camera Modal">Pop-Out Live</button>
+          </div>
+          <div class="gis-camera-viewer">
+            <canvas id="gis-camera-canvas" width="380" height="220" title="Click any vehicle on feed to track it!"></canvas>
+            <div class="gis-cam-overlay-badge"><span class="live-dot-pulse"></span> [LIVE]</div>
+            <div class="gis-cam-info">
+              <span id="gis-cam-id">—</span>
+              <span id="gis-cam-type">—</span>
+            </div>
+          </div>
+          <div class="gis-cam-controls-row">
+            <select id="gis-cam-picker" class="acq-select mini" title="Switch Active Surveillance Sensor">
+              <option value="auto">[AUTO] Auto-Track Target Camera</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel-section">
+          <div class="section-header-row">
+            <h2 class="panel-title">Nearby ANPR</h2>
+            <span class="badge-mini cyan">NODE TOPOLOGY</span>
+          </div>
+          <div class="nearby-nodes-container">
+            <div class="nearby-card active-card">
+              <div class="nc-header"><span class="nc-role">CURRENT NODE</span><span class="nc-status active">RECORDING</span></div>
+              <div class="nc-main"><div class="nc-name" id="gis-anpr-curr">—</div><div class="nc-detail" id="gis-anpr-meta">—</div></div>
+            </div>
+            <div class="nearby-subgroup">
+              <span class="subgroup-label">NEARBY FIXED ANPR</span>
+              <div class="subgroup-items" id="gis-nearby-fixed"></div>
+            </div>
+            <div class="nearby-subgroup">
+              <span class="subgroup-label">MOBILE NODES ALONGSIDE</span>
+              <div class="subgroup-items" id="gis-nearby-mobile"></div>
+            </div>
+            <div class="nearby-intercept-box">
+              <span class="nib-label">PREDICTED INTERCEPT:</span>
+              <span class="nib-val" id="gis-next-intercept">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-section">
+          <div class="section-header-row">
+            <h2 class="panel-title">Confidence</h2>
+            <span class="badge-mini green" id="gis-legal-badge">LEGAL COMPLIANT</span>
+          </div>
+          <div class="conf-overall">
+            <div class="conf-ring-container">
+              <svg class="conf-ring" viewBox="0 0 100 100">
+                <circle class="conf-ring-bg" cx="50" cy="50" r="42"/>
+                <circle class="conf-ring-fill" id="gis-conf-ring" cx="50" cy="50" r="42"/>
+              </svg>
+              <div class="conf-ring-val" id="gis-conf-val">—</div>
+            </div>
+            <div class="conf-tier-wrapper">
+              <div class="conf-tier" id="gis-conf-tier">AWAITING</div>
+              <div class="conf-desc">Multi-factor link score</div>
+            </div>
+          </div>
+          <div class="conf-breakdown">
+            <div class="conf-factor"><span class="factor-label">Plate (w₁=0.40)</span><div class="factor-bar"><div class="factor-fill" id="gis-conf-plate" style="width:0%"></div></div><span class="factor-val" id="gis-conf-plate-val">—</span></div>
+            <div class="conf-factor"><span class="factor-label">Kinematic (w₂=0.25)</span><div class="factor-bar"><div class="factor-fill" id="gis-conf-time" style="width:0%"></div></div><span class="factor-val" id="gis-conf-time-val">—</span></div>
+            <div class="conf-factor"><span class="factor-label">Road Net (w₃=0.20)</span><div class="factor-bar"><div class="factor-fill" id="gis-conf-road" style="width:0%"></div></div><span class="factor-val" id="gis-conf-road-val">—</span></div>
+            <div class="conf-factor"><span class="factor-label">Quality (w₄=0.15)</span><div class="factor-bar"><div class="factor-fill" id="gis-conf-quality" style="width:0%"></div></div><span class="factor-val" id="gis-conf-quality-val">—</span></div>
+          </div>
+        </div>
+          <div class="panel-section">
+            <div class="section-header-row">
+              <h2 class="panel-title">Telemetry</h2>
+              <span class="badge-mini purple">MQTT</span>
+            </div>
+            <div id="gis-telemetry-feed"></div>
+          </div>
+        </aside>
+      </div>
+      <div class="window-resize-grip" title="Resize Window Corner"></div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- WINDOW 4: EVIDENTIARY DOSSIER & LEGAL PROOF                       -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section class="window-panel" id="window-dossier">
+      <div class="window-folder-header">
+        <div class="wfh-title-group">
+          
+          <span class="wfh-title">VESPER // EVIDENTIARY SIGHTINGS DOSSIER &amp; LEGAL CHAIN [BSA §63]</span>
+          <span class="wfh-tag">COURT RECORD</span>
+        </div>
+        <div class="wfh-controls">
+          <button class="wfh-btn btn-win-maximize" title="Maximize / Restore Window">MAX</button>
+          <button class="wfh-btn btn-win-close pane-btn-close" id="btn-dossier-close" title="Close Window / Return to Mission Brief (Esc)">CLOSE</button>
+        </div>
+      </div>
+      <div class="dossier-layout">
+        <div class="dossier-header-bar">
+          <div class="dhb-left">
+            
+            <div>
+              <h2 class="dhb-title">Evidentiary Sightings Dossier — All Captured Shots</h2>
+              <div class="dhb-subtitle" id="dossier-subtitle">Target: DL 1C AE 4921 · Complete Cross-Camera Journey Evidence</div>
+            </div>
+          </div>
+          <div class="dhb-right">
+            <button class="modal-btn secondary" id="btn-export-dossier2">Export Legal PDF</button>
+          </div>
+        </div>
+        <div class="dossier-meta-bar">
+          <div class="dmb-item"><span class="dmb-lbl">TARGET:</span> <span class="dmb-val cyan" id="dossier-plate">DL 1C AE 4921</span></div>
+          <div class="dmb-item"><span class="dmb-lbl">RE-ID:</span> <span class="dmb-val" id="dossier-reid">a4f891b2</span></div>
+          <div class="dmb-item"><span class="dmb-lbl">SIGHTINGS:</span> <span class="dmb-val" id="dossier-count">5</span></div>
+          <div class="dmb-item"><span class="dmb-lbl">BLIND SPOTS BRIDGED:</span> <span class="dmb-val green" id="dossier-bridged">1 Mobile</span></div>
+          <div class="dmb-item"><span class="dmb-lbl">COURT ADMISSIBILITY:</span> <span class="dmb-val purple">BSA §63 / IEA §65B</span></div>
+        </div>
+        <div class="shots-gallery-grid" id="dossier-gallery"></div>
+        <div class="dossier-footer">
+          <span class="hash-tag">CRYPTOGRAPHIC EVIDENCE SEAL: SHA-256 VERIFIED</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- WINDOW 5: URBAN TRAFFIC ANALYTICS & MOBILE SENSING (SIH26127)      -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section class="window-panel" id="window-ps124" data-pane="ps124">
+      <div class="window-folder-header">
+        <div class="wfh-title-group">
+          
+          <span class="wfh-title">VESPER // URBAN TRAFFIC ANALYTICS &amp; MUNICIPAL SENSING ENGINE</span>
+          <span class="wfh-tag pane-split-badge">BOTTOM 25% PANE</span>
+        </div>
+        <div class="wfh-controls">
+          <button class="wfh-btn btn-win-reset" title="Reset 50:25:25 Window Split">Reset</button>
+          <button class="wfh-btn btn-win-minimize" title="Minimize / Compact Window">MIN</button>
+          <button class="wfh-btn btn-win-maximize pane-btn-expand" title="Maximize / Expand Pane">EXPAND</button>
+          <button class="wfh-btn btn-win-close pane-btn-close pane-btn-collapse" id="btn-ps124-close" title="Close Window / Return to Mission Brief (Esc)">CLOSE</button>
+        </div>
+      </div>
+
+      <div class="ps124-layout">
+        <!-- Hero Header -->
+        <div class="ps124-hero-banner">
+          <div class="phb-title-row">
+            <div>
+              <h2>Urban Traffic Analytics &amp; Zero-Capex Public Transit Sensing</h2>
+              <p>Harnessing Delhi's mobile bus fleet to generate live <strong>Origin-Destination (O-D) matrices</strong>, <strong>corridor congestion heatmaps</strong>, <strong>BRTS bus-lane enforcement</strong>, and <strong>PWD road distress profiling</strong> at zero additional hardware capex.</p>
+            </div>
+            <div class="phb-badge-group">
+              <span class="phb-tag cyan">PostGIS + pgRouting</span>
+              <span class="phb-tag purple">DTC / BMTC Fleet Mesh</span>
+              <span class="phb-tag green">AIS-140 GPS Fused</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual Plate Sighting & Trajectory Investigator -->
+        <div class="uta-plate-investigator">
+          <div class="upi-header">
+            <div class="upi-title">
+              
+              <div>
+                <strong>Manual Plate Sighting &amp; Trajectory Reconstruction</strong>
+                <span class="upi-sub">Input any vehicle registration number to query 12 Fixed ANPR junctions &amp; 4 DTC mobile bus cameras, view GPS hits &amp; reconstruct trajectory</span>
+              </div>
+            </div>
+            <div class="upi-input-wrap">
+              <input type="text" id="uta-plate-input" class="uta-plate-input" placeholder="Input Plate / Number (e.g. DL 1C AE 4921 or 4921)..." autocomplete="off" spellcheck="false" />
+              <button id="btn-uta-search-plate" class="uta-search-btn">Search GPS Sightings</button>
+              <button id="btn-uta-open-chain-modal" class="uta-chain-btn" title="Open Multi-Sensor Sighting Ledger Modal">View GPS Sighting Ledger</button>
+            </div>
+          </div>
+          <div class="upi-quick-chips">
+            <span class="upi-chips-lbl">Quick Check:</span>
+            <button class="upi-chip active" data-plate="DL 1C AE 4921">DL 1C AE 4921 (5 Sightings · Swift)</button>
+            <button class="upi-chip stolen" data-plate="UP 16 AB 7843">[ALERT] UP 16 AB 7843 (Hotlist · Fortuner)</button>
+            <button class="upi-chip" data-plate="HR 26 DK 9912">HR 26 DK 9912 (i20 · Lajpat Nagar)</button>
+            <button class="upi-chip hotlist" data-plate="MH 12 FG 3391">MH 12 FG 3391 (Hit &amp; Run · Dhaula Kuan)</button>
+          </div>
+        </div>
+
+        <!-- Analytics Navigation Bar -->
+        <div class="uta-nav-bar">
+          <button class="uta-tab-btn active" data-uta-tab="od-matrix">Origin-Destination (O-D) Matrix</button>
+          <button class="uta-tab-btn" data-uta-tab="corridor-speed">Corridor Speed &amp; Congestion Heatmap</button>
+          <button class="uta-tab-btn" data-uta-tab="brts-enforce">BRTS Lane Auto-Challan</button>
+          <button class="uta-tab-btn" data-uta-tab="pothole-imu">PWD Road Distress &amp; Potholes</button>
+          <button class="uta-tab-btn" data-uta-tab="air-quality">Micro-Climate (PM2.5/PM10)</button>
+        </div>
+
+        <!-- ═══ SECTION A: ORIGIN-DESTINATION (O-D) MATRIX ═══ -->
+        <div class="uta-content-pane active" id="uta-pane-od-matrix">
+          <div class="uta-section-header">
+            <div class="ush-left">
+              
+              <div>
+                <h3 class="ush-title">Real-Time Delhi Metro-Area Origin-Destination (O-D) Flow Matrix</h3>
+                <span class="ush-sub">Aggregated from 12 Fixed ANPR junctions and 4 DTC mobile bus corridors (1-hr rolling window)</span>
+              </div>
+            </div>
+            <div class="ush-right">
+              <div class="preset-pill-group">
+                <span class="ppg-label">PEAK PROFILE:</span>
+                <button class="ppg-btn active" data-od-peak="morning">Morning Peak (08:30-11:00)</button>
+                <button class="ppg-btn" data-od-peak="evening">Evening Peak (17:30-20:30)</button>
+                <button class="ppg-btn" data-od-peak="offpeak">Midday Off-Peak</button>
+                <button class="ppg-btn" data-od-peak="live">Live Dynamic Feed</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats Row -->
+          <div class="uta-metrics-strip">
+            <div class="ums-card">
+              <span class="ums-lbl">MONITORED TRIPS / HR</span>
+              <span class="ums-val cyan" id="od-metric-trips">38,420</span>
+              <span class="ums-sub">+8.4% vs last week</span>
+            </div>
+            <div class="ums-card">
+              <span class="ums-lbl">PUBLIC TRANSIT SHARE</span>
+              <span class="ums-val green" id="od-metric-transit">46.2%</span>
+              <span class="ums-sub">DTC Buses + Feeder e-Rickshaws</span>
+            </div>
+            <div class="ums-card">
+              <span class="ums-lbl">AVG CORRIDOR TRIP TIME</span>
+              <span class="ums-val" id="od-metric-time">34.6 min</span>
+              <span class="ums-sub">Across 6 major urban zones</span>
+            </div>
+            <div class="ums-card">
+              <span class="ums-lbl">FLOW IMBALANCE INDEX</span>
+              <span class="ums-val yellow" id="od-metric-imbalance">1.82 (Moderate)</span>
+              <span class="ums-sub">High inbound rush to Connaught Place</span>
+            </div>
+          </div>
+
+          <!-- O-D Flow Matrix Table & Interactive Flow Map -->
+          <div class="od-matrix-container">
+            <div class="od-table-wrapper">
+              <div class="od-table-title">
+                <span>ZONE-TO-ZONE TRIP EXCHANGE MATRIX (VEHICLES / HOUR)</span>
+                <span class="od-legend-hint">Cells shaded by volume intensity · Click any pair to inspect transit split</span>
+              </div>
+              <table class="od-matrix-table" id="od-matrix-table">
+                <thead>
+                  <tr>
+                    <th class="od-th-corner">ORIGIN \ DEST</th>
+                    <th>Karol Bagh (KB)</th>
+                    <th>Connaught Place (CP)</th>
+                    <th>ITO / Pragati (ITO)</th>
+                    <th>AIIMS / South Ext</th>
+                    <th>Nehru Place (NP)</th>
+                    <th>Dhaula Kuan (DK)</th>
+                    <th>TOTAL OUT</th>
+                  </tr>
+                </thead>
+                <tbody id="od-matrix-tbody">
+                  <!-- Dynamically populated via JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Corridor Flow Highlights Card -->
+            <div class="od-corridor-summary">
+              <div class="ocs-header">
+                <span class="ocs-title">Top High-Volume Transit Corridors</span>
+                <span class="ocs-tag">AI CONGESTION DISPATCH</span>
+              </div>
+              <div class="ocs-list" id="od-top-corridors">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ SECTION B: CORRIDOR SPEED & CONGESTION HEATMAP ═══ -->
+        <div class="uta-content-pane" id="uta-pane-corridor-speed">
+          <div class="uta-section-header">
+            <div class="ush-left">
+              
+              <div>
+                <h3 class="ush-title">City Arterial Speed &amp; Level of Service (LOS) Monitor</h3>
+                <span class="ush-sub">Continuous speed telemetry logged from AIS-140 GPS and mobile bus transit sweeps</span>
+              </div>
+            </div>
+            <div class="ush-right">
+              <button class="psm-action-btn" id="btn-refresh-speeds">REFRESH CORRIDOR ANALYTICS</button>
+            </div>
+          </div>
+
+          <div class="corridor-speed-grid" id="corridor-speed-grid">
+            <!-- Dynamically populated via JS with speed bars, LOS ratings, and signal advisory -->
+          </div>
+        </div>
+
+        <!-- ═══ SECTION C: BRTS LANE ENFORCEMENT ═══ -->
+        <div class="uta-content-pane" id="uta-pane-brts-enforce">
+          <div class="ps124-module single-pane-module">
+            <div class="psm-header">
+              
+              <div>
+                <h3 class="psm-title">BRTS Dedicated Bus Lane Automated Enforcement</h3>
+                <span class="psm-badge amber">AUTO E-CHALLAN GENERATOR · MOTOR VEHICLES ACT SEC 192A</span>
+              </div>
+              <button class="psm-action-btn" id="btn-trigger-brts-pane">INJECT BRTS LANE VIOLATION</button>
+            </div>
+            <div class="psm-live-panel">
+              <canvas id="ps124-brts-canvas-pane" width="760" height="200"></canvas>
+              <div class="psm-stats-row">
+                <div class="psm-stat"><span class="psm-stat-val" id="ps124-violations-pane">4</span><span class="psm-stat-lbl">Active Violations</span></div>
+                <div class="psm-stat"><span class="psm-stat-val" id="ps124-challans-pane">4</span><span class="psm-stat-lbl">Auto E-Challans</span></div>
+                <div class="psm-stat"><span class="psm-stat-val" id="ps124-fine-total-pane">Rs 40,000</span><span class="psm-stat-lbl">Total Fines Issued</span></div>
+                <div class="psm-stat"><span class="psm-stat-val green">100%</span><span class="psm-stat-lbl">ANPR Confidence</span></div>
+              </div>
+            </div>
+            <div class="psm-desc">
+              <p>Bus forward dashcams continuously segment yellow BRTS lane boundaries. When unauthorized private cars occupy the lane for &gt;50 meters, an automated e-challan with timestamped photographic evidence, GPS coordinates, and vehicle owner records (via MoRTH VAHAN 4.0) is instantly dispatched to Delhi Police HQ.</p>
+            </div>
+            <div class="psm-log" id="ps124-brts-log-pane"></div>
+          </div>
+        </div>
+
+        <!-- ═══ SECTION D: POTHOLE & ROAD DISTRESS ═══ -->
+        <div class="uta-content-pane" id="uta-pane-pothole-imu">
+          <div class="ps124-module single-pane-module">
+            <div class="psm-header">
+              
+              <div>
+                <h3 class="psm-title">Municipal Road Distress &amp; Pothole Detection Mesh</h3>
+                <span class="psm-badge">6-AXIS IMU + COMPUTER VISION · INTERNATIONAL ROUGHNESS INDEX</span>
+              </div>
+              <button class="psm-action-btn" id="btn-trigger-pothole-pane">INJECT 3.8g VERTICAL ACCEL SPIKE</button>
+            </div>
+            <div class="psm-live-panel">
+              <canvas id="ps124-accel-chart-pane" width="760" height="200"></canvas>
+              <div class="psm-stats-row">
+                <div class="psm-stat"><span class="psm-stat-val" id="ps124-potholes-pane">2</span><span class="psm-stat-lbl">Potholes Logged</span></div>
+                <div class="psm-stat"><span class="psm-stat-val" id="ps124-iri-pane">3.4</span><span class="psm-stat-lbl">IRI (m/km)</span></div>
+                <div class="psm-stat"><span class="psm-stat-val" id="ps124-accel-peak-pane">3.8g</span><span class="psm-stat-lbl">Peak Shock</span></div>
+                <div class="psm-stat"><span class="psm-stat-val purple">PWD WORK ORDER</span><span class="psm-stat-lbl">Auto-Dispatched</span></div>
+              </div>
+            </div>
+            <div class="psm-desc">
+              <p>Fuses forward dashcam surface road segmentation with 6-axis IMU vertical shocks (&gt;2.5g) to distinguish surface bumps from expansion joints. Computes automated International Roughness Index (IRI) ratings to prioritize Municipal Corporation of Delhi (MCD) &amp; PWD road resurfacing contracts.</p>
+            </div>
+            <div class="psm-log" id="ps124-pothole-log-pane"></div>
+          </div>
+        </div>
+
+        <!-- ═══ SECTION E: MICRO-CLIMATE & AIR QUALITY ═══ -->
+        <div class="uta-content-pane" id="uta-pane-air-quality">
+          <div class="ps124-module single-pane-module">
+            <div class="psm-header">
+              
+              <div>
+                <h3 class="psm-title">Mobile Micro-Climate &amp; Particulate Pollution Sensor Mesh</h3>
+                <span class="psm-badge green">PLANTOWER PMS5003 + SHT31 · I2C BUS ON BUS NPU</span>
+              </div>
+              <button class="psm-action-btn" id="btn-trigger-aqi-pane">INJECT INDUSTRIAL PM2.5 SPIKE</button>
+            </div>
+            <div class="psm-live-panel">
+              <canvas id="ps124-aqi-chart-pane" width="760" height="200"></canvas>
+              <div class="psm-stats-row">
+                <div class="psm-stat"><span class="psm-stat-val" id="ps124-pm25-pane">124</span><span class="psm-stat-lbl">PM2.5 (ug/m3)</span></div>
+                <div class="psm-stat"><span class="psm-stat-val" id="ps124-pm10-pane">218</span><span class="psm-stat-lbl">PM10 (ug/m3)</span></div>
+                <div class="psm-stat"><span class="psm-stat-val yellow" id="ps124-aqi-level-pane">Moderate</span><span class="psm-stat-lbl">Air Quality Index</span></div>
+                <div class="psm-stat"><span class="psm-stat-val">31.2 C / 58%</span><span class="psm-stat-lbl">Temp / Humidity</span></div>
+              </div>
+            </div>
+            <div class="psm-desc">
+              <p>Turns 100+ public transit buses into high-resolution moving environmental laboratories. Identifies local particulate pollution hotspots (construction dust, road dust re-suspension, idling choke points) with GPS-correlated heatmaps.</p>
+            </div>
+            <div class="psm-log" id="ps124-aqi-log-pane"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="window-resize-grip" title="Resize Window Corner"></div>
+    </section>
+
+    
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- WINDOW 6: UNIFIED COMMAND GRID (MULTI-PANE)                       -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <section class="window-panel" id="window-grid">
+    <div class="window-folder-header">
+      <div class="wfh-title-group">
+        
+        <span class="wfh-title">VESPER // UNIFIED COMMAND MATRIX [QUAD-PANE]</span>
+        <span class="wfh-tag">4-UP MATRIX</span>
+      </div>
+      <div class="wfh-controls">
+        <button class="wfh-btn btn-win-maximize" title="Maximize / Restore Window">MAX</button>
+        <button class="wfh-btn btn-win-close pane-btn-close" id="btn-grid-close" title="Close Window / Return to Mission Brief (Esc)">CLOSE</button>
+      </div>
+    </div>
+    <div class="grid-layout">
+      <!-- Top-left: Map -->
+      <div class="grid-cell" id="grid-map-cell">
+        <div class="gc-header"><span>GIS Map</span></div>
+        <div id="grid-map" style="width:100%;height:100%"></div>
+      </div>
+      <!-- Top-right: Dual feeds stacked -->
+      <div class="grid-cell" id="grid-feeds-cell">
+        <div class="gc-header"><span>Dual Surveillance</span></div>
+        <div class="grid-feeds-stack">
+          <div class="grid-feed-mini">
+            <canvas id="grid-canvas-fixed" width="380" height="180"></canvas>
+            <div class="gfm-label"><span class="sfc-badge cyan small">FIXED</span> <span id="grid-fixed-cam">CAM-JNC-04</span></div>
+          </div>
+          <div class="grid-feed-mini">
+            <canvas id="grid-canvas-bus" width="380" height="180"></canvas>
+            <div class="gfm-label"><span class="sfc-badge amber small">BUS</span> <span id="grid-bus-cam">BUS-DTC-419</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Bottom-left: Timeline + Nearby -->
+      <div class="grid-cell" id="grid-info-cell">
+        <div class="gc-header"><span>Confidence and Nearby</span></div>
+        <div class="grid-info-content">
+          <div class="conf-overall" style="margin-bottom:10px">
+            <div class="conf-ring-container" style="width:60px;height:60px">
+              <svg class="conf-ring" viewBox="0 0 100 100">
+                <circle class="conf-ring-bg" cx="50" cy="50" r="42"/>
+                <circle class="conf-ring-fill" id="grid-conf-ring" cx="50" cy="50" r="42"/>
+              </svg>
+              <div class="conf-ring-val" id="grid-conf-val" style="font-size:14px">—</div>
+            </div>
+            <div class="conf-tier-wrapper">
+              <div class="conf-tier" id="grid-conf-tier" style="font-size:10px">AWAITING</div>
+            </div>
+          </div>
+          <div class="nearby-card active-card" style="margin-bottom:6px">
+            <div class="nc-header"><span class="nc-role">CURRENT NODE</span><span class="nc-status active">REC</span></div>
+            <div class="nc-main"><div class="nc-name" id="grid-curr-node">—</div></div>
+          </div>
+          <div class="nearby-subgroup" style="margin-bottom:4px">
+            <span class="subgroup-label">NEARBY</span>
+            <div class="subgroup-items" id="grid-nearby"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Bottom-right: Telemetry -->
+      <div class="grid-cell" id="grid-telem-cell">
+        <div class="gc-header"><span>Telemetry Feed</span></div>
+        <div id="grid-telemetry-feed" class="grid-telem-feed"></div>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <!-- ═══════════ BOTTOM STATUS BAR ═══════════ -->
+  <footer id="bottom-bar">
+    <div class="bottom-section"><span class="bottom-label">EDGE</span><span class="bottom-val">DeepStream 6.4 + TensorRT INT8</span></div>
+    <div class="bottom-section"><span class="bottom-label">OCR</span><span class="bottom-val">YOLOv8 + STN + PARSeq</span></div>
+    <div class="bottom-section"><span class="bottom-label">Re-ID</span><span class="bottom-val">FastReID OSNet x1.0</span></div>
+    <div class="bottom-section"><span class="bottom-label">SPATIAL</span><span class="bottom-val">PostGIS + pgRouting + HMM</span></div>
+    <div class="bottom-section"><span class="bottom-label">HOTLIST</span><span class="bottom-val">Redis Bloom — <span id="hotlist-latency">4.2ms</span></span></div>
+    <div class="bottom-section"><span class="bottom-label">LEGAL</span><span class="bottom-val">SHA-256 | BSA §63</span></div>
+  </footer>
+
+  <!-- ═══════════ TACTICAL TOAST NOTIFICATION ═══════════ -->
+  <div id="tactical-toast" class="tactical-toast hidden">
+    <div class="toast-indicator"></div>
+    <div class="toast-body">
+      <div class="toast-title" id="toast-title">ALERT</div>
+      <div class="toast-msg" id="toast-msg">Message</div>
+    </div>
+    <button class="toast-close" id="toast-close">CLOSE</button>
+  </div>
+
+  <!-- ═══════════ LEGAL FORENSIC CERTIFICATE MODAL (BSA §63) ═══════════ -->
+  <div id="modal-certificate" class="modal-backdrop hidden">
+    <div class="certificate-modal">
+      <div class="cert-header">
+        <div class="cert-emblem" style="font-weight:900;font-size:12px;color:#213d77;border:1px solid #213d77;padding:4px 8px;border-radius:4px;">SEC 63 BHS</div>
+        <div class="cert-title-block">
+          <h3>GOVERNMENT OF NCT OF DELHI · DELHI TRAFFIC POLICE HQ</h3>
+          <h4>CERTIFICATE OF ELECTRONIC EVIDENCE PURSUANT TO SECTION 63, BHARATIYA SAKSHYA ADHINIYAM (BSA) 2023</h4>
+          <p class="cert-ref">REF NO: VESPER/EVD-DL/2026/8941 · CLASSIFICATION: SECTION 63 BSA COURT RECORD</p>
+        </div>
+        <button class="modal-close" id="btn-close-cert">CLOSE</button>
+      </div>
+      <div class="cert-body" id="cert-content">
+        <!-- Dynamically generated -->
+      </div>
+      <div class="cert-actions">
+        <button class="modal-btn secondary" id="btn-cert-download-json">DOWNLOAD JSON MANIFEST</button>
+        <button class="modal-btn primary" id="btn-cert-print">Print / Save as PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ CLICK BACKDROP FOR SPLIT EXPANDED PANES ═══════════ -->
+  <div id="split-backdrop" class="split-backdrop hidden" title="Click outside to collapse to 50:25:25"></div>
+
+  <!-- ═══════════ API GATEWAY & KEYS MANAGER MODAL ═══════════ -->
+  <div id="modal-api-gateway" class="modal-backdrop hidden">
+    <div class="certificate-modal api-modal">
+      <div class="cert-header">
+        <div class="cert-emblem" style="font-weight:900;font-size:12px;color:#213d77;border:1px solid #213d77;padding:4px 8px;border-radius:4px;">API GATEWAY</div>
+        <div class="cert-title-block">
+          <h3>PROJECT VESPER — PRODUCTION API GATEWAY & MICROSERVICES</h3>
+          <h4>Real-time Edge NPUs, National Databases, Vector Search, and MQTT Endpoints</h4>
+          <p class="cert-ref">FIPS 140-3 COMPLIANT API CREDENTIAL MANAGER · SYSTEM HEALTH: ALL OPERATIONAL</p>
+        </div>
+        <button class="modal-close" id="btn-close-api">CLOSE</button>
+      </div>
+      <div class="cert-body api-body">
+        <!-- Live API Health Bar -->
+        <div class="api-health-bar">
+          <div class="ah-stat"><span class="ah-lbl">API HEALTH</span><span class="ah-val green" id="ah-status">6/6 OPERATIONAL</span></div>
+          <div class="ah-stat"><span class="ah-lbl">AVG LATENCY</span><span class="ah-val cyan" id="ah-lat">12.4ms</span></div>
+          <div class="ah-stat"><span class="ah-lbl">ENCRYPTION</span><span class="ah-val purple">TLS 1.3 · FIPS 140-3</span></div>
+          <div class="ah-stat"><span class="ah-lbl">TOTAL CALLS</span><span class="ah-val" id="ah-calls">24,192 reqs</span></div>
+        </div>
+
+        <div class="api-grid">
+          <!-- API 1: NVIDIA DeepStream Cloud -->
+          <div class="api-card" id="card-api-deepstream">
+            <div class="api-card-header">
+              <span class="api-name">NVIDIA DeepStream Cloud API</span>
+              <span class="api-status-badge online" id="status-deepstream">[ACTIVE] 45 FPS</span>
+            </div>
+            <div class="api-desc">TensorRT INT8 Neural Inference Pipeline for Fixed ANPR CCTVs</div>
+            <div class="api-field">
+              <span class="api-label">Endpoint:</span>
+              <code class="api-code">https://api.deepstream.vesper.gov.in/v1/infer</code>
+            </div>
+            <div class="api-field">
+              <span class="api-label">API Key:</span>
+              <div class="api-key-group">
+                <input type="password" class="api-key-input" id="key-deepstream" value="nv_trt_live_89f3a74b210c9e8841fd" readonly>
+                <button class="api-key-toggle-btn" data-target="key-deepstream" title="Show / Hide Key">SHOW</button>
+                <button class="api-key-copy-btn" data-target="key-deepstream" title="Copy Key">COPY</button>
+              </div>
+            </div>
+            <div class="api-payload-box" id="payload-deepstream">
+              <div class="api-payload-header"><span class="aph-title">LIVE RESPONSE (200 OK)</span><span class="aph-ts">NVIDIA TRT INT8</span></div>
+              <pre class="api-payload-code"><code>{ "status": 200, "node": "CAM-JNC-04", "fps": 45.2, "tensorrt_precision": "INT8", "yolo_model": "v8m-license-plate", "inference_latency_ms": 18.2 }</code></pre>
+            </div>
+            <div class="api-card-footer">
+              <span class="api-latency" id="lat-deepstream">Latency: 18.2ms</span>
+              <button class="api-test-btn tested" data-api="deepstream">TEST PING</button>
+            </div>
+          </div>
+
+          <!-- API 2: MoRTH VAHAN & SARATHI -->
+          <div class="api-card" id="card-api-vahan">
+            <div class="api-card-header">
+              <span class="api-name">MoRTH VAHAN 4.0 / SARATHI API</span>
+              <span class="api-status-badge online" id="status-vahan">[CONNECTED]</span>
+            </div>
+            <div class="api-desc">National Vehicle Registration & Owner Intelligence Registry</div>
+            <div class="api-field">
+              <span class="api-label">Endpoint:</span>
+              <code class="api-code">https://vahan.parivahan.gov.in/api/v4/specs</code>
+            </div>
+            <div class="api-field">
+              <span class="api-label">API Key:</span>
+              <div class="api-key-group">
+                <input type="password" class="api-key-input" id="key-vahan" value="vahan_auth_sec_9941a80c33e14b" readonly>
+                <button class="api-key-toggle-btn" data-target="key-vahan" title="Show / Hide Key">SHOW</button>
+                <button class="api-key-copy-btn" data-target="key-vahan" title="Copy Key">COPY</button>
+              </div>
+            </div>
+            <div class="api-payload-box" id="payload-vahan">
+              <div class="api-payload-header"><span class="aph-title">LIVE RESPONSE (200 OK)</span><span class="aph-ts">NIC MoRTH GATEWAY</span></div>
+              <pre class="api-payload-code"><code>{ "status": 200, "reg_no": "DL 1C AE 4921", "maker": "Maruti Swift Dzire", "color": "White", "fuel": "Petrol", "insurance_active": true }</code></pre>
+            </div>
+            <div class="api-card-footer">
+              <span class="api-latency" id="lat-vahan">Latency: 31.5ms</span>
+              <button class="api-test-btn tested" data-api="vahan">TEST PING</button>
+            </div>
+          </div>
+
+          <!-- API 3: CCTNS Stolen Vehicle Hotlist -->
+          <div class="api-card" id="card-api-cctns">
+            <div class="api-card-header">
+              <span class="api-name">CCTNS National Hotlist Sync API</span>
+              <span class="api-status-badge online" id="status-cctns">[50K SYNCED]</span>
+            </div>
+            <div class="api-desc">Ministry of Home Affairs Stolen & Wanted Vehicle Hotlist</div>
+            <div class="api-field">
+              <span class="api-label">Endpoint:</span>
+              <code class="api-code">https://cctns.mha.gov.in/api/hotlist/bloom</code>
+            </div>
+            <div class="api-field">
+              <span class="api-label">JWT Token:</span>
+              <div class="api-key-group">
+                <input type="password" class="api-key-input" id="key-cctns" value="cctns_mha_jwt_token_4810ff882a" readonly>
+                <button class="api-key-toggle-btn" data-target="key-cctns" title="Show / Hide Key">SHOW</button>
+                <button class="api-key-copy-btn" data-target="key-cctns" title="Copy Key">COPY</button>
+              </div>
+            </div>
+            <div class="api-payload-box" id="payload-cctns">
+              <div class="api-payload-header"><span class="aph-title">LIVE RESPONSE (200 OK)</span><span class="aph-ts">MHA CCTNS CORE</span></div>
+              <pre class="api-payload-code"><code>{ "status": 200, "hotlist_count": 50412, "bloom_filter_bytes": 131072, "false_positive_rate": 0.0001, "sync_status": "REALTIME" }</code></pre>
+            </div>
+            <div class="api-card-footer">
+              <span class="api-latency" id="lat-cctns">Latency: 22.0ms</span>
+              <button class="api-test-btn tested" data-api="cctns">TEST PING</button>
+            </div>
+          </div>
+
+          <!-- API 4: FastReID OSNet -->
+          <div class="api-card" id="card-api-fastreid">
+            <div class="api-card-header">
+              <span class="api-name">FastReID OSNet Vector Search API</span>
+              <span class="api-status-badge online" id="status-fastreid">[ACTIVE] 512-D</span>
+            </div>
+            <div class="api-desc">512-dim Cosine Similarity Cross-Camera Vehicle Re-Identification</div>
+            <div class="api-field">
+              <span class="api-label">Endpoint:</span>
+              <code class="api-code">https://reid.edge.vesper.net/v2/vector_match</code>
+            </div>
+            <div class="api-field">
+              <span class="api-label">API Key:</span>
+              <div class="api-key-group">
+                <input type="password" class="api-key-input" id="key-fastreid" value="fastreid_vec_8b41cd99e173bca" readonly>
+                <button class="api-key-toggle-btn" data-target="key-fastreid" title="Show / Hide Key">SHOW</button>
+                <button class="api-key-copy-btn" data-target="key-fastreid" title="Copy Key">COPY</button>
+              </div>
+            </div>
+            <div class="api-payload-box" id="payload-fastreid">
+              <div class="api-payload-header"><span class="aph-title">LIVE RESPONSE (200 OK)</span><span class="aph-ts">FASTREID OSNET-X1.0</span></div>
+              <pre class="api-payload-code"><code>{ "status": 200, "vector_dim": 512, "top1_cosine_sim": 0.942, "candidate_match": "DL 1C AE 4921", "reid_hash": "a4f891b2" }</code></pre>
+            </div>
+            <div class="api-card-footer">
+              <span class="api-latency" id="lat-fastreid">Latency: 11.8ms</span>
+              <button class="api-test-btn tested" data-api="fastreid">TEST PING</button>
+            </div>
+          </div>
+
+          <!-- API 5: AWS IoT MQTT Broker -->
+          <div class="api-card" id="card-api-mqtt">
+            <div class="api-card-header">
+              <span class="api-name">AWS IoT Core / AIS-140 MQTT</span>
+              <span class="api-status-badge online" id="status-mqtt">[ACTIVE] 180B</span>
+            </div>
+            <div class="api-desc">180-Byte Low-Bandwidth Telemetry Ingestion from DTC Bus Fleet</div>
+            <div class="api-field">
+              <span class="api-label">Broker:</span>
+              <code class="api-code">mqtts://a2x48vesper.iot.ap-south-1.amazonaws.com:8883</code>
+            </div>
+            <div class="api-field">
+              <span class="api-label">Client Cert:</span>
+              <div class="api-key-group">
+                <input type="password" class="api-key-input" id="key-mqtt" value="aws_x509_dtc_fleet_signed_cert_2026" readonly>
+                <button class="api-key-toggle-btn" data-target="key-mqtt" title="Show / Hide Key">SHOW</button>
+                <button class="api-key-copy-btn" data-target="key-mqtt" title="Copy Key">COPY</button>
+              </div>
+            </div>
+            <div class="api-payload-box" id="payload-mqtt">
+              <div class="api-payload-header"><span class="aph-title">LIVE RESPONSE (200 OK)</span><span class="aph-ts">AWS IOT CORE AP-SOUTH-1</span></div>
+              <pre class="api-payload-code"><code>{ "status": 200, "topic": "vesper/dtc/telemetry", "qos": 1, "packet_bytes": 180, "client_id": "DTC-419-HAILO8", "ack": true }</code></pre>
+            </div>
+            <div class="api-card-footer">
+              <span class="api-latency" id="lat-mqtt">Latency: 8.4ms</span>
+              <button class="api-test-btn tested" data-api="mqtt">TEST PING</button>
+            </div>
+          </div>
+
+          <!-- API 6: CartoDB Basemap Tiles API -->
+          <div class="api-card" id="card-api-carto">
+            <div class="api-card-header">
+              <span class="api-name">CartoDB &amp; OSM Vector Tiles</span>
+              <span class="api-status-badge online" id="status-carto">[CONNECTED] EDGE</span>
+            </div>
+            <div class="api-desc">Dark Matter &amp; High-Resolution Satellite Basemap CDN</div>
+            <div class="api-field">
+              <span class="api-label">Tile URL:</span>
+              <code class="api-code">https://cartocdn.com/dark_all/{z}/{x}/{y}</code>
+            </div>
+            <div class="api-field">
+              <span class="api-label">Map Key:</span>
+              <div class="api-key-group">
+                <input type="password" class="api-key-input" id="key-carto" value="carto_dark_vector_prod_v2" readonly>
+                <button class="api-key-toggle-btn" data-target="key-carto" title="Show / Hide Key">SHOW</button>
+                <button class="api-key-copy-btn" data-target="key-carto" title="Copy Key">COPY</button>
+              </div>
+            </div>
+            <div class="api-payload-box" id="payload-carto">
+              <div class="api-payload-header"><span class="aph-title">LIVE RESPONSE (200 OK)</span><span class="aph-ts">CARTO CDN POP DELHI</span></div>
+              <pre class="api-payload-code"><code>{ "status": 200, "tile_cache": "HIT", "edge_pop": "DELHI-NCR", "gzip": true, "max_age_sec": 86400 }</code></pre>
+            </div>
+            <div class="api-card-footer">
+              <span class="api-latency" id="lat-carto">Latency: 14.1ms</span>
+              <button class="api-test-btn tested" data-api="carto">TEST PING</button>
+            </div>
+        </div>
+
+        <!-- Live API Network Request & Response Stream Terminal -->
+        <div class="api-terminal-section">
+          <div class="api-terminal-header">
+            <div class="ath-left">
+              <span class="ath-dot"></span>
+              <span class="ath-title">LIVE API NETWORK STREAM &amp; AUDIT TRAIL</span>
+              <span class="ath-badge">HTTP/2 · TLS 1.3 · FIPS 140-3 SHA-256</span>
+            </div>
+            <div class="ath-actions">
+              <button class="ath-btn" id="btn-fire-all-apis">TRIGGER ALL 6 CALLS</button>
+              <button class="ath-btn" id="btn-clear-api-log">Clear</button>
+              <button class="ath-btn" id="btn-export-api-log">Export JSON</button>
+            </div>
+          </div>
+          <div class="api-terminal-log" id="api-terminal-log">
+            <!-- Dynamically populated with live API calls -->
+          </div>
+        </div>
+      </div>
+      <div class="cert-actions">
+        <button class="modal-btn primary" id="btn-api-test-all">AUTHENTICATE ALL 6 APIS (FULL HEALTH AUDIT)</button>
+        <button class="modal-btn secondary" id="btn-close-api-bottom">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ GODSEYE ORBITAL SURVEILLANCE HUD ═══════════ -->
+  <div id="godseye-overlay" class="godseye-overlay hidden">
+    <div class="godseye-hud">
+      <!-- Top Banner -->
+      <div class="ge-top-banner">
+        <div class="ge-top-left">
+          <span class="ge-logo">GODSEYE</span>
+          <span class="ge-subtitle">MUNICIPAL SPATIAL OVERWATCH &amp; AERIAL SENSOR FUSION</span>
+          <div class="ge-target-quickswitch" id="ge-target-chips" title="Switch Orbital Target Lock">
+            <!-- Dynamically populated target switcher chips -->
+          </div>
+        </div>
+        <div class="ge-top-center">
+          <div class="ge-altitude-modes" id="ge-altitude-modes">
+            <button class="ge-alt-btn" id="ge-alt-leo" data-mode="leo" title="City Sector Macro Overwatch (Zoom 13)">CITY SECTOR</button>
+            <button class="ge-alt-btn active" id="ge-alt-tactical" data-mode="tactical" title="Blind-Spot Corridor Mesh (Zoom 15)">CORRIDOR MESH</button>
+            <button class="ge-alt-btn" id="ge-alt-lock" data-mode="lock" title="Interception &amp; Roadblock Lock (Zoom 18)">INTERCEPT LOCK</button>
+          </div>
+          <div class="ge-clock-wrap">
+            <span class="ge-clock" id="ge-clock">--:--:--</span>
+            <span class="ge-clock-sub">IST · NTP-SYNC · STRATUM-1</span>
+          </div>
+        </div>
+        <div class="ge-top-right">
+          <div class="ge-toggles">
+            <button class="ge-toggle-btn active" id="ge-toggle-los" title="Toggle Active Sensor Line-of-Sight Beam">SENSOR LOS</button>
+            <button class="ge-toggle-btn" id="ge-toggle-flir" title="Toggle High-Contrast FLIR Thermal Filter">FLIR</button>
+            <button class="ge-toggle-btn active" id="ge-toggle-interceptions" title="Toggle AI Choke-Point Roadblocks">CHOKEPOINTS</button>
+          </div>
+          <span class="ge-status-pill"><span class="ge-status-dot"></span> <span id="ge-status-text">AIS-140 MESH ACTIVE</span></span>
+          <button class="ge-close-btn" id="btn-godseye-close" title="Exit GodsEye (Esc)">EXIT</button>
+        </div>
+      </div>
+
+      <!-- Main Map Canvas -->
+      <div class="ge-map-container" id="ge-map-container">
+        <div id="godseye-map" class="ge-map"></div>
+
+        <!-- Radar sweep canvas overlay (double-buffered & hardware-accelerated) -->
+        <canvas id="ge-radar-canvas" class="ge-radar-canvas"></canvas>
+
+        <!-- Targeting reticle -->
+        <div class="ge-reticle" id="ge-reticle">
+          <div class="ge-reticle-ring ge-ring-outer"></div>
+          <div class="ge-reticle-ring ge-ring-inner"></div>
+          <div class="ge-reticle-crosshair-h"></div>
+          <div class="ge-reticle-crosshair-v"></div>
+          <div class="ge-reticle-label" id="ge-reticle-label">TARGET LOCK</div>
+        <!-- GodsEye Live Sensor Inspection PiP -->
+        <div class="ge-sensor-pip hidden" id="ge-sensor-pip">
+          <div class="ge-pip-header">
+            <div class="ge-pip-hdr-left">
+              <span class="ge-pip-live-dot">[LIVE]</span>
+              <span class="ge-pip-title" id="ge-pip-title">LIVE SENSOR // CAM-04</span>
+            </div>
+            <button class="ge-pip-close" id="btn-ge-pip-close" title="Close Sensor Stream">CLOSE</button>
+          </div>
+          <div class="ge-pip-body">
+            <canvas id="ge-pip-canvas" width="280" height="150"></canvas>
+            <div class="ge-pip-overlay">
+              <span class="ge-pip-fps">45.0 FPS · TRT INT8</span>
+              <span class="ge-pip-plate" id="ge-pip-plate">DL 1C AE 4921 (98.2%)</span>
+            </div>
+          </div>
+          <div class="ge-pip-footer">
+            <span class="ge-pip-location" id="ge-pip-location">Karol Bagh Crossing · Heading 127 DEG</span>
+            <button class="ge-pip-btn" id="btn-ge-pip-switch">Open Full Stream</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left Telemetry Panel -->
+      <div class="ge-panel ge-panel-left">
+        <div class="ge-panel-title">REAL-TIME TARGET INTELLIGENCE</div>
+        <div class="ge-data-row"><span class="ge-data-lbl">PLATE</span><span class="ge-data-val cyan" id="ge-target-plate">DL 1C AE 4921</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">MAKE/MODEL</span><span class="ge-data-val" id="ge-target-make">Maruti Swift Dzire</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">COLOR</span><span class="ge-data-val" id="ge-target-color">White</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">RE-ID EMBEDDING</span><span class="ge-data-val purple" id="ge-target-reid">OSNet 512-d (98.4%)</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">STATUS</span><span class="ge-data-val green" id="ge-target-status">TRACKING</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">THREAT LEVEL</span><span class="ge-data-val" id="ge-target-threat">LOW</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">ACTIVE CORRIDOR</span><span class="ge-data-val cyan" id="ge-target-corridor">Panchkuian Marg</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">HMM ROAD MATCH</span><span class="ge-data-val green" id="ge-target-mapmatch">99.8% SNAPPED</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">STN DEWARP ANGLE</span><span class="ge-data-val amber">32 DEG RECTIFIED</span></div>
+        
+        <div class="ge-divider"></div>
+        <div class="ge-panel-title">AI INTERCEPTION VECTOR</div>
+        <div class="ge-intercept-summary-card" id="ge-intercept-summary">
+          <div class="ge-intercept-choke-title" id="ge-primary-choke">Mandir Marg Roundabout</div>
+          <div class="ge-data-row"><span class="ge-data-lbl">CHOKEPOINT ETA</span><span class="ge-data-val amber" id="ge-choke-eta">1m 45s</span></div>
+          <div class="ge-data-row"><span class="ge-data-lbl">NEAREST UNIT</span><span class="ge-data-val cyan" id="ge-choke-unit">PCR-Bravo-08 (1.1 km)</span></div>
+          <div class="ge-data-row"><span class="ge-data-lbl">INTERCEPT PROB</span><span class="ge-data-val green" id="ge-choke-prob">97.8% OPTIMAL</span></div>
+          <div class="ge-data-row"><span class="ge-data-lbl">TACTICAL REC</span><span class="ge-data-val red" id="ge-choke-action">DEPLOY SPIKE STRIP</span></div>
+          <button class="ge-btn-authorize-intercept" id="btn-ge-dispatch-intercept">AUTHORIZE INTERCEPT AND SEAL PERIMETER</button>
+        </div>
+
+        <div class="ge-divider"></div>
+        <div class="ge-panel-title">EDGE HARDWARE TELEMETRY</div>
+        <div class="ge-data-row"><span class="ge-data-lbl">GIS BASEMAP</span><span class="ge-data-val" id="ge-altitude">ISRO Bhuvan 0.3m</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">CORRIDOR SPAN</span><span class="ge-data-val" id="ge-swath">18.5 km</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">EDGE COMPUTE</span><span class="ge-data-val" id="ge-gsd">Hailo-8 INT8 (5W)</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">DATA CONTRACT</span><span class="ge-data-val green">180-Byte MQTT</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">LEGAL DIGEST</span><span class="ge-data-val cyan">Sec 63 BSA SHA-256</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">RENDER ENGINE</span><span class="ge-data-val green" id="ge-render-fps">60.0 FPS · 0.3ms</span></div>
+      </div>
+
+      <!-- Right Telemetry Panel -->
+      <div class="ge-panel ge-panel-right">
+        <div class="ge-panel-title">SENSOR NETWORK AND LOS</div>
+        <div class="ge-data-row"><span class="ge-data-lbl">FIXED ANPR</span><span class="ge-data-val cyan" id="ge-fixed-count">12 NODES</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">MOBILE BUS</span><span class="ge-data-val amber" id="ge-mobile-count">4 ACTIVE</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">COVERAGE EFFICIENCY</span><span class="ge-data-val green" id="ge-coverage">94.2%</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">ACTIVE LOS NODE</span><span class="ge-data-val cyan" id="ge-active-node">CAM-JNC-04</span></div>
+        <div class="ge-data-row"><span class="ge-data-lbl">SENSOR LOCK</span><span class="ge-data-val green" id="ge-los-status">DIRECT BEAM (34m)</span></div>
+
+        <div class="ge-divider"></div>
+        <div class="ge-panel-title">INTERCEPTION MATRIX</div>
+        <div class="ge-intercept-list" id="ge-intercept-list">
+          <!-- Dynamically populated downstream intercept bottlenecks -->
+        </div>
+
+        <div class="ge-divider"></div>
+        <div class="ge-panel-title">TACTICAL EVENT LOG</div>
+        <div class="ge-mini-feed" id="ge-mini-feed"></div>
+      </div>
+
+      <!-- Bottom Telemetry Bar -->
+      <div class="ge-bottom-bar">
+        <div class="ge-bottom-cell"><span class="ge-bl">SPEED</span><span class="ge-bv" id="ge-speed">42 km/h</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">HEADING</span><span class="ge-bv" id="ge-heading">127 DEG SE</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">LAT</span><span class="ge-bv" id="ge-lat">28.6514 N</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">LNG</span><span class="ge-bv" id="ge-lng">77.1907 E</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">CORRIDOR</span><span class="ge-bv cyan" id="ge-road-name">Panchkuian Marg</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">NEXT CHOKE</span><span class="ge-bv amber" id="ge-eta">~1.7 min</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">DISTANCE</span><span class="ge-bv" id="ge-dist">1.4 km</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">SIGHTINGS</span><span class="ge-bv" id="ge-sightings">5</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">CONFIDENCE</span><span class="ge-bv green" id="ge-conf">94%</span></div>
+        <div class="ge-bottom-cell"><span class="ge-bl">LOS NODE</span><span class="ge-bv cyan" id="ge-los-node">CAM-04</span></div>
+      </div>
+    </div>
+  </div>
+  <!-- ═══════════ LIVE TRACKED CAMERA VIEWER (PIP & FULL MODAL) ═══════════ -->
+  <div id="live-camera-modal" class="live-camera-modal hidden">
+    <div class="lcm-card">
+      <div class="lcm-header">
+        <div class="lcm-title-row">
+          <span class="live-dot-pulse"></span>
+          <span class="lcm-title">VESPER // LIVE TRACKED CAMERA BROADCAST</span>
+          <span class="lcm-badge-tag" id="lcm-feed-type">AUTO-TRACKED STREAM</span>
+        </div>
+        <div class="lcm-controls">
+          <button class="lcm-btn" id="lcm-btn-ptz-in" title="Digital Zoom In">+</button>
+          <button class="lcm-btn" id="lcm-btn-ptz-out" title="Digital Zoom Out">-</button>
+          <button class="lcm-btn" id="lcm-btn-ptz-reset" title="Reset Zoom">1x</button>
+          <button class="lcm-btn" id="lcm-btn-night" title="Toggle IR Night Vision">IR</button>
+          <button class="lcm-btn active" id="lcm-btn-ocr" title="Toggle OCR Overlay">OCR</button>
+          <button class="lcm-btn" id="lcm-btn-audio" title="Toggle Edge Audio Monitoring">AUDIO</button>
+          <button class="lcm-btn lcm-close" id="lcm-btn-close" title="Close Live Camera Modal">CLOSE</button>
+        </div>
+      </div>
+      <div class="lcm-cam-selector-bar">
+        <div class="lcs-left">
+          <label for="lcm-cam-select" class="lcs-label">ACTIVE SENSOR:</label>
+          <select id="lcm-cam-select" class="lcs-select">
+            <option value="auto">[AUTO] Current Tracking Node</option>
+          </select>
+        </div>
+        <div class="lcs-right">
+          <span class="lcs-status"><span class="lcs-val-good">[45 FPS]</span> · <span class="lcs-val-cyan">1080p TRT INT8</span> · Latency: 16ms</span>
+        </div>
+      </div>
+      <div class="lcm-canvas-wrapper">
+        <canvas id="lcm-live-canvas" width="854" height="480"></canvas>
+        <div class="lcm-overlay-reticle" id="lcm-reticle-hint">
+          <span class="lor-icon">TARGET</span>
+          <span>CLICK ANY VEHICLE IN FEED TO INSTANTLY LOCK &amp; TRACK</span>
+        </div>
+        <div class="lcm-stream-hud-bottom">
+          <div class="lsh-left">
+            <span id="lcm-hud-cam-name">CAM-JNC-04 · Karol Bagh Crossing</span>
+            <span id="lcm-hud-gps">GPS: 28.6514 N, 77.1907 E</span>
+          </div>
+          <div class="lsh-right">
+            <span id="lcm-hud-target-lock">TARGET: DL 1C AE 4921 (Maruti Swift Dzire)</span>
+          </div>
+        </div>
+      </div>
+      <div class="lcm-footer">
+        <div class="lcm-quick-actions">
+          <span class="lcm-qa-label">Quick Target Actions:</span>
+          <button class="lcm-action-btn" id="lcm-qa-track-plate">INPUT PLATE</button>
+          <button class="lcm-action-btn" id="lcm-qa-track-feat">Match Features</button>
+          <button class="lcm-action-btn active" id="lcm-qa-click-car">CLICK CAR ON SCREEN</button>
+        </div>
+        <div class="lcm-feed-meta">
+          <span>Hailo-8 / DeepStream Edge Pipeline · AIS-140 Handoff Engine · Delhi Police Command</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════ ANPR SIGHTING CHAIN & TRAJECTORY RECONSTRUCTION MODAL ═══════════ -->
+  <div id="modal-sighting-chain" class="modal-backdrop hidden">
+    <div class="sc-modal-card">
+      <div class="sc-modal-header">
+        <div class="sc-header-left">
+          <span class="sc-header-icon" style="font-weight:900;font-size:12px;color:var(--accent-orange)">DOSSIER</span>
+          <div>
+            <h3 class="sc-title">VESPER // MULTI-SENSOR ANPR SIGHTING &amp; TRAJECTORY DOSSIER</h3>
+            <span class="sc-subtitle">Decentralized Fixed CCTV &amp; DTC Mobile Fleet Sensor Interconnection Engine</span>
+          </div>
+        </div>
+        <button class="sc-modal-close" id="btn-close-sighting-modal" title="Close Sighting Dossier">CLOSE</button>
+      </div>
+      <div class="sc-modal-body">
+        <!-- Target Summary Banner -->
+        <div class="sc-target-banner">
+          <div>
+            <span class="sc-plate-badge" id="sc-modal-plate">DL 1C AE 4921</span>
+            <div class="sc-target-meta" id="sc-modal-veh-desc">White Maruti Swift Dzire · Re-ID Hash #a4f891b2</div>
+          </div>
+          <div>
+            <span class="sc-status-pill tracking" id="sc-modal-status-pill">TRACKING (5 HITS)</span>
+          </div>
+        </div>
+
+        <!-- Sighting Chain Chronological Table -->
+        <div>
+          <div class="sc-section-title">Chronological Camera Sighting Chain (GPS Correlated)</div>
+          <div class="sc-table-wrap">
+            <table class="sc-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>SENSOR SOURCE</th>
+                  <th>LOCATION &amp; STREET</th>
+                  <th>EXACT GPS COORDS</th>
+                  <th>TIMESTAMP</th>
+                  <th>SPEED</th>
+                  <th>OCR CONF</th>
+                  <th>ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="sc-modal-tbody">
+                <!-- Populated dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Expected Trajectory & Blind Corridor Prediction Card -->
+        <div class="sc-corridor-card">
+          <div class="sc-corridor-header">
+            <span class="sc-corridor-title">EXPECTED TRAJECTORY AND BLIND CORRIDOR REACHABILITY</span>
+            <span class="badge-mini amber">UNMONITORED HORIZON</span>
+          </div>
+          <div class="sc-corridor-desc" id="sc-modal-corridor-desc">
+            Target vehicle was last observed by <strong>CAM-JNC-10 (Pragati Maidan)</strong>. The vehicle does NOT emit live GPS. Reconstructing road corridor physics predicts downstream travel along Mathura Road towards Ashram / Sarai Kale Khan.
+          </div>
+          <div class="sc-corridor-meta-row">
+            <div class="sc-corridor-meta-item"><span>Last Confirmed GPS:</span> <strong id="sc-modal-last-gps" class="cyan">28.61545, 77.24843</strong></div>
+            <div class="sc-corridor-meta-item"><span>Reachability Horizon:</span> <strong id="sc-modal-radius" class="amber">~1.2 km (speed 45 km/h)</strong></div>
+            <div class="sc-corridor-meta-item"><span>Next Downstream Sensor:</span> <strong id="sc-modal-next-sensor" class="green">CAM-JNC-07 (Nehru Place Outer Ring)</strong></div>
+            <div class="sc-corridor-meta-item"><span>Recommended Intercept Unit:</span> <strong id="sc-modal-unit" class="purple">PCR-ECHO-12 (Bhairon Marg)</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="sc-modal-footer">
+        <span style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono)">Verified cryptographic audit trail · Section 65B Indian Evidence Act ready</span>
+        <div class="sc-footer-btns">
+          <button class="assc-btn primary" id="btn-modal-connect-map">CONNECT SIGHTINGS ON MAP</button>
+          <button class="assc-btn secondary" id="btn-modal-build-corridor">BUILD EXPECTED TRAJECTORY</button>
+          <button class="wfh-btn" id="btn-modal-close-footer">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
