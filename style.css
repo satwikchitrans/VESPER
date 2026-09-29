@@ -1,6 +1,6 @@
 /* ============================================================
    PROJECT VESPER — MULTI-WINDOW COMMAND CENTER STYLESHEET
-   Sleek, Minimalist, Defense-Grade Dark Glassmorphism Design
+   Sleek, Minimalist, Tactical-Grade Dark Glassmorphism Design
    ============================================================ */
 
 /* ----------- CSS CUSTOM PROPERTIES ----------- */
@@ -6726,10 +6726,10 @@ body.theme-gov .home-problem-section {
   overflow: hidden;
   position: relative;
   z-index: 10000;
-  animation: apiModalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: apiModalFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes apiModalSlide {
+@keyframes apiModalFade {
   from { opacity: 0; transform: scale(0.96) translateY(12px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }

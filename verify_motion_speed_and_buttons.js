@@ -16,6 +16,7 @@ function haversine(lat1, lon1, lat2, lon2) {
 }
 
 const appJs = fs.readFileSync('app.js', 'utf8');
+const realRoadsJs = fs.existsSync('real_roads.js') ? fs.readFileSync('real_roads.js', 'utf8') : '';
 
 // Use node vm to run the data definition part of app.js
 const vm = require('vm');
@@ -67,6 +68,7 @@ const context = {
 // Extract everything up to startSimulation
 const cutIdx = appJs.indexOf('// ========================= SIMULATION ENGINE');
 const setupCode = `(() => {
+${realRoadsJs}
 ${appJs.substring(0, cutIdx > 0 ? cutIdx : 20000)}
 return { BUS_ROUTES, VEHICLES, advanceEntityAlongRoad };
 })()`;

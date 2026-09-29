@@ -111,7 +111,7 @@
     </div>
     <div class="top-bar-right">
       <button class="top-bar-action" id="btn-topbar-godseye" onclick="openGodsEye()" style="background:linear-gradient(135deg,#00f0ff,#0284c7);color:#0b111e;font-weight:800;font-size:11px;padding:6px 14px;border-radius:4px;border:1px solid rgba(0,240,255,0.6);box-shadow:0 0 14px rgba(0,240,255,0.4);display:flex;align-items:center;gap:6px;cursor:pointer;" title="Launch Godseye 1.0 OSINT Geospatial Reconnaissance Globe">🛰️ GODSEYE 3D</button>
-      <button class="top-bar-action api-status-action" id="btn-api-modal" title="Production API Integrations & Health"><span class="api-live-dot"></span> <span id="nav-api-label">APIS: 6/6 LIVE</span></button>
+      <button class="top-bar-action api-status-action" id="btn-api-modal" title="Production API Integrations & Health"><span class="api-live-dot"></span> <span id="nav-api-label">APIS: 6/6 LIVE</span> <span id="nav-api-lat" style="margin-left:4px;font-size:10px;opacity:0.8;">(12.4ms)</span></button>
       <button class="top-bar-action alert" id="btn-trigger-hotlist">⚠️ PURSUIT ALERT</button>
       <button class="top-bar-action" id="btn-audio-toggle" title="Toggle Audio Sound">SOUND: ON</button>
       <button class="top-bar-action" id="btn-fullscreen-toggle" title="Toggle Fullscreen">FULLSCREEN</button>
@@ -2210,6 +2210,7 @@
     </div>
   </div>
 
+  <script src="real_roads.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
