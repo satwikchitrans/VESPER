@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VESPER — Unified Command &amp; Control Center</title>
   <meta name="description" content="Project VESPER: City-Wide Multi-Camera ANPR Trajectory Tracking &amp; Urban Mobile Sensing Platform">
-  <meta name="theme-color" content="#0a0e17">
+  <meta name="theme-color" content="#f4f6fb">
   <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;rect width='100' height='100' rx='20' fill='%23213d77'/&gt;&lt;text x='50' y='68' font-size='52' font-family='Arial,sans-serif' font-weight='900' fill='%23fb792b' text-anchor='middle'&gt;IR&lt;/text&gt;&lt;/svg&gt;">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -52,7 +52,7 @@
   <!-- ═══════════ API GATEWAY & KEYS MANAGER MODAL ═══════════ -->
   <div id="gov-utility-bar" class="gov-utility-bar">
     <div class="iub-left">
-      <span class="iub-emblem" style="font-weight:900;letter-spacing:1px;font-size:10px;color:#ffffff;background:#213d77;padding:2px 6px;border-radius:3px;border:1px solid #fb792b;">BEL / MoD</span>
+      <span class="iub-emblem" style="font-weight:900;letter-spacing:1px;font-size:10px;color:#ffffff;background:#213d77;padding:2px 6px;border-radius:3px;border:1px solid #ec6e2a;">BEL / MoD</span>
       <div class="iub-gov-text">
         <span class="iub-hi">भारत सरकार · रक्षा मंत्रालय · भारत इलेक्ट्रॉनिक्स</span>
         <span class="iub-en">GOVERNMENT OF INDIA · MINISTRY OF DEFENCE · BHARAT ELECTRONICS (BEL)</span>
@@ -89,7 +89,7 @@
     <div class="top-bar-left">
       <div class="gov-logo-group">
         <div class="gov-round-crest" style="left: 9px; top: 2px;">
-          <span class="gov-crest-symbol" style="font-weight:900;letter-spacing:1px;font-size:10px;color:#ffffff;background:#fb792b;padding:2px 6px;border-radius:3px;">GOVT COMMAND</span>
+          <span class="gov-crest-symbol" style="font-weight:900;letter-spacing:1px;font-size:10px;color:#ffffff;background:#ec6e2a;padding:2px 6px;border-radius:3px;">GOVT COMMAND</span>
           <span class="gov-crest-glow"></span>
         </div>
         <div class="gov-text-col">
@@ -110,9 +110,9 @@
       <div class="clock-label">IST (UTC+5:30) — NTP SYNCHRONIZED</div>
     </div>
     <div class="top-bar-right">
-      <button class="top-bar-action" id="btn-topbar-godseye" onclick="openGodsEye()" style="background:linear-gradient(135deg,#00f0ff,#0284c7);color:#0b111e;font-weight:800;font-size:11px;padding:6px 14px;border-radius:4px;border:1px solid rgba(0,240,255,0.6);box-shadow:0 0 14px rgba(0,240,255,0.4);display:flex;align-items:center;gap:6px;cursor:pointer;" title="Launch Godseye 1.0 OSINT Geospatial Reconnaissance Globe">🛰️ GODSEYE 3D</button>
+      <button class="top-bar-action" id="btn-topbar-godseye" onclick="openGodsEye()" style="background:linear-gradient(135deg,#ec6e2a,#0284c7);color:#213d77;font-weight:800;font-size:11px;padding:6px 14px;border-radius:4px;border:1px solid rgba(236, 110, 42,0.6);box-shadow:0 0 14px rgba(236, 110, 42,0.4);display:flex;align-items:center;gap:6px;cursor:pointer;" title="Launch Godseye 1.0 OSINT Geospatial Reconnaissance Globe"> GODSEYE 3D</button>
       <button class="top-bar-action api-status-action" id="btn-api-modal" title="Production API Integrations & Health"><span class="api-live-dot"></span> <span id="nav-api-label">APIS: 6/6 LIVE</span> <span id="nav-api-lat" style="margin-left:4px;font-size:10px;opacity:0.8;">(12.4ms)</span></button>
-      <button class="top-bar-action alert" id="btn-trigger-hotlist">⚠️ PURSUIT ALERT</button>
+      <button class="top-bar-action alert" id="btn-trigger-hotlist">⚠ PURSUIT ALERT</button>
       <button class="top-bar-action" id="btn-audio-toggle" title="Toggle Audio Sound">SOUND: ON</button>
       <button class="top-bar-action" id="btn-fullscreen-toggle" title="Toggle Fullscreen">FULLSCREEN</button>
     </div>
@@ -121,16 +121,16 @@
   <nav id="window-nav">
     <div class="nav-tabs-group">
             <button class="nav-tab active" data-window="dashboard" id="nav-dashboard">
-        <span class="nav-icon">📈</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Executive Dashboard</span>
       </button>
 <button class="nav-tab" data-window="gis" id="nav-gis">
-        <span class="nav-icon">🗺️</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Tactical GIS Map</span>
       </button>
       
       <button class="nav-tab" data-window="surveillance" id="nav-surveillance">
-        <span class="nav-icon">📹</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Dual Surveillance</span>
       </button>
       <button class="nav-tab" data-window="grid" id="nav-grid">
@@ -138,15 +138,15 @@
         <span class="nav-label">Command Grid</span>
       </button>
       <button class="nav-tab" data-window="dossier" id="nav-dossier">
-        <span class="nav-icon">📁</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Evidence Dossier</span>
       </button>
       <button class="nav-tab" data-window="ps124" id="nav-ps124">
-        <span class="nav-icon">📊</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Urban Analytics</span>
       </button>
       <button class="nav-tab" data-window="home" id="nav-home">
-        <span class="nav-icon">📋</span>
+        <span class="nav-icon"></span>
         <span class="nav-label">Mission Brief</span>
       </button>
       <button class="nav-tab" data-window="alerts" id="nav-alerts">
@@ -158,7 +158,7 @@
       </button>
     </div>
     <div class="nav-search-group" id="nav-plate-search-group">
-      <span class="ns-icon" style="font-weight:800;font-size:11px;color:var(--accent-cyan);">🔍</span>
+      <span class="ns-icon" style="font-weight:800;font-size:11px;color:var(--accent-cyan);"></span>
       <input type="text" id="global-plate-input" class="global-plate-input" placeholder="Search Plate (e.g. DL 1C AE 4921)..." autocomplete="off" spellcheck="false">
       <button id="btn-global-plate-search" class="global-plate-btn" title="Search Sightings & Trace Trajectory">SEARCH</button>
     </div>
@@ -177,562 +177,235 @@
     <!-- WINDOW: EXECUTIVE TRAFFIC DASHBOARD & DEEP ARTERIAL ANALYTICS     -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <section class="window-panel active" id="window-dashboard" data-pane="dashboard">
-      <div class="window-folder-header">
-        <div class="wfh-title-group">
-          <span class="wfh-title">VESPER // EXECUTIVE COMMAND DASHBOARD &amp; DEEP TRAFFIC ANALYSIS</span>
-          <span class="wfh-tag green">LIVE SENSING MESH ONLINE</span>
-        </div>
-        <div class="wfh-controls">
-          <button class="wfh-btn btn-win-reset" onclick="resetDashboardView()" title="Reset Dashboard Telemetry">Reset</button>
-          <button class="wfh-btn btn-win-maximize" title="Maximize Window">MAX</button>
-          <button class="wfh-btn btn-win-close" id="btn-dashboard-close" onclick="closeOrCollapseWindow('dashboard')" title="Close Window (Esc)">CLOSE</button>
-        </div>
-      </div>
 
       <div class="dashboard-layout">
-        <!-- Hero Header & Global Operational Filter Bar -->
+        <!-- Simple, Modern Hero Banner -->
         <div class="dash-hero-banner">
           <div class="dhb-left">
-            <h2>Metropolitan Traffic Flow &amp; Real-Time Arterial Analytics</h2>
-            <p>Unified telemetry stream fusing <strong>12 Fixed ANPR Junctions</strong>, <strong>4 DTC Mobile Edge NPU Buses</strong>, and <strong>Municipal Induction Sensors</strong> for automated corridor optimization.</p>
+            <h2>VESPER Unified Traffic Command & Urban Mobile Sensing</h2>
+            <p>Real-time edge telemetry fusing <strong>12 Fixed ANPR Junctions</strong>, <strong>4 DTC Mobile Edge NPU Buses</strong>, and <strong>Municipal Induction Sensors</strong> for automated corridor tracking.</p>
           </div>
           <div class="dhb-ctrls">
-            <div class="dhb-time-filter">
-              <span class="dhb-label">FLOW REGIME:</span>
-              <select id="dash-time-regime" class="dash-select" onchange="onDashboardRegimeChange(this.value)">
-                <option value="am_peak">Morning Peak (08:00 - 11:00)</option>
-                <option value="normal" selected>Normal Midday (11:00 - 16:00)</option>
-                <option value="pm_peak">Evening Peak (16:00 - 21:00)</option>
-                <option value="night">Night Clearance (21:00 - 06:00)</option>
-              </select>
-            </div>
-            <div class="dhb-actions">
-              <button class="dash-btn green-wave-btn" id="btn-dash-greenwave" onclick="triggerGreenCorridorWave()">
-                <span>⚡ TRIGGER GREEN WAVE</span>
-              </button>
-              <button class="dash-btn export-btn" id="btn-dash-export-json" onclick="exportDashboardTrafficJson()">
-                <span>📥 EXPORT AUDIT JSON</span>
-              </button>
-            </div>
+            <button class="dhb-action-btn" id="btn-hero-open-gis" onclick="switchWindow('gis')" style="background:#d4601f;color:#fff;font-weight:700;border:none;">TACTICAL GIS MAP &rarr;</button>
+            <button class="dhb-action-btn" id="btn-hero-open-surv" onclick="switchWindow('surveillance')">ANPR MATRIX</button>
+            <button class="dhb-action-btn" id="btn-hero-trigger-alert" onclick="triggerStolenVehicleDemo()" style="background:rgba(239,68,68,0.15);color:#ef4444;border-color:rgba(239,68,68,0.4);font-weight:700;">PURSUIT ALERT</button>
           </div>
         </div>
 
-        <!-- KPI Strip: 6 Strategic Municipal Metrics -->
+        <!-- 4 Clean, High-Level Key Metric Cards -->
         <div class="dash-kpi-grid">
-          <div class="dash-kpi-card" id="kpi-card-flow">
-            <div class="dkc-top">
-              <span class="dkc-title">TOTAL FLEET FLOW</span>
-              <span class="dkc-badge green" id="dash-flow-badge">+4.8% NORMAL</span>
+          <div class="dash-kpi-card">
+            <div class="dkc-header">
+              <span class="dkc-title">MONITORED FLEET</span>
+              <span class="dkc-badge green">99.8% ONLINE</span>
             </div>
-            <div class="dkc-value" id="dash-kpi-flow">142,850</div>
-            <div class="dkc-sub">Vehicles / Hour · Urban Perimeter</div>
-            <div class="dkc-progress-bar"><div class="dkc-progress-fill green" style="width: 78%;"></div></div>
+            <div class="dkc-value" id="kpi-fleet-count">150,420</div>
+            <div class="dkc-subtext">DTC Public Transit &amp; Municipal Mesh</div>
           </div>
 
-          <div class="dash-kpi-card" id="kpi-card-speed">
-            <div class="dkc-top">
-              <span class="dkc-title">AVG CORRIDOR SPEED</span>
-              <span class="dkc-badge cyan" id="dash-speed-badge">TARGET: 35 KM/H</span>
+          <div class="dash-kpi-card">
+            <div class="dkc-header">
+              <span class="dkc-title">FIXED ANPR JUNCTIONS</span>
+              <span class="dkc-badge green">12/12 ACTIVE</span>
             </div>
-            <div class="dkc-value" id="dash-kpi-speed">37.4 <span class="dkc-unit">km/h</span></div>
-            <div class="dkc-sub">Range: 28 - 54 km/h across corridors</div>
-            <div class="dkc-progress-bar"><div class="dkc-progress-fill cyan" style="width: 74%;"></div></div>
+            <div class="dkc-value" id="kpi-camera-count">12</div>
+            <div class="dkc-subtext">Central &amp; South Delhi Corridors (12.4ms latency)</div>
           </div>
 
-          <div class="dash-kpi-card" id="kpi-card-congestion">
-            <div class="dkc-top">
-              <span class="dkc-title">CONGESTION INDEX</span>
-              <span class="dkc-badge green" id="dash-cong-badge">LOS B · OPTIMAL</span>
+          <div class="dash-kpi-card">
+            <div class="dkc-header">
+              <span class="dkc-title">TARGET INTERCEPT CONFIDENCE</span>
+              <span class="dkc-badge orange">98.4% LOCK</span>
             </div>
-            <div class="dkc-value" id="dash-kpi-congestion">24.8%</div>
-            <div class="dkc-sub">Citywide Delay Factor: 1.18x free-flow</div>
-            <div class="dkc-progress-bar"><div class="dkc-progress-fill green" style="width: 25%;"></div></div>
+            <div class="dkc-value" id="kpi-conf-score">98.4%</div>
+            <div class="dkc-subtext">BSA 2023 §63 Forensic Cryptographic Hash</div>
           </div>
 
-          <div class="dash-kpi-card" id="kpi-card-anpr">
-            <div class="dkc-top">
-              <span class="dkc-title">ANPR SCAN RATE</span>
-              <span class="dkc-badge blue">16 SENSORS ACTIVE</span>
+          <div class="dash-kpi-card">
+            <div class="dkc-header">
+              <span class="dkc-title">MUNICIPAL CAPEX SAVINGS</span>
+              <span class="dkc-badge green">96.5% REDUCTION</span>
             </div>
-            <div class="dkc-value" id="dash-kpi-anpr">3,840 <span class="dkc-unit">/min</span></div>
-            <div class="dkc-sub">99.4% OCR Confidence · NTP Synced</div>
-            <div class="dkc-progress-bar"><div class="dkc-progress-fill blue" style="width: 88%;"></div></div>
-          </div>
-
-          <div class="dash-kpi-card" id="kpi-card-signals">
-            <div class="dkc-top">
-              <span class="dkc-title">AI SIGNAL SPLITS</span>
-              <span class="dkc-badge amber">ADAPTIVE SYNC</span>
-            </div>
-            <div class="dkc-value" id="dash-kpi-signals">128 <span class="dkc-unit">/ hr</span></div>
-            <div class="dkc-sub">Dynamic Green-Wave Interventions</div>
-            <div class="dkc-progress-bar"><div class="dkc-progress-fill amber" style="width: 65%;"></div></div>
-          </div>
-
-          <div class="dash-kpi-card" id="kpi-card-carbon">
-            <div class="dkc-top">
-              <span class="dkc-title">EMISSION OFFSET</span>
-              <span class="dkc-badge green">-18.4% CO₂</span>
-            </div>
-            <div class="dkc-value" id="dash-kpi-carbon">2.42 <span class="dkc-unit">t/day</span></div>
-            <div class="dkc-sub">Anti-Idling Signal Synchronization</div>
-            <div class="dkc-progress-bar"><div class="dkc-progress-fill green" style="width: 82%;"></div></div>
+            <div class="dkc-value" id="kpi-capex-val">96.5%</div>
+            <div class="dkc-subtext">Via Mobile Transit Edge NPU Multi-Tasking</div>
           </div>
         </div>
 
-        <!-- Main Dashboard Content Grid: 3 Analytical Columns -->
-        <div class="dash-main-grid">
-          <!-- Column 1: Corridor-by-Corridor Deep Flow Matrix -->
-          <div class="dash-card corridor-matrix-card">
-            <div class="dcard-header">
-              <div class="dcard-title-group">
-                <span class="dcard-icon">🛣️</span>
-                <div>
-                  <h3 class="dcard-title">Arterial Corridor Flow &amp; Level-of-Service</h3>
-                  <span class="dcard-sub">Click any corridor to inspect real-time capacity and bottlenecks</span>
-                </div>
+        <!-- Organized Collapsible Detail Drawers -->
+        <div class="collapsible-sections-container">
+          
+          <!-- Drawer 1: Arterial Flow & Traffic Throughput Chart -->
+          <div class="collapsible-card" id="drawer-traffic-flow">
+            <div class="collapsible-header" onclick="toggleCollapsibleDrawer('drawer-traffic-flow')">
+              <div class="ch-left">
+                <span class="ch-icon">&bull;</span>
+                <span class="ch-title">Arterial Traffic Flow &amp; Real-Time Volume Throughput</span>
+                <span class="ch-pill green">LIVE SENSING MESH</span>
               </div>
-              <span class="dcard-tag cyan">4 ARTERIES</span>
-            </div>
-            
-            <div class="corridor-list" id="dash-corridor-list">
-              <!-- Corridor 1 -->
-              <div class="corridor-item active" id="ci-c1" onclick="selectDashboardCorridor('c1')">
-                <div class="ci-header">
-                  <div class="ci-title-wrap">
-                    <span class="ci-id-tag c1">C-01</span>
-                    <span class="ci-name">Karol Bagh ↔ CP ↔ ITO ↔ Pragati Maidan</span>
-                  </div>
-                  <span class="ci-los-badge los-b" id="c1-los">LOS B</span>
-                </div>
-                <div class="ci-stats">
-                  <div class="ci-stat-col"><span>Flow:</span><strong id="c1-vol">4,120 veh/h</strong></div>
-                  <div class="ci-stat-col"><span>Avg Speed:</span><strong id="c1-spd">34 km/h</strong></div>
-                  <div class="ci-stat-col"><span>Congestion:</span><strong id="c1-cong">22%</strong></div>
-                  <div class="ci-stat-col"><span>Sync:</span><strong class="green" id="c1-sync">94%</strong></div>
-                </div>
-                <div class="ci-bottleneck">
-                  <span class="ci-bn-icon">⚠️</span>
-                  <span>Bottleneck: <strong>ITO Junction Westbound</strong> · Delay: +2.1m</span>
-                </div>
-              </div>
-
-              <!-- Corridor 2 -->
-              <div class="corridor-item" id="ci-c2" onclick="selectDashboardCorridor('c2')">
-                <div class="ci-header">
-                  <div class="ci-title-wrap">
-                    <span class="ci-id-tag c2">C-02</span>
-                    <span class="ci-name">AIIMS Flyover ↔ Ring Road ↔ Moolchand ↔ Nehru Place</span>
-                  </div>
-                  <span class="ci-los-badge los-c" id="c2-los">LOS C</span>
-                </div>
-                <div class="ci-stats">
-                  <div class="ci-stat-col"><span>Flow:</span><strong id="c2-vol">5,680 veh/h</strong></div>
-                  <div class="ci-stat-col"><span>Avg Speed:</span><strong id="c2-spd">42 km/h</strong></div>
-                  <div class="ci-stat-col"><span>Congestion:</span><strong id="c2-cong">36%</strong></div>
-                  <div class="ci-stat-col"><span>Sync:</span><strong class="green" id="c2-sync">91%</strong></div>
-                </div>
-                <div class="ci-bottleneck">
-                  <span class="ci-bn-icon">⚠️</span>
-                  <span>Bottleneck: <strong>Lajpat Nagar Ring Road Merge</strong> · Delay: +3.8m</span>
-                </div>
-              </div>
-
-              <!-- Corridor 3 -->
-              <div class="corridor-item" id="ci-c3" onclick="selectDashboardCorridor('c3')">
-                <div class="ci-header">
-                  <div class="ci-title-wrap">
-                    <span class="ci-id-tag c3">C-03</span>
-                    <span class="ci-name">Dhaula Kuan ↔ Sardar Patel Marg ↔ India Gate</span>
-                  </div>
-                  <span class="ci-los-badge los-a" id="c3-los">LOS A</span>
-                </div>
-                <div class="ci-stats">
-                  <div class="ci-stat-col"><span>Flow:</span><strong id="c3-vol">3,450 veh/h</strong></div>
-                  <div class="ci-stat-col"><span>Avg Speed:</span><strong id="c3-spd">48 km/h</strong></div>
-                  <div class="ci-stat-col"><span>Congestion:</span><strong id="c3-cong">14%</strong></div>
-                  <div class="ci-stat-col"><span>Sync:</span><strong class="green" id="c3-sync">98%</strong></div>
-                </div>
-                <div class="ci-bottleneck">
-                  <span class="ci-bn-icon green">✓</span>
-                  <span>Express Flow · Optimal Transit Green Wave</span>
-                </div>
-              </div>
-
-              <!-- Corridor 4 -->
-              <div class="corridor-item" id="ci-c4" onclick="selectDashboardCorridor('c4')">
-                <div class="ci-header">
-                  <div class="ci-title-wrap">
-                    <span class="ci-id-tag c4">C-04</span>
-                    <span class="ci-name">Connaught Place ↔ India Gate ↔ AIIMS ↔ Saket</span>
-                  </div>
-                  <span class="ci-los-badge los-c" id="c4-los">LOS C</span>
-                </div>
-                <div class="ci-stats">
-                  <div class="ci-stat-col"><span>Flow:</span><strong id="c4-vol">4,890 veh/h</strong></div>
-                  <div class="ci-stat-col"><span>Avg Speed:</span><strong id="c4-spd">31 km/h</strong></div>
-                  <div class="ci-stat-col"><span>Congestion:</span><strong id="c4-cong">41%</strong></div>
-                  <div class="ci-stat-col"><span>Sync:</span><strong class="amber" id="c4-sync">88%</strong></div>
-                </div>
-                <div class="ci-bottleneck">
-                  <span class="ci-bn-icon">⚠️</span>
-                  <span>Bottleneck: <strong>Aurobindo Marg Influx</strong> · Delay: +4.5m</span>
-                </div>
+              <div class="ch-right">
+                <span class="ch-toggle-btn" id="btn-toggle-traffic-flow">[-] COLLAPSE</span>
               </div>
             </div>
-
-            <!-- Selected Corridor Deep-Inspection Card -->
-            <div class="selected-corridor-card" id="selected-corridor-card">
-              <div class="scc-header">
-                <span class="scc-title" id="scc-title">CORRIDOR 1: KAROL BAGH - ITO DEEP PROFILE</span>
-                <span class="scc-badge online" id="scc-status">ACTIVE CO-ORDINATION</span>
-              </div>
-              <div class="scc-grid">
-                <div class="scc-item">
-                  <span class="scc-lbl">ROADWAY CAPACITY:</span>
-                  <strong id="scc-capacity">5,200 veh/hr (V/C: 0.79)</strong>
+            <div class="collapsible-body" id="body-traffic-flow">
+              <div class="dash-analytics-row">
+                <div class="dash-panel">
+                  <div class="dash-panel-header">
+                    <span class="dash-panel-title">Real-Time Corridor Volume (Vehicles / Minute)</span>
+                    <span style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);">SAMPLING: 1s TELEMETRY</span>
+                  </div>
+                  <div class="dash-chart-wrap">
+                    <canvas id="traffic-canvas-chart"></canvas>
+                  </div>
                 </div>
-                <div class="scc-item">
-                  <span class="scc-lbl">MEDIAN DENSITY:</span>
-                  <strong id="scc-density">38.4 vehicles / km</strong>
-                </div>
-                <div class="scc-item">
-                  <span class="scc-lbl">END-TO-END TIME:</span>
-                  <strong id="scc-tt">14.2 min (Baseline: 12.0 min)</strong>
-                </div>
-                <div class="scc-item">
-                  <span class="scc-lbl">TRANSIT PRIORITY:</span>
-                  <strong class="cyan" id="scc-transit">Route 419 Bus TSP Active</strong>
+                <div class="dash-panel">
+                  <div class="dash-panel-header">
+                    <span class="dash-panel-title">Corridor Congestion Index</span>
+                    <span class="dkc-badge green">OPTIMIZED</span>
+                  </div>
+                  <div class="corridor-list">
+                    <div class="corridor-item">
+                      <div class="ci-header">
+                        <span>C-01: Connaught Place Outer Ring</span>
+                        <span style="color:#10b981;">32 km/h (Normal)</span>
+                      </div>
+                      <div class="ci-bar-wrap"><div class="ci-bar" style="width:35%;"></div></div>
+                    </div>
+                    <div class="corridor-item warning">
+                      <div class="ci-header">
+                        <span>C-02: ITO Flyover / Vikas Marg</span>
+                        <span style="color:#ec6e2a;">18 km/h (Moderate)</span>
+                      </div>
+                      <div class="ci-bar-wrap"><div class="ci-bar" style="width:68%;"></div></div>
+                    </div>
+                    <div class="corridor-item">
+                      <div class="ci-header">
+                        <span>C-03: AIIMS - Moolchand Corridor</span>
+                        <span style="color:#10b981;">41 km/h (Green Wave)</span>
+                      </div>
+                      <div class="ci-bar-wrap"><div class="ci-bar" style="width:28%;"></div></div>
+                    </div>
+                    <div class="corridor-item heavy">
+                      <div class="ci-header">
+                        <span>C-04: Karol Bagh - Pusa Road</span>
+                        <span style="color:#ef4444;">12 km/h (Heavy Density)</span>
+                      </div>
+                      <div class="ci-bar-wrap"><div class="ci-bar" style="width:84%;"></div></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Column 2: Live Velocity & Volume Trend Visualizer + Modal Split -->
-          <div class="dash-card traffic-chart-card">
-            <div class="dcard-header">
-              <div class="dcard-title-group">
-                <span class="dcard-icon">📊</span>
-                <div>
-                  <h3 class="dcard-title">Hourly Traffic Velocity &amp; Density Profile</h3>
-                  <span class="dcard-sub">24-hour continuous sensor fusion &amp; velocity curves</span>
-                </div>
+          <!-- Drawer 2: Sighting Chronology & Live ANPR Detections -->
+          <div class="collapsible-card" id="drawer-sighting-matrix">
+            <div class="collapsible-header" onclick="toggleCollapsibleDrawer('drawer-sighting-matrix')">
+              <div class="ch-left">
+                <span class="ch-icon">&bull;</span>
+                <span class="ch-title">ANPR High-Speed OCR Recognition Stream &amp; Forensic Chronology</span>
+                <span class="ch-pill orange">5 SIGHTINGS CHAINED</span>
               </div>
-              <div class="chart-horizon-group">
-                <button class="ch-btn active" id="btn-horizon-24h" onclick="setDashboardChartMode('24h')">24H CYCLE</button>
-                <button class="ch-btn" id="btn-horizon-live" onclick="setDashboardChartMode('live')">REAL-TIME</button>
+              <div class="ch-right">
+                <span class="ch-toggle-btn" id="btn-toggle-sighting-matrix">[-] COLLAPSE</span>
               </div>
             </div>
-
-            <!-- Canvas Chart Container -->
-            <div class="dash-chart-wrapper">
-              <canvas id="dash-traffic-canvas" width="560" height="220"></canvas>
-            </div>
-
-            <div class="dash-chart-legend">
-              <span class="dcl-item"><span class="dcl-color blue"></span> Traffic Volume (veh/hr ×100)</span>
-              <span class="dcl-item"><span class="dcl-color cyan"></span> Average Velocity (km/h)</span>
-              <span class="dcl-item"><span class="dcl-color amber"></span> Congestion Threshold (30 km/h)</span>
-            </div>
-
-            <!-- Modal Fleet Composition Matrix -->
-            <div class="dash-modal-split-box">
-              <div class="dms-title">MUNICIPAL FLEET MODAL SPLIT &amp; EMISSION PROFILE</div>
-              <div class="dms-bars">
-                <div class="dms-bar-row">
-                  <span class="dms-label">Public Transit (DTC Electric Buses)</span>
-                  <div class="dms-bar-track"><div class="dms-bar-fill blue" style="width: 28.4%;"></div></div>
-                  <span class="dms-pct">28.4%</span>
+            <div class="collapsible-body" id="body-sighting-matrix">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:12px;">
+                <div style="background:var(--bg-surface-alt);padding:12px;border-radius:6px;border-left:3px solid #ec6e2a;">
+                  <div style="display:flex;justify-content:space-between;font-weight:700;font-size:11px;">
+                    <span>Sighting #1 (Origin)</span>
+                    <span style="color:var(--accent-orange);font-family:var(--font-mono);">09:14:02 IST</span>
+                  </div>
+                  <div style="font-size:13px;font-weight:800;font-family:var(--font-mono);margin:4px 0;">DL 1C AE 4921</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">Karol Bagh Crossing (CAM-JNC-04) &bull; 96.2% Conf</div>
                 </div>
-                <div class="dms-bar-row">
-                  <span class="dms-label">Commercial Cabs &amp; Shared EV Mobility</span>
-                  <div class="dms-bar-track"><div class="dms-bar-fill green" style="width: 34.2%;"></div></div>
-                  <span class="dms-pct">34.2%</span>
+
+                <div style="background:var(--bg-surface-alt);padding:12px;border-radius:6px;border-left:3px solid #213d77;">
+                  <div style="display:flex;justify-content:space-between;font-weight:700;font-size:11px;">
+                    <span>Sighting #2 (Mobile DTC Intercept)</span>
+                    <span style="color:#213d77;font-family:var(--font-mono);">09:18:24 IST</span>
+                  </div>
+                  <div style="font-size:13px;font-weight:800;font-family:var(--font-mono);margin:4px 0;">DL 1C AE 4921</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">Panchkuian Marg (BUS-DTC-419) &bull; 82.4% Conf</div>
                 </div>
-                <div class="dms-bar-row">
-                  <span class="dms-label">Private Sedans &amp; Passenger SUVs</span>
-                  <div class="dms-bar-track"><div class="dms-bar-fill amber" style="width: 29.8%;"></div></div>
-                  <span class="dms-pct">29.8%</span>
+
+                <div style="background:var(--bg-surface-alt);padding:12px;border-radius:6px;border-left:3px solid #10b981;">
+                  <div style="display:flex;justify-content:space-between;font-weight:700;font-size:11px;">
+                    <span>Sighting #3 (Junction Lock)</span>
+                    <span style="color:#10b981;font-family:var(--font-mono);">09:21:50 IST</span>
+                  </div>
+                  <div style="font-size:13px;font-weight:800;font-family:var(--font-mono);margin:4px 0;">DL 1C AE 4921</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">Connaught Place Outer Circle (CAM-JNC-01) &bull; 97.8% Conf</div>
                 </div>
-                <div class="dms-bar-row">
-                  <span class="dms-label">Two-Wheelers &amp; Last-Mile Auto-Rickshaws</span>
-                  <div class="dms-bar-track"><div class="dms-bar-fill slate" style="width: 7.6%;"></div></div>
-                  <span class="dms-pct">7.6%</span>
+
+                <div style="background:var(--bg-surface-alt);padding:12px;border-radius:6px;border-left:3px solid #10b981;">
+                  <div style="display:flex;justify-content:space-between;font-weight:700;font-size:11px;">
+                    <span>Sighting #4 (Flyover Transit)</span>
+                    <span style="color:#10b981;font-family:var(--font-mono);">09:26:15 IST</span>
+                  </div>
+                  <div style="font-size:13px;font-weight:800;font-family:var(--font-mono);margin:4px 0;">DL 1C AE 4921</div>
+                  <div style="font-size:11px;color:var(--text-secondary);">ITO Flyover / Vikas Marg (CAM-JNC-02) &bull; 94.1% Conf</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Column 3: AI Adaptive Signals & Predictive Congestion Horizon -->
-          <div class="dash-card signal-predict-card">
-            <!-- Part 1: AI Adaptive Signal Synchronization -->
-            <div class="dcard-header">
-              <div class="dcard-title-group">
-                <span class="dcard-icon">🚦</span>
-                <div>
-                  <h3 class="dcard-title">Adaptive Signal Mesh &amp; Split Control</h3>
-                  <span class="dcard-sub">Edge AI junction timing &amp; green-wave coordination</span>
-                </div>
+          <!-- Drawer 3: Public Transit AIS-140 Mobile Mesh Fleet -->
+          <div class="collapsible-card" id="drawer-transit-mesh">
+            <div class="collapsible-header" onclick="toggleCollapsibleDrawer('drawer-transit-mesh')">
+              <div class="ch-left">
+                <span class="ch-icon">&bull;</span>
+                <span class="ch-title">AIS-140 Public Transit Mobile Edge NPU Sensing Network</span>
+                <span class="ch-pill green">4 BUS NODES DEPLOYED</span>
               </div>
-              <button class="mini-action-btn" onclick="recalculateSignalSplits()">Auto-Tune</button>
-            </div>
-
-            <div class="dash-signals-list">
-              <div class="ds-item">
-                <div class="ds-top">
-                  <span class="ds-junction">ITO Flyover Junction (CAM-02)</span>
-                  <span class="ds-badge green" id="sig-ito">GREEN: 62s</span>
-                </div>
-                <div class="ds-meta">
-                  <span>Phase: Eastbound Wave</span>
-                  <span>Queue: 18 veh</span>
-                  <span class="green">Synced (96%)</span>
-                </div>
-              </div>
-
-              <div class="ds-item">
-                <div class="ds-top">
-                  <span class="ds-junction">Connaught Place Outer Circle (CAM-01)</span>
-                  <span class="ds-badge green" id="sig-cp">GREEN: 45s</span>
-                </div>
-                <div class="ds-meta">
-                  <span>Phase: Radial Circulatory</span>
-                  <span>Queue: 12 veh</span>
-                  <span class="green">Synced (92%)</span>
-                </div>
-              </div>
-
-              <div class="ds-item">
-                <div class="ds-top">
-                  <span class="ds-junction">AIIMS Flyover Underpass (CAM-05)</span>
-                  <span class="ds-badge amber" id="sig-aiims">SPLIT: 54s</span>
-                </div>
-                <div class="ds-meta">
-                  <span>Phase: Ring Road Priority</span>
-                  <span>Queue: 24 veh</span>
-                  <span class="amber">Dense (88%)</span>
-                </div>
-              </div>
-
-              <div class="ds-item">
-                <div class="ds-top">
-                  <span class="ds-junction">Moolchand Metro Crossing (CAM-06)</span>
-                  <span class="ds-badge green" id="sig-moolchand">GREEN: 40s</span>
-                </div>
-                <div class="ds-meta">
-                  <span>Phase: BRTS Bus Priority</span>
-                  <span>Queue: 15 veh</span>
-                  <span class="green">Synced (95%)</span>
-                </div>
+              <div class="ch-right">
+                <span class="ch-toggle-btn" id="btn-toggle-transit-mesh">[-] COLLAPSE</span>
               </div>
             </div>
+            <div class="collapsible-body" id="body-transit-mesh">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:12px;">
+                <div style="background:var(--bg-surface-alt);padding:12px;border-radius:6px;">
+                  <div style="display:flex;justify-content:space-between;font-weight:700;">
+                    <span style="color:var(--color-info);">BUS-DTC-419 (Route 419 DOWN)</span>
+                    <span class="dkc-badge green">34 km/h</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">Corridor: Karol Bagh &rarr; CP &rarr; ITO &rarr; Pragati Maidan</div>
+                  <div style="font-size:10px;color:var(--text-muted);margin-top:2px;font-family:var(--font-mono);">Edge NPU: 24.8 FPS | Mesh Relay: CAM-01 Linked</div>
+                </div>
 
-            <!-- Part 2: Predictive Congestion Forecaster -->
-            <div class="dash-predictive-box">
-              <div class="dpb-header">
-                <span class="dpb-title">🔮 PREDICTIVE CONGESTION HORIZON</span>
-                <div class="dpb-horizon-toggles">
-                  <button class="dh-btn active" id="btn-pred-15" onclick="setDashboardPredictHorizon(15)">+15m</button>
-                  <button class="dh-btn" id="btn-pred-30" onclick="setDashboardPredictHorizon(30)">+30m</button>
-                  <button class="dh-btn" id="btn-pred-60" onclick="setDashboardPredictHorizon(60)">+60m</button>
+                <div style="background:var(--bg-surface-alt);padding:12px;border-radius:6px;">
+                  <div style="display:flex;justify-content:space-between;font-weight:700;">
+                    <span style="color:var(--color-info);">BUS-DTC-522 (Route 522 UP)</span>
+                    <span class="dkc-badge green">36 km/h</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">Corridor: AIIMS &rarr; Moolchand &rarr; Lajpat &rarr; Nehru Place</div>
+                  <div style="font-size:10px;color:var(--text-muted);margin-top:2px;font-family:var(--font-mono);">Edge NPU: 25.1 FPS | Mesh Relay: CAM-06 Linked</div>
                 </div>
-              </div>
 
-              <div class="dpb-content" id="dpb-content">
-                <div class="dpb-stat-row">
-                  <span>Predicted City Speed:</span>
-                  <strong class="green" id="pred-speed">38.6 km/h (▲ +1.2 km/h)</strong>
+                <div style="background:var(--bg-surface-alt);padding:12px;border-radius:6px;">
+                  <div style="display:flex;justify-content:space-between;font-weight:700;">
+                    <span style="color:var(--color-info);">BUS-DTC-764 (Route 764 RING)</span>
+                    <span class="dkc-badge green">38 km/h</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">Corridor: Dhaula Kuan &rarr; India Gate &rarr; Saket</div>
+                  <div style="font-size:10px;color:var(--text-muted);margin-top:2px;font-family:var(--font-mono);">Edge NPU: 24.2 FPS | Mesh Relay: CAM-11 Linked</div>
                 </div>
-                <div class="dpb-stat-row">
-                  <span>Congestion Probability:</span>
-                  <strong class="cyan" id="pred-prob">18% (Low Risk)</strong>
-                </div>
-                <div class="dpb-stat-row">
-                  <span>Primary Chokepoint Risk:</span>
-                  <strong class="amber" id="pred-choke">Lajpat Nagar Merge (34%)</strong>
-                </div>
-                <div class="dpb-advisory" id="dpb-advisory">
-                  <span>💡 Advisory: <strong>Maintain current green wave on C-01 &amp; C-03.</strong> Route 522 bus mobile ANPR units will monitor Ring Road inflow.</span>
-                </div>
-              </div>
 
-              <div class="dpb-actions">
-                <button class="dpb-btn-broadcast" onclick="broadcastCongestionAdvisory()">📢 Broadcast Advisory to Navigation Mesh</button>
+                <div style="background:var(--bg-surface-alt);padding:12px;border-radius:6px;">
+                  <div style="display:flex;justify-content:space-between;font-weight:700;">
+                    <span style="color:var(--color-info);">BUS-DTC-335 (Route 335 EXPRESS)</span>
+                    <span class="dkc-badge green">35 km/h</span>
+                  </div>
+                  <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">Corridor: CP &rarr; India Gate &rarr; AIIMS &rarr; Saket</div>
+                  <div style="font-size:10px;color:var(--text-muted);margin-top:2px;font-family:var(--font-mono);">Edge NPU: 26.0 FPS | Mesh Relay: CAM-05 Linked</div>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
-
-        <!-- ═══════════════════════════════════════════════════════════════════ -->
-        <!-- COMPLETE 16-CAMERA INTERCONNECTED SENSOR NETWORK MESH DIRECTORY    -->
-        <!-- ═══════════════════════════════════════════════════════════════════ -->
-        <div class="dash-card full-width-card" style="margin-top: 4px;">
-          <div class="dcard-header">
-            <div class="dcard-title-group">
-              <span class="dcard-icon">🛰️</span>
-              <div>
-                <h3 class="dcard-title">Interconnected Municipal Camera Network (16 Active Sensor Nodes)</h3>
-                <span class="dcard-sub">12 Fixed 4K ANPR Junction Cameras + 4 DTC Bus Mobile Edge NPU Cameras synchronized via low-latency MQTT mesh</span>
-              </div>
-            </div>
-            <div class="mesh-summary-badge">
-              <span class="badge-dot green"></span>
-              <strong>16/16 SENSORS INTERCONNECTED · 100% COVERAGE</strong>
-            </div>
-          </div>
-
-          <div class="camera-mesh-grid">
-            <!-- 12 Fixed Junction Cameras -->
-            <div class="cm-group">
-              <div class="cm-group-title">
-                <span>FIXED 4K ANPR JUNCTION CAMERAS (12 NODES)</span>
-                <span class="badge-mini blue">DEEPSTREAM TRT INT8 · 45 FPS</span>
-              </div>
-              <div class="cm-list">
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-01')">
-                  <span class="cm-badge">CAM-01</span>
-                  <div class="cm-info">
-                    <strong>Connaught Place Junction</strong>
-                    <span>Outer Circle · Lat 28.6315, Lng 77.2167</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-02')">
-                  <span class="cm-badge">CAM-02</span>
-                  <div class="cm-info">
-                    <strong>ITO Flyover / Vikas Marg</strong>
-                    <span>Arterial · Lat 28.6278, Lng 77.2436</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-03')">
-                  <span class="cm-badge">CAM-03</span>
-                  <div class="cm-info">
-                    <strong>Rajiv Chowk Central</strong>
-                    <span>Radial · Lat 28.6328, Lng 77.2197</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-04')">
-                  <span class="cm-badge">CAM-04</span>
-                  <div class="cm-info">
-                    <strong>Karol Bagh Crossing</strong>
-                    <span>Pusa Road · Lat 28.6513, Lng 77.1906</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-05')">
-                  <span class="cm-badge">CAM-05</span>
-                  <div class="cm-info">
-                    <strong>AIIMS Flyover</strong>
-                    <span>Ring Road · Lat 28.5654, Lng 77.2101</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-06')">
-                  <span class="cm-badge">CAM-06</span>
-                  <div class="cm-info">
-                    <strong>Moolchand Metro Crossing</strong>
-                    <span>Lala Lajpat Rai · Lat 28.5709, Lng 77.2390</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-07')">
-                  <span class="cm-badge">CAM-07</span>
-                  <div class="cm-info">
-                    <strong>Nehru Place Outer Ring</strong>
-                    <span>Commercial Hub · Lat 28.5492, Lng 77.2527</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-08')">
-                  <span class="cm-badge">CAM-08</span>
-                  <div class="cm-info">
-                    <strong>Lajpat Nagar Flyover</strong>
-                    <span>Mahatma Gandhi Marg · Lat 28.5700, Lng 77.2422</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-09')">
-                  <span class="cm-badge">CAM-09</span>
-                  <div class="cm-info">
-                    <strong>Dhaula Kuan Interchange</strong>
-                    <span>Ring Road / Airport · Lat 28.5921, Lng 77.1616</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-10')">
-                  <span class="cm-badge">CAM-10</span>
-                  <div class="cm-info">
-                    <strong>Pragati Maidan / Mathura Rd</strong>
-                    <span>Tunnel Corridor · Lat 28.6154, Lng 77.2484</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-11')">
-                  <span class="cm-badge">CAM-11</span>
-                  <div class="cm-info">
-                    <strong>India Gate C-Hexagon Circle</strong>
-                    <span>Rajpath Radial · Lat 28.6129, Lng 77.2276</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-                <div class="cm-item" onclick="openLiveCameraModal('CAM-JNC-12')">
-                  <span class="cm-badge">CAM-12</span>
-                  <div class="cm-info">
-                    <strong>Saket Select City Walk</strong>
-                    <span>Press Enclave · Lat 28.5244, Lng 77.2167</span>
-                  </div>
-                  <span class="cm-status green">45 FPS · LIVE</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4 Mobile Bus Edge NPU Cameras -->
-            <div class="cm-group bus-group">
-              <div class="cm-group-title">
-                <span>DTC BUS MOBILE EDGE NPU CAMERAS (4 NODES)</span>
-                <span class="badge-mini saffron">HAILO-8 NPU · AIS-140 GPS FUSED</span>
-              </div>
-              <div class="cm-list">
-                <div class="cm-item bus-item" onclick="openLiveCameraModal('BUS-DTC-419')">
-                  <span class="cm-badge bus">BUS-419</span>
-                  <div class="cm-info">
-                    <strong>Route 419 DOWN (Karol Bagh - CP - ITO - Pragati Maidan)</strong>
-                    <span>Speed: 34 km/h · Interconnected with CAM-04, CAM-01, CAM-02, CAM-10</span>
-                  </div>
-                  <span class="cm-status green">14.6 FPS · MESH ACTIVE</span>
-                </div>
-                <div class="cm-item bus-item" onclick="openLiveCameraModal('BUS-DTC-522')">
-                  <span class="cm-badge bus">BUS-522</span>
-                  <div class="cm-info">
-                    <strong>Route 522 UP (AIIMS - Moolchand - Lajpat - Nehru Place)</strong>
-                    <span>Speed: 36 km/h · Interconnected with CAM-05, CAM-06, CAM-08, CAM-07</span>
-                  </div>
-                  <span class="cm-status green">14.8 FPS · MESH ACTIVE</span>
-                </div>
-                <div class="cm-item bus-item" onclick="openLiveCameraModal('BUS-DTC-764')">
-                  <span class="cm-badge bus">BUS-764</span>
-                  <div class="cm-info">
-                    <strong>Route 764 RING (Dhaula Kuan - India Gate - Saket)</strong>
-                    <span>Speed: 38 km/h · Interconnected with CAM-09, CAM-11, CAM-12</span>
-                  </div>
-                  <span class="cm-status green">15.0 FPS · MESH ACTIVE</span>
-                </div>
-                <div class="cm-item bus-item" onclick="openLiveCameraModal('BUS-DTC-335')">
-                  <span class="cm-badge bus">BUS-335</span>
-                  <div class="cm-info">
-                    <strong>Route 335 EXPRESS (CP - India Gate - AIIMS - Saket)</strong>
-                    <span>Speed: 35 km/h · Interconnected with CAM-01, CAM-11, CAM-05, CAM-12</span>
-                  </div>
-                  <span class="cm-status green">15.0 FPS · MESH ACTIVE</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
+
     </section>
 
   <!-- ═══════════════════════════════════════════════════════════════════ -->
@@ -1358,11 +1031,11 @@
           </div>
 
           <div id="gis-map-legend">
-            <div class="legend-item"><span class="legend-dot" style="background:#00e5ff"></span> Fixed ANPR</div>
-            <div class="legend-item"><span class="legend-dot" style="background:#ffc107"></span> Mobile Bus</div>
-            <div class="legend-item"><span class="legend-dot" style="background:#ff1744"></span> Target Vehicle</div>
-            <div class="legend-item"><span class="legend-dot" style="background:#69f0ae"></span> Trajectory</div>
-            <div class="legend-item"><span class="legend-dot" style="background:#7c4dff;border:2px dashed #b388ff"></span> Reachability Cone</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#213d77"></span> Fixed ANPR</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ec6e2a"></span> Mobile Bus</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ec6e2a;border:1.5px solid #213d77"></span> Target Vehicle</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#213d77"></span> Trajectory</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ffffff;border:1.5px dashed #ec6e2a"></span> Reachability Cone</div>
           </div>
         </div>
 
@@ -2299,8 +1972,8 @@
         <div class="ge-top-right">
           <div class="ge-toggles">
             <button class="ge-toggle-btn active" id="ge-toggle-adsb" title="Toggle ADS-B Live Aircraft Flight Vectors"><span class="ge-tb-icon">✈</span> ADS-B (<span id="ge-adsb-count">5</span>)</button>
-            <button class="ge-toggle-btn active" id="ge-toggle-satellites" title="Toggle LEO Recon Satellite Passes &amp; Swaths"><span class="ge-tb-icon">🛰</span> LEO SAT (<span id="ge-sat-count">5</span>)</button>
-            <button class="ge-toggle-btn active" id="ge-toggle-airspace" title="Toggle Restricted Airspace &amp; No-Go Zones"><span class="ge-tb-icon">🛑</span> AIRSPACE</button>
+            <button class="ge-toggle-btn active" id="ge-toggle-satellites" title="Toggle LEO Recon Satellite Passes &amp; Swaths"><span class="ge-tb-icon"></span> LEO SAT (<span id="ge-sat-count">5</span>)</button>
+            <button class="ge-toggle-btn active" id="ge-toggle-airspace" title="Toggle Restricted Airspace &amp; No-Go Zones"><span class="ge-tb-icon"></span> AIRSPACE</button>
             <button class="ge-toggle-btn active" id="ge-toggle-los" title="Toggle Active Sensor Line-of-Sight Beam">LOS BEAM</button>
             <button class="ge-toggle-btn active" id="ge-toggle-interceptions" title="Toggle AI Choke-Point Roadblocks">CHOKEPOINTS</button>
             <button class="ge-toggle-btn" id="ge-toggle-aqi" title="Toggle Environmental &amp; AQI Mesh">AQI/ENV</button>

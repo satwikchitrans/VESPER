@@ -514,7 +514,7 @@ function updateSightingChainUI(veh) {
             <span class="sc-gps-coord">${step.lat.toFixed(5)}, ${step.lng.toFixed(5)}</span>
           </td>
           <td>${timeStr}</td>
-          <td style="color:#34d399;font-weight:700">${speedStr}</td>
+          <td style="color:#ec6e2a;font-weight:700">${speedStr}</td>
           <td style="color:var(--accent-cyan);font-weight:800">${ocrStr}</td>
           <td>
             <button class="sc-fly-btn" onclick="flyToSightingGPS(${step.lat}, ${step.lng}, '${step.cam}')">
@@ -831,13 +831,13 @@ function renderSightingSnapshot(canvas, veh, step, stepIdx) {
   // Background
   const grad = ctx.createLinearGradient(0, 0, 0, h);
   grad.addColorStop(0, '#060a12');
-  grad.addColorStop(0.5, '#0f172a');
+  grad.addColorStop(0.5, '#213d77');
   grad.addColorStop(1, '#020617');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
   // Road Perspective
-  ctx.fillStyle = '#1e293b';
+  ctx.fillStyle = '#2c4f8a';
   ctx.beginPath();
   ctx.moveTo(0, h * 0.55);
   ctx.lineTo(w, h * 0.55);
@@ -846,7 +846,7 @@ function renderSightingSnapshot(canvas, veh, step, stepIdx) {
   ctx.fill();
 
   // Lane line
-  ctx.strokeStyle = '#334155';
+  ctx.strokeStyle = '#4a6ba5';
   ctx.lineWidth = 1;
   ctx.setLineDash([6, 4]);
   ctx.beginPath();
@@ -862,11 +862,11 @@ function renderSightingSnapshot(canvas, veh, step, stepIdx) {
   const cy = h * 0.52;
 
   // Vehicle Body
-  ctx.fillStyle = veh.color === 'White' ? '#e2e8f0' : (veh.color === 'Black' ? '#0f172a' : (veh.color === 'Red' ? '#dc2626' : '#64748b'));
+  ctx.fillStyle = veh.color === 'White' ? '#e2e8f0' : (veh.color === 'Black' ? '#213d77' : (veh.color === 'Red' ? '#dc2626' : '#64748b'));
   ctx.beginPath();
   ctx.roundRect(cx - carW/2, cy, carW, carH, 4);
   ctx.fill();
-  ctx.strokeStyle = '#fb792b';
+  ctx.strokeStyle = '#ec6e2a';
   ctx.lineWidth = 1;
   ctx.stroke();
 
@@ -881,7 +881,7 @@ function renderSightingSnapshot(canvas, veh, step, stepIdx) {
   const bbY = cy - 4;
   const bbW = carW + 8;
   const bbH = carH + 8;
-  ctx.strokeStyle = veh.isStolen ? '#ef4444' : '#00f0ff';
+  ctx.strokeStyle = veh.isStolen ? '#ef4444' : '#ec6e2a';
   ctx.lineWidth = 1.5;
   ctx.strokeRect(bbX, bbY, bbW, bbH);
 
@@ -899,7 +899,7 @@ function renderSightingSnapshot(canvas, veh, step, stepIdx) {
   ctx.beginPath(); ctx.moveTo(bbX + bbW - bLen, bbY + bbH); ctx.lineTo(bbX + bbW, bbY + bbH); ctx.lineTo(bbX + bbW, bbY + bbH - bLen); ctx.stroke();
 
   // License plate tag on snapshot
-  ctx.fillStyle = '#fbbf24';
+  ctx.fillStyle = '#ec6e2a';
   ctx.fillRect(cx - 16, cy + carH - 4, 32, 7);
   ctx.fillStyle = '#000000';
   ctx.font = 'bold 5.5px monospace';
@@ -959,7 +959,7 @@ function simulatePCRIntercept(targetLat, targetLng, camName) {
     className: 'pcr-unit-icon',
     html: `
       <div style="background:#dc2626;color:#fff;font-weight:900;font-size:9px;padding:3px 6px;border-radius:4px;border:1px solid #fff;box-shadow:0 0 12px rgba(220,38,38,0.8);white-space:nowrap;">
-        🚓 PCR-ECHO-12 (ETA 2.4 min)
+         PCR-ECHO-12 (ETA 2.4 min)
       </div>
     `,
     iconSize: [80, 24],
@@ -970,7 +970,7 @@ function simulatePCRIntercept(targetLat, targetLng, camName) {
   STATE._pcrInterceptLayer = L.layerGroup([vectorLine, pcrMarker]).addTo(STATE.maps.gis);
 
   playSound('alarm');
-  showToast('🚨 PCR INTERCEPT DISPATCHED', `PCR-ECHO-12 dispatched to intercept target at ${camName}. Estimated Time to Intercept: 2.4 minutes.`);
+  showToast(' PCR INTERCEPT DISPATCHED', `PCR-ECHO-12 dispatched to intercept target at ${camName}. Estimated Time to Intercept: 2.4 minutes.`);
 }
 
 function initSightingChainInteractions() {
@@ -1596,7 +1596,7 @@ async function pollLiveAirspaceAndFleet() {
       flightData.flights.forEach(f => {
         const icon = L.divIcon({
           className: 'custom-flight-icon',
-          html: `<div style="background:rgba(14,165,233,0.9);color:#ffffff;font-size:9px;font-weight:800;font-family:monospace;padding:2px 5px;border-radius:3px;border:1px solid #38bdf8;box-shadow:0 0 8px rgba(14,165,233,0.6);white-space:nowrap;">✈ ${f.callsign} · ${f.altFeet}ft</div>`,
+          html: `<div style="background:rgba(14,165,233,0.9);color:#ffffff;font-size:9px;font-weight:800;font-family:monospace;padding:2px 5px;border-radius:3px;border:1px solid #213d77;box-shadow:0 0 8px rgba(14,165,233,0.6);white-space:nowrap;">✈ ${f.callsign} · ${f.altFeet}ft</div>`,
           iconSize: [80, 20],
           iconAnchor: [40, 10]
         });
@@ -1616,7 +1616,7 @@ async function pollLiveAirspaceAndFleet() {
       dtcData.sampleUnits.forEach(b => {
         const icon = L.divIcon({
           className: 'custom-bus-icon',
-          html: `<div style="background:rgba(245,158,11,0.9);color:#000000;font-size:9px;font-weight:900;font-family:monospace;padding:2px 5px;border-radius:3px;border:1px solid #fef08a;box-shadow:0 0 8px rgba(245,158,11,0.6);white-space:nowrap;">🚌 ${b.busId}</div>`,
+          html: `<div style="background:rgba(245,158,11,0.9);color:#000000;font-size:9px;font-weight:900;font-family:monospace;padding:2px 5px;border-radius:3px;border:1px solid #fef08a;box-shadow:0 0 8px rgba(245,158,11,0.6);white-space:nowrap;"> ${b.busId}</div>`,
           iconSize: [75, 20],
           iconAnchor: [37, 10]
         });
@@ -1783,7 +1783,7 @@ function registerAutomatedThreatAlert(alertData, opts = {}) {
   if (!opts.silent) {
     playSound('lock');
     showToast(
-      `🚨 AUTOMATED THREAT DETECTED: ${alertObj.plate}`,
+      ` AUTOMATED THREAT DETECTED: ${alertObj.plate}`,
       `${alertObj.badPastTitle} · Detected by ${alertObj.sensorName} at ${alertObj.street}`,
       true
     );
@@ -1999,7 +1999,7 @@ function initGISMap() {
   // Dark Tactical Vector Basemap (Up to zoom 22 with retina/native 19 scaling)
   const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     subdomains: 'abcd', maxZoom: 22, maxNativeZoom: 19, updateWhenIdle: false, keepBuffer: 4
-  }).addTo(map);
+  });
 
   // 1. Crystal-Clear Photorealistic Google Hybrid Satellite HD (Sub-meter ground sampling, native 20, zoom up to 22)
   const satLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
@@ -2045,7 +2045,7 @@ function initGISMap() {
     maxNativeZoom: 19,
     updateWhenIdle: false,
     keepBuffer: 4
-  });
+  }).addTo(map);
 
   STATE.tileLayers = {
     dark: darkLayer,
@@ -2055,7 +2055,7 @@ function initGISMap() {
     street: streetLayer,
     roadOverlay: roadOverlay
   };
-  STATE.currentTileLayer = 'dark';
+  STATE.currentTileLayer = 'street';
   STATE.maps.gis = map;
   STATE.mapsInitialized.gis = true;
 
@@ -2152,25 +2152,25 @@ function cycleMapLayer() {
     STATE.tileLayers.satellite.addTo(map);
     STATE.tileLayers.roadOverlay.addTo(map);
     if (txt) txt.textContent = 'Satellite HD + Roads';
-    showToast('🛰️ SATELLITE HD ACTIVE', 'Crystal-clear photorealistic satellite imagery with vector road overlay. Zoom up to Level 22.');
+    showToast(' SATELLITE HD ACTIVE', 'Crystal-clear photorealistic satellite imagery with vector road overlay. Zoom up to Level 22.');
   } else if (STATE.currentTileLayer === 'satellite') {
     STATE.currentTileLayer = 'pureSat';
     STATE.tileLayers.pureSat.addTo(map);
     if (txt) txt.textContent = 'Satellite 4K (Pure)';
-    showToast('📸 PURE SATELLITE 4K', 'Unfiltered optical satellite photography without road markings.');
+    showToast(' PURE SATELLITE 4K', 'Unfiltered optical satellite photography without road markings.');
   } else if (STATE.currentTileLayer === 'pureSat') {
     STATE.currentTileLayer = 'esri';
     STATE.tileLayers.esri.addTo(map);
     STATE.tileLayers.roadOverlay.addTo(map);
     if (txt) txt.textContent = 'Esri Clarity HD';
-    showToast('🌐 ESRI CLARITY HD', 'Esri global high-resolution multi-source imagery.');
+    showToast(' ESRI CLARITY HD', 'Esri global high-resolution multi-source imagery.');
   } else if (STATE.currentTileLayer === 'esri') {
     STATE.currentTileLayer = 'street';
     STATE.tileLayers.street.addTo(map);
     if (txt) txt.textContent = 'Street Map HD';
-    showToast('🗺️ OPENSTREETMAP HD', 'High-contrast detailed street topology.');
+    showToast(' OPENSTREETMAP HD', 'High-contrast detailed street topology.');
   } else {
-    STATE.currentTileLayer = 'dark';
+    STATE.currentTileLayer = 'street';
     STATE.tileLayers.dark.addTo(map);
     if (txt) txt.textContent = 'Dark Basemap';
     showToast('⚡ DARK VECTOR BASEMAP', 'Low-light tactical command grid.');
@@ -2238,7 +2238,7 @@ function toggleGodsEyeMapMode() {
       if (map.hasLayer(STATE.tileLayers.roadOverlay)) {
         map.removeLayer(STATE.tileLayers.roadOverlay);
       }
-      STATE.currentTileLayer = 'dark';
+      STATE.currentTileLayer = 'street';
       STATE.tileLayers.dark.addTo(map);
       const layerTxt = document.getElementById('map-layer-text');
       if (layerTxt) layerTxt.textContent = 'Dark Basemap';
@@ -2267,7 +2267,7 @@ function setGISVisualShader(mode) {
     if (btn3D) btn3D.classList.toggle('active', is3D);
     playSound('chirp');
     showToast(
-      is3D ? '🛸 3D ISOMETRIC PERSPECTIVE' : '🗺️ 2D TOP-DOWN VIEW',
+      is3D ? ' 3D ISOMETRIC PERSPECTIVE' : ' 2D TOP-DOWN VIEW',
       is3D ? 'Photorealistic 32° isometric tilt and target ride-along angle activated.' : 'Standard 2D orthographic tactical grid restored.'
     );
     return;
@@ -2286,15 +2286,15 @@ function setGISVisualShader(mode) {
   if (mode === 'flir') {
     container.classList.add('flir-active');
     playSound('chirp');
-    showToast('🔥 FLIR THERMAL SPECTRUM', 'Forward-Looking Infrared optical inversion enabled.');
+    showToast(' FLIR THERMAL SPECTRUM', 'Forward-Looking Infrared optical inversion enabled.');
   } else if (mode === 'nvg') {
     container.classList.add('nvg-active');
     playSound('chirp');
-    showToast('🟢 NIGHT VISION GOGGLES (NVG)', 'Phosphor green 525nm image intensifier activated.');
+    showToast(' NIGHT VISION GOGGLES (NVG)', 'Phosphor green 525nm image intensifier activated.');
   } else if (mode === 'crt') {
     container.classList.add('crt-active');
     playSound('chirp');
-    showToast('📡 CRT RADAR RASTER', 'Phosphor beam scanlines & high-contrast tactical filter active.');
+    showToast(' CRT RADAR RASTER', 'Phosphor beam scanlines & high-contrast tactical filter active.');
   } else {
     playSound('click');
     showToast('⚡ STANDARD TACTICAL GRID', 'Normal optical spectrum restored.');
@@ -2316,7 +2316,7 @@ function drawGISCameraFOVCones() {
     }
     arcPoints.push([cam.lat, cam.lng]);
     const arc = L.polygon(arcPoints, {
-      color: '#00e5ff', fillColor: '#00e5ff', fillOpacity: 0.12, weight: 1.5, opacity: 0.6
+      color: '#213d77', fillColor: '#00e5ff', fillOpacity: 0.12, weight: 1.5, opacity: 0.6
     }).addTo(map);
     STATE.godsEyeCoverageArcs.push(arc);
 
@@ -2326,7 +2326,7 @@ function drawGISCameraFOVCones() {
       cam.lng + Math.sin(headingRad) * radius * 1.3
     ];
     const headingLine = L.polyline([[cam.lat, cam.lng], lineEnd], {
-      color: '#00e5ff', weight: 1, opacity: 0.4, dashArray: '4 4'
+      color: '#213d77', weight: 1, opacity: 0.4, dashArray: '4 4'
     }).addTo(map);
     STATE.godsEyeCoverageArcs.push(headingLine);
   });
@@ -3077,13 +3077,13 @@ function updateSurvModeButtons(activeMode) {
 
 function initSurvMap() {
   const map = L.map('surv-mini-map', { center: CONFIG.MAP_CENTER, zoom: 14, minZoom: 4, maxZoom: 19, maxBounds: INDIA_BOUNDS, maxBoundsViscosity: 1.0, zoomControl: false, attributionControl: false });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
   STATE.maps.surv = map;
 }
 
 function initGridMap() {
   const map = L.map('grid-map', { center: CONFIG.MAP_CENTER, zoom: CONFIG.MAP_ZOOM, minZoom: 4, maxZoom: 19, maxBounds: INDIA_BOUNDS, maxBoundsViscosity: 1.0, zoomControl: false, attributionControl: false });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
   STATE.maps.grid = map;
 
   // Add fixed cameras to grid map too
@@ -3098,7 +3098,7 @@ function initFixedCameras(map) {
   FIXED_CAMERAS.forEach(cam => {
     const icon = L.divIcon({ className: 'marker-fixed-anpr', html: '', iconSize: [20,20], iconAnchor: [10,10] });
     const marker = L.marker([cam.lat, cam.lng], { icon }).addTo(map);
-    marker.bindPopup(`<div style="padding:4px"><div style="font-weight:700;color:#00e5ff;font-size:11px">${cam.id}</div><div style="font-size:10px;color:#94a3b8">${cam.name}</div><div style="font-size:9px;color:#34d399;margin:3px 0 6px">ONLINE · 45 FPS</div><button class="map-popup-live-btn" onclick="openLiveCameraModal(\'${cam.id}\')"> Watch Live Feed</button></div>`);
+    marker.bindPopup(`<div style="padding:4px"><div style="font-weight:700;color:#213d77;font-size:11px">${cam.id}</div><div style="font-size:10px;color:#94a3b8">${cam.name}</div><div style="font-size:9px;color:#ec6e2a;margin:3px 0 6px">ONLINE · 45 FPS</div><button class="map-popup-live-btn" onclick="openLiveCameraModal(\'${cam.id}\')"> Watch Live Feed</button></div>`);
     STATE.markers.fixed[cam.id] = marker;
   });
 }
@@ -3114,14 +3114,14 @@ function initBuses(map) {
     const html = `
       <div class="tactical-bus-marker" id="tbm-wrap-${bus.id}">
         <div class="tbm-body">
-          <span class="tbm-icon">🚌</span>
+          <span class="tbm-icon"></span>
         </div>
         <div class="tbm-label">${bus.id}</div>
       </div>
     `;
     const icon = L.divIcon({ className: 'marker-bus-wrapper', html: html, iconSize: [28, 28], iconAnchor: [14, 14] });
     const marker = L.marker(startPt, { icon, zIndexOffset: 2000 }).addTo(map);
-    marker.bindPopup(`<div style="padding:4px"><div style="font-weight:700;color:#fbbf24;font-size:11px">${bus.id}</div><div style="font-size:10px;color:#94a3b8">${bus.name}</div><div style="font-size:9px;color:#fbbf24;margin:3px 0 6px">Hailo-8 NPU · Active Mobile ANPR</div><button class="map-popup-live-btn" onclick="openLiveCameraModal('${bus.id}')"> Watch Live Feed</button></div>`);
+    marker.bindPopup(`<div style="padding:4px"><div style="font-weight:700;color:#ec6e2a;font-size:11px">${bus.id}</div><div style="font-size:10px;color:#94a3b8">${bus.name}</div><div style="font-size:9px;color:#ec6e2a;margin:3px 0 6px">Hailo-8 NPU · Active Mobile ANPR</div><button class="map-popup-live-btn" onclick="openLiveCameraModal('${bus.id}')"> Watch Live Feed</button></div>`);
     STATE.markers.buses[bus.id] = marker;
   });
 }
@@ -3290,9 +3290,9 @@ function createVehicleMarkers(veh) {
       <div style="padding:6px;min-width:210px;font-family:var(--font-mono)">
         <div style="font-weight:800;color:${isStolen ? '#ef4444' : '#00e5ff'};font-size:12px">${veh.plate}</div>
         <div style="font-size:10px;color:#94a3b8">${veh.make} · ${veh.color} · ${veh.type}</div>
-        <div style="font-size:9px;color:#fbbf24;margin-top:3px;font-weight:700"> ANPR ESTIMATED TRAJECTORY (NO VEHICLE GPS)</div>
+        <div style="font-size:9px;color:#ec6e2a;margin-top:3px;font-weight:700"> ANPR ESTIMATED TRAJECTORY (NO VEHICLE GPS)</div>
         <div style="font-size:8.5px;color:#cbd5e1;margin-top:2px">Last Confirmed Sighting: <b style="color:#00e5ff">${lastCam}</b></div>
-        ${isStolen ? '<div style="color:#ef4444;font-weight:800;margin-top:3px"> HOTLIST MATCH (FIR #4482/2026)</div>' : '<div style="color:#34d399;font-weight:700;margin-top:3px">* ACTIVE SIGHTING CHAIN</div>'}
+        ${isStolen ? '<div style="color:#ef4444;font-weight:800;margin-top:3px"> HOTLIST MATCH (FIR #4482/2026)</div>' : '<div style="color:#ec6e2a;font-weight:700;margin-top:3px">* ACTIVE SIGHTING CHAIN</div>'}
         <div style="color:#94a3b8;font-size:8px;margin-top:4px"> ${veh.corridorName}</div>
       </div>
     `);
@@ -3331,14 +3331,14 @@ function drawTrajectory(veh) {
     // Confirmed Trajectory (Solid glowing line connecting camera captures)
     if (confirmedPts.length > 1) {
       const casingConfirmed = L.polyline(confirmedPts, {
-        color: '#00e5ff',
+        color: '#213d77',
         weight: 6.5,
         opacity: 0.35,
         lineCap: 'round',
         lineJoin: 'round'
       });
       const lineConfirmed = L.polyline(confirmedPts, {
-        color: veh.isStolen ? '#f87171' : '#34d399',
+        color: veh.isStolen ? '#ec6e2a' : '#213d77',
         weight: 3.5,
         opacity: 0.95,
         lineCap: 'round',
@@ -3350,7 +3350,7 @@ function drawTrajectory(veh) {
     // Blind Corridor (Dashed line for unmonitored road segments)
     if (blindPts.length > 1) {
       const lineBlind = L.polyline(blindPts, {
-        color: '#f59e0b',
+        color: '#ec6e2a',
         weight: 3,
         opacity: 0.8,
         dashArray: '8, 8',
@@ -3398,18 +3398,18 @@ function drawTrajectory(veh) {
         const marker = L.marker([step.lat, step.lng], { icon: customIcon, zIndexOffset: 2000 }).addTo(STATE.maps.gis);
         marker.bindPopup(`
           <div style="padding:6px;min-width:220px;font-family:var(--font-mono)">
-            <div style="font-weight:800;color:${step.mobile ? '#fbbf24' : '#00e5ff'};font-size:11px">
+            <div style="font-weight:800;color:${step.mobile ? '#ec6e2a' : '#00e5ff'};font-size:11px">
               ${step.mobile ? ' MOBILE BUS ANPR SIGHTING' : ' FIXED CCTV ANPR SIGHTING'}
             </div>
             <div style="font-size:10px;color:#cbd5e1;margin-top:2px"> ${step.street}</div>
             <div style="font-size:9px;color:#94a3b8;margin-top:4px">
               Sensor Node: <b style="color:#fff">${step.cam}</b><br/>
-              Optical Re-ID: <b style="color:#34d399">${(step.conf * 100).toFixed(1)}% Match</b><br/>
+              Optical Re-ID: <b style="color:#ec6e2a">${(step.conf * 100).toFixed(1)}% Match</b><br/>
               Timeline Offset: <b>+${step.time} min</b>
             </div>
             <div style="margin-top:6px;padding:4px 6px;background:rgba(0,0,0,0.6);border-radius:4px;border:1px solid ${veh.isStolen ? '#ef4444' : '#00e5ff'};display:flex;justify-content:space-between;align-items:center">
-              <span style="font-size:10px;color:#fbbf24;font-weight:800">${veh.plate}</span>
-              <span style="font-size:8px;color:#34d399;font-weight:700">OCR CONFIRMED</span>
+              <span style="font-size:10px;color:#ec6e2a;font-weight:800">${veh.plate}</span>
+              <span style="font-size:8px;color:#ec6e2a;font-weight:700">OCR CONFIRMED</span>
             </div>
             <button class="map-popup-live-btn" style="margin-top:6px;width:100%" onclick="activateTimelineStep(VEHICLES.find(v => v.id === '${veh.id}'), ${idx})">
                View This Sighting Capture
@@ -3430,8 +3430,8 @@ function drawTrajectory(veh) {
       } else {
         STATE.reachabilityCircles['cone'] = L.circle([activeStep.lat, activeStep.lng], {
           radius: radiusM,
-          color: '#f59e0b',
-          fillColor: '#f59e0b',
+          color: '#ec6e2a',
+          fillColor: '#ec6e2a',
           fillOpacity: 0.07,
           weight: 1.5,
           dashArray: '6 6'
@@ -3443,21 +3443,21 @@ function drawTrajectory(veh) {
 
   // 2. Dual Surveillance Mini-Map Polyline
   if (STATE.maps.surv) {
-    const sCasing = L.polyline(points, { color: '#00e5ff', weight: 5, opacity: 0.3, lineCap: 'round', lineJoin: 'round' });
-    const sLine = L.polyline(points, { color: veh.isStolen ? '#f87171' : '#00e5ff', weight: 2.5, opacity: 0.95, lineCap: 'round', lineJoin: 'round' });
+    const sCasing = L.polyline(points, { color: '#213d77', weight: 5, opacity: 0.3, lineCap: 'round', lineJoin: 'round' });
+    const sLine = L.polyline(points, { color: veh.isStolen ? '#ec6e2a' : '#213d77', weight: 2.5, opacity: 0.95, lineCap: 'round', lineJoin: 'round' });
     STATE.trajectoryLines.surv = L.layerGroup([sCasing, sLine]).addTo(STATE.maps.surv);
   }
 
   // 3. Command Grid Map Polyline
   if (STATE.maps.grid) {
-    const gCasing = L.polyline(points, { color: '#00e5ff', weight: 5, opacity: 0.3, lineCap: 'round', lineJoin: 'round' });
-    const gLine = L.polyline(points, { color: veh.isStolen ? '#f87171' : '#00e5ff', weight: 2.5, opacity: 0.95, lineCap: 'round', lineJoin: 'round' });
+    const gCasing = L.polyline(points, { color: '#213d77', weight: 5, opacity: 0.3, lineCap: 'round', lineJoin: 'round' });
+    const gLine = L.polyline(points, { color: veh.isStolen ? '#ec6e2a' : '#213d77', weight: 2.5, opacity: 0.95, lineCap: 'round', lineJoin: 'round' });
     STATE.trajectoryLines.grid = L.layerGroup([gCasing, gLine]).addTo(STATE.maps.grid);
   }
 
   // 4. GodsEye Satellite Trajectory
   if (GODSEYE.map) {
-    const geCasing = L.polyline(points, { color: '#00e5ff', weight: 6, opacity: 0.35 });
+    const geCasing = L.polyline(points, { color: '#213d77', weight: 6, opacity: 0.35 });
     const geLine = L.polyline(points, { color: veh.isStolen ? '#f87171' : '#69f0ae', weight: 3, opacity: 0.95 });
     GODSEYE.trajectoryLine = L.layerGroup([geCasing, geLine]).addTo(GODSEYE.map);
   }
@@ -3836,7 +3836,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
 
   // Background
   const grad = ctx.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, '#0a0e17');
+  grad.addColorStop(0, '#f4f6fb');
   grad.addColorStop(0.4, isBus ? '#1a1520' : '#141e2e');
   grad.addColorStop(1, isBus ? '#1a0f20' : '#1a1a2e');
   ctx.fillStyle = grad;
@@ -3853,7 +3853,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
   ctx.setLineDash([]);
   
   // Road Curb
-  ctx.strokeStyle = isBus ? '#fbbf24' : '#00e5ff'; ctx.lineWidth = 2;
+  ctx.strokeStyle = isBus ? '#ec6e2a' : '#00e5ff'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, h * 0.52); ctx.lineTo(w, h * 0.52); ctx.stroke();
 
   // Recorded Mode Offset or Normal Sim Tick
@@ -3935,10 +3935,10 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
   renderedList.forEach(item => {
     const { x, y, w: vw, h: vh } = item.rect;
     const bodyColor = item.color === 'White' ? '#e2e8f0' :
-                      item.color === 'Black' ? '#1e293b' :
+                      item.color === 'Black' ? '#2c4f8a' :
                       item.color === 'Red' ? '#dc2626' :
                       item.color === 'Silver' ? '#94a3b8' :
-                      item.color === 'Blue' ? '#2563eb' : '#fbbf24';
+                      item.color === 'Blue' ? '#213d77' : '#ec6e2a';
 
     // Shadow
     ctx.fillStyle = 'rgba(0,0,0,0.5)';
@@ -3984,7 +3984,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
     // Detection Label Tag above vehicle
     ctx.fillStyle = item.isTarget ? 'rgba(105, 240, 174, 0.9)' : 'rgba(15, 23, 42, 0.85)';
     ctx.fillRect(x - 3, y - 16, Math.min(88, vw + 14), 13);
-    ctx.fillStyle = item.isTarget ? '#000000' : '#38bdf8';
+    ctx.fillStyle = item.isTarget ? '#000000' : '#213d77';
     ctx.font = `bold ${Math.max(7, Math.min(9, w * 0.013))}px Inter, sans-serif`;
     ctx.fillText(`${item.isTarget ? ' ' : ''}${item.type} ${(item.conf * 100).toFixed(0)}%`, x, y - 6);
 
@@ -4016,7 +4016,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
   // Top Camera HUD
   ctx.fillStyle = 'rgba(0,0,0,0.7)';
   ctx.fillRect(0, 0, w, 24);
-  ctx.fillStyle = isRecMode ? '#fbbf24' : (isBus ? '#fbbf24' : '#00e5ff');
+  ctx.fillStyle = isRecMode ? '#ec6e2a' : (isBus ? '#ec6e2a' : '#00e5ff');
   ctx.font = `bold ${Math.max(8, Math.min(10, w * 0.016))}px JetBrains Mono, monospace`;
   ctx.fillText(`${isRecMode ? ' ARCHIVE PLAYBACK' : '* LIVE STREAM'}  ${step.cam}  ${isBus ? 'MOBILE NPU NODE' : 'FIXED ANPR'}`, 8, 15);
 
@@ -4025,14 +4025,14 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
   const ts = isRecMode 
     ? (STATE.liveCamera?.recordedTimestamp || '2026-09-19 10:24:18 IST')
     : `IST ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}  GPS: ${step.lat.toFixed(4)}, ${step.lng.toFixed(4)}`;
-  ctx.fillStyle = isRecMode ? '#fbbf24' : '#94a3b8';
+  ctx.fillStyle = isRecMode ? '#ec6e2a' : '#94a3b8';
   ctx.font = `${Math.max(7, Math.min(8, w * 0.013))}px JetBrains Mono`;
   ctx.fillText(ts, 8, 22);
 
   // Click-to-Track Hint Prompt
   ctx.fillStyle = 'rgba(10, 14, 23, 0.75)';
   ctx.fillRect(6, h - 18, 205, 16);
-  ctx.fillStyle = '#fb792b';
+  ctx.fillStyle = '#ec6e2a';
   ctx.font = 'bold 8px Inter';
   ctx.fillText(' Click any vehicle to acquire & track', 10, h - 6);
 
@@ -4241,7 +4241,7 @@ function updateConfRing(ringId, valId, tierId, conf) {
     return;
   }
   ring.style.strokeDashoffset = 263.89 * (1 - conf.overall);
-  ring.style.stroke = conf.tier === 'HIGH' ? '#34d399' : conf.tier === 'MEDIUM' ? '#fbbf24' : '#f87171';
+  ring.style.stroke = conf.tier === 'HIGH' ? '#34d399' : conf.tier === 'MEDIUM' ? '#ec6e2a' : '#f87171';
   valEl.textContent = (conf.overall * 100).toFixed(0) + '%';
   tierEl.textContent = conf.tier;
   tierEl.className = `conf-tier ${conf.tier.toLowerCase()}`;
@@ -4269,7 +4269,7 @@ function addTelemetryEntry(step, veh) {
     if (!feed) return;
     const item = document.createElement('div');
     item.className = `telem-item ${step.mobile ? 'mobile' : 'detection'}`;
-    item.innerHTML = `<span class="telem-ts">[${ts}]</span> <span class="telem-node">${step.cam}</span> - <span class="telem-plate">${veh.plate}</span> | ${(step.conf * 100).toFixed(0)}% ${step.mobile ? '| <span style="color:#fbbf24">MOBILE</span>' : ''} ${veh.isStolen ? '| <span class="telem-alert-text"> HOTLIST</span>' : ''}`;
+    item.innerHTML = `<span class="telem-ts">[${ts}]</span> <span class="telem-node">${step.cam}</span> - <span class="telem-plate">${veh.plate}</span> | ${(step.conf * 100).toFixed(0)}% ${step.mobile ? '| <span style="color:#ec6e2a">MOBILE</span>' : ''} ${veh.isStolen ? '| <span class="telem-alert-text"> HOTLIST</span>' : ''}`;
     feed.insertBefore(item, feed.firstChild);
     while (feed.children.length > CONFIG.MAX_TELEMETRY) feed.removeChild(feed.lastChild);
   });
@@ -4443,7 +4443,7 @@ function renderDossier() {
       </div>
       <div class="shot-body">
         <div class="shot-plate-crop-row">
-          <div class="spc-left"><span class="spc-crop-box">${veh.plate}</span>${step.mobile ? '<span style="font-size:8px;color:#fbbf24;font-weight:700">STN</span>' : ''}</div>
+          <div class="spc-left"><span class="spc-crop-box">${veh.plate}</span>${step.mobile ? '<span style="font-size:8px;color:#ec6e2a;font-weight:700">STN</span>' : ''}</div>
           <span class="spc-conf-badge">${(step.conf * 100).toFixed(0)}% OCR</span>
         </div>
         <div class="shot-info-table">
@@ -4455,7 +4455,7 @@ function renderDossier() {
         </div>
         <div class="shot-hash-line">SHA-256: ${hash}</div>
         <button class="assc-btn primary" style="font-size:9.5px;padding:5px 8px;width:100%;margin-top:8px;" onclick="inspectSightingFromDossier(${idx})">
-          📍 View &amp; Inspect Sighting on Tactical Map
+           View &amp; Inspect Sighting on Tactical Map
         </button>
       </div>
     `;
@@ -4479,7 +4479,7 @@ function inspectSightingFromDossier(idx) {
     STATE.maps.gis.flyTo([step.lat, step.lng], 15, { animate: true, duration: 1.0 });
   }
   playSound('chirp');
-  showToast('🗺️ SIGHTING LOCATED ON MAP', `Focused on Sighting #${idx + 1} (${veh.trajectory[idx]?.cam})`);
+  showToast(' SIGHTING LOCATED ON MAP', `Focused on Sighting #${idx + 1} (${veh.trajectory[idx]?.cam})`);
 }
 
 function drawShotCanvas(canvasId, step, veh) {
@@ -4495,7 +4495,7 @@ function drawShotCanvas(canvasId, step, veh) {
   ctx.fillStyle = '#262638';
   ctx.beginPath(); ctx.moveTo(0, h*0.55); ctx.lineTo(w, h*0.55); ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.fill();
 
-  ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
+  ctx.strokeStyle = '#ec6e2a'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, h*0.55); ctx.lineTo(w, h*0.55); ctx.stroke();
 
   const vx = w * 0.32, vy = h * 0.58, vw = 65, vh = 35;
@@ -4504,7 +4504,7 @@ function drawShotCanvas(canvasId, step, veh) {
   ctx.fillStyle = 'rgba(56,189,248,0.25)'; ctx.fillRect(vx + 42, vy + 3, 16, vh - 10);
   ctx.fillStyle = '#f8fafc'; ctx.fillRect(vx + 8, vy + vh - 10, 38, 8);
   ctx.fillStyle = '#000'; ctx.font = '5px JetBrains Mono'; ctx.fillText(veh.plate, vx + 10, vy + vh - 4);
-  ctx.strokeStyle = step.mobile ? '#fbbf24' : '#00e5ff'; ctx.lineWidth = 1.5; ctx.strokeRect(vx - 2, vy - 2, vw + 4, vh + 4);
+  ctx.strokeStyle = step.mobile ? '#ec6e2a' : '#00e5ff'; ctx.lineWidth = 1.5; ctx.strokeRect(vx - 2, vy - 2, vw + 4, vh + 4);
   ctx.fillStyle = step.mobile ? 'rgba(251,191,36,0.9)' : 'rgba(0,229,255,0.9)';
   ctx.fillRect(vx - 2, vy - 13, 55, 11);
   ctx.fillStyle = '#000'; ctx.font = 'bold 7px Inter'; ctx.fillText(`${veh.type} ${(step.conf * 100).toFixed(0)}%`, vx, vy - 4);
@@ -4658,7 +4658,7 @@ function drawBRTSCanvas(targetId) {
     ctx.fillStyle = 'rgba(248,113,113,0.6)'; ctx.font = 'bold 10px Inter'; ctx.fillText('DEDICATED BRTS LANE', 10, h*0.55);
 
     // Bus icon
-    ctx.fillStyle = '#fbbf24'; ctx.fillRect(w*0.6, h*0.45, 50, 25);
+    ctx.fillStyle = '#ec6e2a'; ctx.fillRect(w*0.6, h*0.45, 50, 25);
     ctx.fillStyle = '#000'; ctx.font = 'bold 10px Inter'; ctx.fillText('BUS', w*0.62, h*0.58);
 
     // Violating car
@@ -4672,7 +4672,7 @@ function drawBRTSCanvas(targetId) {
 
     // Top HUD
     ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(0, 0, w, 18);
-    ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 9px JetBrains Mono'; ctx.fillText(`* REC  BUS-DTC-419  BRTS ENFORCEMENT`, 8, 12);
+    ctx.fillStyle = '#ec6e2a'; ctx.font = 'bold 9px JetBrains Mono'; ctx.fillText(`* REC  BUS-DTC-419  BRTS ENFORCEMENT`, 8, 12);
   });
 }
 
@@ -4715,7 +4715,7 @@ function drawAQIChart(targetId) {
     // PM10 line
     const pm10 = STATE.ps124.pm10History;
     if (pm10.length >= 2) {
-      ctx.strokeStyle = '#818cf8'; ctx.lineWidth = 1;
+      ctx.strokeStyle = '#2c4f8a'; ctx.lineWidth = 1;
       ctx.beginPath();
       pm10.forEach((val, i) => {
         const x = (i / (pm10.length - 1)) * w;
@@ -4728,7 +4728,7 @@ function drawAQIChart(targetId) {
     // Legend
     ctx.fillStyle = '#34d399'; ctx.fillRect(w - 80, 5, 8, 3);
     ctx.fillStyle = '#94a3b8'; ctx.font = '7px Inter'; ctx.fillText('PM2.5', w - 68, 9);
-    ctx.fillStyle = '#818cf8'; ctx.fillRect(w - 80, 13, 8, 3);
+    ctx.fillStyle = '#2c4f8a'; ctx.fillRect(w - 80, 13, 8, 3);
     ctx.fillStyle = '#94a3b8'; ctx.fillText('PM10', w - 68, 17);
   });
 }
@@ -4861,9 +4861,9 @@ const OSINT_SATELLITES = [
 
 const OSINT_AIRSPACE = [
   { id: 'VIDP-R1', name: 'VIDP-R1 Lutyens VIP Zone', desc: 'Lutyens VIP Restricted Corridor (0 - FL100, Anti-Drone Red Zone)', color: '#ef4444', label: 'VIDP-R1 NO-FLY ZONE', alt: 'SFC to FL100 (10,000 ft)', speed: 'RESTRICTED (0 KTS)', hdg: null, squawk: 'PROHIBITED (NO FLIGHT)', payload: 'Counter-UAS Drone Jammer Active', status: 'RED NO-DRONE AIRSPACE', polygon: [[28.625, 77.195], [28.630, 77.218], [28.610, 77.225], [28.595, 77.200], [28.610, 77.188]], marker: null },
-  { id: 'AFB-HINDON', name: 'Hindon AFB Security Buffer', desc: 'Hindon Air Force Base Tactical Buffer & Ingress Corridor', color: '#f59e0b', label: 'AFB HINDON BUFFER', alt: 'SFC to FL150 (15,000 ft)', speed: 'TACTICAL BUFFER', hdg: null, squawk: 'MILITARY ATC CLEARANCE', payload: 'IAF Air Surveillance Radar Arcs', status: 'CAUTION ZONE', polygon: [[28.685, 77.330], [28.730, 77.350], [28.720, 77.410], [28.670, 77.380]], marker: null },
+  { id: 'AFB-HINDON', name: 'Hindon AFB Security Buffer', desc: 'Hindon Air Force Base Tactical Buffer & Ingress Corridor', color: '#ec6e2a', label: 'AFB HINDON BUFFER', alt: 'SFC to FL150 (15,000 ft)', speed: 'TACTICAL BUFFER', hdg: null, squawk: 'MILITARY ATC CLEARANCE', payload: 'IAF Air Surveillance Radar Arcs', status: 'CAUTION ZONE', polygon: [[28.685, 77.330], [28.730, 77.350], [28.720, 77.410], [28.670, 77.380]], marker: null },
   { id: 'CENTRAL-VISTA', name: 'Central Vista Sterile Perimeter', desc: 'Parliament House & Central Vista Sterile Ground-to-Air Grid', color: '#dc2626', label: 'PARLIAMENT STERILE', alt: 'SFC to UNLIMITED', speed: 'STERILE', hdg: null, squawk: 'ABSOLUTE LOCK', payload: 'NSG Tactical Snipers & RF Shield', status: 'STERILE AIRSPACE', polygon: [[28.620, 77.202], [28.622, 77.214], [28.614, 77.215], [28.612, 77.204]], marker: null },
-  { id: 'IGI-CTR', name: 'IGI Airport Control Zone', desc: 'Indira Gandhi International Airport Runway Ingress/Egress CTR', color: '#3b82f6', label: 'IGI AIRPORT CTR', alt: 'SFC to 3,000 ft AGL', speed: 'CONTROLLED', hdg: null, squawk: 'CLASS D AIRSPACE', payload: 'Delhi Approach Radar 126.35 MHz', status: 'CIVIL AIRSPACE', polygon: [[28.535, 77.060], [28.585, 77.080], [28.570, 77.140], [28.520, 77.120]], marker: null }
+  { id: 'IGI-CTR', name: 'IGI Airport Control Zone', desc: 'Indira Gandhi International Airport Runway Ingress/Egress CTR', color: '#213d77', label: 'IGI AIRPORT CTR', alt: 'SFC to 3,000 ft AGL', speed: 'CONTROLLED', hdg: null, squawk: 'CLASS D AIRSPACE', payload: 'Delhi Approach Radar 126.35 MHz', status: 'CIVIL AIRSPACE', polygon: [[28.535, 77.060], [28.585, 77.080], [28.570, 77.140], [28.520, 77.120]], marker: null }
 ];
 
 const OSINT_AQI = [
@@ -4923,7 +4923,7 @@ function initGodsEye() {
   FIXED_CAMERAS.forEach(cam => {
     const icon = L.divIcon({ className: 'ge-marker-cam', iconSize: [12, 12], iconAnchor: [6, 6] });
     const marker = L.marker([cam.lat, cam.lng], { icon }).addTo(map);
-    marker.bindPopup(`<div style="padding:3px;background:#0a0e17;color:#00e5ff;font-size:10px;font-weight:700">${cam.id}<br><span style="color:#94a3b8;font-size:9px">${cam.name}</span><br><span style="color:#34d399;font-size:8px">Click to inspect feed</span></div>`, { className: 'ge-popup' });
+    marker.bindPopup(`<div style="padding:3px;background:#f4f6fb;color:#00e5ff;font-size:10px;font-weight:700">${cam.id}<br><span style="color:#94a3b8;font-size:9px">${cam.name}</span><br><span style="color:#ec6e2a;font-size:8px">Click to inspect feed</span></div>`, { className: 'ge-popup' });
     marker.on('click', () => GODSEYE.openSensorPiP(cam));
     GODSEYE.markers.cameras.push(marker);
 
@@ -4937,7 +4937,7 @@ function initGodsEye() {
     }
     arcPoints.push([cam.lat, cam.lng]);
     const arc = L.polygon(arcPoints, {
-      color: '#00e5ff', fillColor: '#00e5ff', fillOpacity: 0.07, weight: 1, opacity: 0.35
+      color: '#213d77', fillColor: '#00e5ff', fillOpacity: 0.07, weight: 1, opacity: 0.35
     }).addTo(map);
     GODSEYE.markers.coverageArcs.push(arc);
   });
@@ -4948,14 +4948,14 @@ function initGodsEye() {
     const icon = L.divIcon({ className: 'ge-marker-bus', iconSize: [12, 12], iconAnchor: [6, 6] });
     const wp = STATE.busPositions[bus.id] || bus.waypoints[0];
     const marker = L.marker([wp.lat, wp.lng], { icon }).addTo(map);
-    marker.bindPopup(`<div style="padding:3px;background:#0a0e17;color:#fbbf24;font-size:10px;font-weight:700">${bus.id}<br><span style="color:#94a3b8;font-size:9px">${bus.name}</span><br><span style="color:#34d399;font-size:8px">Click to inspect feed</span></div>`, { className: 'ge-popup' });
+    marker.bindPopup(`<div style="padding:3px;background:#f4f6fb;color:#ec6e2a;font-size:10px;font-weight:700">${bus.id}<br><span style="color:#94a3b8;font-size:9px">${bus.name}</span><br><span style="color:#ec6e2a;font-size:8px">Click to inspect feed</span></div>`, { className: 'ge-popup' });
     marker.on('click', () => GODSEYE.openSensorPiP({ id: bus.id, name: bus.name, lat: wp.lat, lng: wp.lng, heading: 90 }));
     GODSEYE.markers.buses.push({ id: bus.id, marker });
   });
 
   // Initialize Line-of-Sight dynamic beam
   GODSEYE.losBeam = L.polyline([], {
-    color: '#00e5ff',
+    color: '#213d77',
     weight: 2,
     opacity: 0.85,
     dashArray: '6 6',
@@ -5036,7 +5036,7 @@ function initGodsEye() {
   // ════════════ 7. GODSEYE 1.0 OSINT LAYER: AQI ENVIRONMENTAL MESH ════════════
   GODSEYE.markers.aqi = [];
   OSINT_AQI.forEach(zone => {
-    const dotColor = zone.aqi > 300 ? '#ef4444' : (zone.aqi > 200 ? '#f59e0b' : '#34d399');
+    const dotColor = zone.aqi > 300 ? '#ef4444' : (zone.aqi > 200 ? '#ec6e2a' : '#34d399');
     const aqiIcon = L.divIcon({
       className: 'ge-marker-aqi',
       html: `<span class="ge-aqi-dot" style="background:${dotColor};box-shadow:0 0 6px ${dotColor};"></span><span>${zone.name}: ${zone.aqi}</span>`,
@@ -5303,14 +5303,14 @@ GODSEYE.openSensorPiP = function(node) {
     // YOLO tag
     ctx.fillStyle = 'rgba(0, 229, 255, 0.9)';
     ctx.fillRect(bx, by - 13, 76, 13);
-    ctx.fillStyle = '#0a0e17';
+    ctx.fillStyle = '#f4f6fb';
     ctx.font = 'bold 8px monospace';
     ctx.fillText('YOLOv8 98.4%', bx + 4, by - 3);
 
     // License Plate tag
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(bx + 14, by + bh - 15, 56, 13);
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = '#213d77';
     ctx.font = 'bold 7.5px monospace';
     const veh = VEHICLES.find(v => v.id === STATE.selectedVehicle) || VEHICLES[0];
     ctx.fillText(veh.plate, bx + 17, by + bh - 5);
@@ -5426,7 +5426,7 @@ GODSEYE.switchTarget = function(vehicleId) {
     // Update trajectory
     if (GODSEYE.markers.trajectory) map.removeLayer(GODSEYE.markers.trajectory);
     const points = (veh.roadPath || veh.trajectory).map(t => [t.lat, t.lng]);
-    const geCasing = L.polyline(points, { color: '#00e5ff', weight: 7, opacity: 0.38, lineCap: 'round', lineJoin: 'round' });
+    const geCasing = L.polyline(points, { color: '#213d77', weight: 7, opacity: 0.38, lineCap: 'round', lineJoin: 'round' });
     const geLine = L.polyline(points, { color: veh.isStolen ? '#f87171' : '#69f0ae', weight: 3.5, opacity: 0.95, dashArray: '8 6', lineCap: 'round', lineJoin: 'round' });
     GODSEYE.markers.trajectory = L.layerGroup([geCasing, geLine]).addTo(map);
 
@@ -5468,7 +5468,7 @@ function openGodsEye() {
   // Draw road-matched trajectory line
   if (GODSEYE.markers.trajectory) map.removeLayer(GODSEYE.markers.trajectory);
   const points = (veh.roadPath || veh.trajectory).map(t => [t.lat, t.lng]);
-  const geCasing = L.polyline(points, { color: '#00e5ff', weight: 7, opacity: 0.38, lineCap: 'round', lineJoin: 'round' });
+  const geCasing = L.polyline(points, { color: '#213d77', weight: 7, opacity: 0.38, lineCap: 'round', lineJoin: 'round' });
   const geLine = L.polyline(points, { color: veh.isStolen ? '#f87171' : '#69f0ae', weight: 3.5, opacity: 0.95, dashArray: '8 6', lineCap: 'round', lineJoin: 'round' });
   GODSEYE.markers.trajectory = L.layerGroup([geCasing, geLine]).addTo(map);
 
@@ -5476,7 +5476,7 @@ function openGodsEye() {
   if (GODSEYE.markers.target) map.removeLayer(GODSEYE.markers.target);
   const targetIcon = L.divIcon({ className: 'ge-marker-target', iconSize: [22, 22], iconAnchor: [11, 11] });
   GODSEYE.markers.target = L.marker([step.lat, step.lng], { icon: targetIcon, zIndexOffset: 2000 }).addTo(map);
-  GODSEYE.markers.target.bindPopup(`<div style="padding:4px;background:#0a0e17;color:#f87171;font-size:11px;font-weight:800">${veh.plate}<br><span style="color:#94a3b8;font-size:9px">${veh.make} · ${veh.color}</span>${veh.isStolen ? '<br><span style="color:#f87171"> STOLEN VEHICLE</span>' : ''}<br><span style="color:#00e5ff;font-size:8px;font-weight:700"> ${step.street || veh.corridorName}</span></div>`);
+  GODSEYE.markers.target.bindPopup(`<div style="padding:4px;background:#f4f6fb;color:#f87171;font-size:11px;font-weight:800">${veh.plate}<br><span style="color:#94a3b8;font-size:9px">${veh.make} · ${veh.color}</span>${veh.isStolen ? '<br><span style="color:#f87171"> STOLEN VEHICLE</span>' : ''}<br><span style="color:#00e5ff;font-size:8px;font-weight:700"> ${step.street || veh.corridorName}</span></div>`);
 
   // Telemetry panels
   updateGodsEyePanels(veh, step, stepIdx);
@@ -5572,7 +5572,7 @@ GODSEYE.updateInterceptionMatrix = function(veh, pos) {
       </div>
       <div class="ge-ii-meta">
         <span>ETA: <strong style="color:#00e5ff">${cp.targetEtaStr}</strong> (${cp.distKm}km)</span>
-        <span>Unit: <strong style="color:#fbbf24">${cp.unit}</strong></span>
+        <span>Unit: <strong style="color:#ec6e2a">${cp.unit}</strong></span>
       </div>
     `;
 
@@ -5601,11 +5601,11 @@ GODSEYE.updateInterceptionMatrix = function(veh, pos) {
       });
       const marker = L.marker([cp.lat, cp.lng], { icon }).addTo(GODSEYE.map);
       marker.bindPopup(`
-        <div style="padding:4px;background:#0a0e17;color:#f87171;font-size:10px;font-weight:800">
+        <div style="padding:4px;background:#f4f6fb;color:#f87171;font-size:10px;font-weight:800">
            STRATEGIC CHOKEPOINT: ${cp.name}<br>
           <span style="color:#00e5ff;font-size:9px">Target ETA: ${cp.targetEtaStr} · Dist: ${cp.distKm} km</span><br>
-          <span style="color:#34d399;font-size:9px">Interceptor: ${cp.unit} · Match: ${cp.probPct}%</span><br>
-          <span style="color:#fbbf24;font-size:8px;font-weight:700">Action: ${cp.action}</span>
+          <span style="color:#ec6e2a;font-size:9px">Interceptor: ${cp.unit} · Match: ${cp.probPct}%</span><br>
+          <span style="color:#ec6e2a;font-size:8px;font-weight:700">Action: ${cp.action}</span>
         </div>
       `);
       marker.on('click', () => {
@@ -6829,8 +6829,8 @@ function renderCorridorSpeedGrid() {
   UTA_STATE.corridors.forEach(c => {
     let meterColor = '#34d399';
     if (c.los === 'los-f') meterColor = '#ef4444';
-    else if (c.los === 'los-e') meterColor = '#f97316';
-    else if (c.los === 'los-c') meterColor = '#fbbf24';
+    else if (c.los === 'los-e') meterColor = '#ec6e2a';
+    else if (c.los === 'los-c') meterColor = '#ec6e2a';
 
     html += `
       <div class="corridor-card">
@@ -6868,7 +6868,7 @@ function drawBRTSCanvas(canvasId) {
     ctx.fillRect(0, 0, w, h);
 
     // Perspective road lines
-    ctx.strokeStyle = '#334155';
+    ctx.strokeStyle = '#4a6ba5';
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(w * 0.1, h);
@@ -6878,7 +6878,7 @@ function drawBRTSCanvas(canvasId) {
     ctx.stroke();
 
     // Yellow BRTS Bus Lane
-    ctx.strokeStyle = '#f59e0b';
+    ctx.strokeStyle = '#ec6e2a';
     ctx.lineWidth = 4;
     ctx.setLineDash([12, 8]);
     ctx.beginPath();
@@ -7345,7 +7345,7 @@ function setDashboardPredictHorizon(mins) {
   if (chokeEl) chokeEl.textContent = p.choke;
 
   const advEl = document.getElementById('dpb-advisory');
-  if (advEl) advEl.innerHTML = `<span>💡 Advisory: <strong>${p.advisory}</strong></span>`;
+  if (advEl) advEl.innerHTML = `<span> Advisory: <strong>${p.advisory}</strong></span>`;
 }
 
 function triggerGreenCorridorWave() {
@@ -7482,7 +7482,7 @@ function renderDashboardTrafficChart() {
     ctx.strokeRect(x, y, barW, barH);
   }
 
-  // Average Velocity Curve (IRCTC Saffron #fb792b in Gov mode, Cyan #00f0ff in Tactical mode)
+  // Average Velocity Curve (IRCTC Saffron #ec6e2a in Gov mode, Cyan #ec6e2a in Tactical mode)
   const speedData = [52, 54, 28, 38, 26, 34, 48];
   ctx.beginPath();
   for (let i = 0; i < speedData.length; i++) {
@@ -7491,9 +7491,9 @@ function renderDashboardTrafficChart() {
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
-  ctx.strokeStyle = isGov ? '#fb792b' : '#00f0ff';
+  ctx.strokeStyle = isGov ? '#ec6e2a' : '#ec6e2a';
   ctx.lineWidth = isGov ? 3 : 2.5;
-  ctx.shadowColor = isGov ? 'rgba(251, 121, 43, 0.4)' : 'rgba(0, 240, 255, 0.6)';
+  ctx.shadowColor = isGov ? 'rgba(251, 121, 43, 0.4)' : 'rgba(236, 110, 42, 0.6)';
   ctx.shadowBlur = 8;
   ctx.stroke();
   ctx.shadowBlur = 0; // reset
@@ -7502,11 +7502,11 @@ function renderDashboardTrafficChart() {
   for (let i = 0; i < speedData.length; i++) {
     const x = 35 + i * colW;
     const y = 20 + ((60 - speedData[i]) / 50) * (h - 50);
-    ctx.fillStyle = isGov ? '#ffffff' : '#0b111e';
+    ctx.fillStyle = isGov ? '#ffffff' : '#213d77';
     ctx.beginPath();
     ctx.arc(x, y, 4.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = isGov ? '#fb792b' : '#00f0ff';
+    ctx.fillStyle = isGov ? '#ec6e2a' : '#ec6e2a';
     ctx.beginPath();
     ctx.arc(x, y, 3, 0, Math.PI * 2);
     ctx.fill();
@@ -7550,8 +7550,7 @@ function updateCameraInterconnectionMesh(map) {
   }
 
   // For each mobile bus camera, find 2 nearest fixed cameras and draw optical telemetry mesh link
-  if (STATE.maps.gis) updateCameraInterconnectionMesh(STATE.maps.gis);
-    BUS_ROUTES.forEach(bus => {
+  BUS_ROUTES.forEach(bus => {
     const bPos = STATE.busPositions[bus.id];
     if (!bPos) return;
 
@@ -7568,7 +7567,7 @@ function updateCameraInterconnectionMesh(map) {
         [bPos.lat, bPos.lng],
         [cam.lat, cam.lng]
       ], {
-        color: '#fb792b',
+        color: '#ec6e2a',
         weight: 1.5,
         opacity: 0.55,
         dashArray: '4, 6',
@@ -7577,4 +7576,144 @@ function updateCameraInterconnectionMesh(map) {
       _cameraMeshLayer.addLayer(poly);
     });
   });
+}
+
+
+/* ============================================================
+   COLLAPSIBLE HERO DRAWER TOGGLES
+   ============================================================ */
+function toggleCollapsibleDrawer(drawerId) {
+  const card = document.getElementById(drawerId);
+  if (!card) return;
+  const isCollapsed = card.classList.contains('collapsed');
+  if (isCollapsed) {
+    card.classList.remove('collapsed');
+    const btn = card.querySelector('.ch-toggle-btn');
+    if (btn) btn.textContent = '[-] COLLAPSE';
+  } else {
+    card.classList.add('collapsed');
+    const btn = card.querySelector('.ch-toggle-btn');
+    if (btn) btn.textContent = '[+] EXPAND';
+  }
+}
+
+/* ============================================================
+   MAP TRAJECTORY BUILDING & BUS-CAMERA MESH NETWORK
+   ============================================================ */
+let g_trajectoryBuildingPolyline = null;
+let g_trajectoryDroppedPins = [];
+let g_busCameraMeshLines = [];
+let g_meshNetworkEnabled = true;
+
+function initMapTrajectoryBuilding() {
+  if (!state || !state.map) return;
+  
+  // Create or reset dynamic trajectory polyline
+  if (g_trajectoryBuildingPolyline) {
+    state.map.removeLayer(g_trajectoryBuildingPolyline);
+  }
+  g_trajectoryBuildingPolyline = L.polyline([], {
+    color: '#d4601f',
+    weight: 4,
+    opacity: 0.9,
+    dashArray: '8, 6',
+    lineCap: 'round',
+    className: 'leaflet-trajectory-line'
+  }).addTo(state.map);
+
+  // Clear any existing pins
+  g_trajectoryDroppedPins.forEach(pin => state.map.removeLayer(pin));
+  g_trajectoryDroppedPins = [];
+}
+
+function updateLiveTrajectoryBuilding(veh, currentPos, pathIndex) {
+  if (!state || !state.map || !veh || !veh.roadPath) return;
+  if (!g_trajectoryBuildingPolyline) initMapTrajectoryBuilding();
+
+  // Slice road path up to current index
+  const activePath = veh.roadPath.slice(0, Math.max(1, pathIndex + 1));
+  g_trajectoryBuildingPolyline.setLatLngs(activePath);
+
+  // Check sighting milestones and drop pins
+  if (veh.trajectory && Array.isArray(veh.trajectory)) {
+    veh.trajectory.forEach((sighting, idx) => {
+      if (pathIndex >= (sighting.pathIdx || 0) && !sighting._pinDropped) {
+        sighting._pinDropped = true;
+        
+        const pinIcon = L.divIcon({
+          className: 'sighting-pin-marker-container',
+          html: `<div class="sighting-pin-marker">${idx + 1}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
+        });
+
+        const pinMarker = L.marker([sighting.lat, sighting.lng], { icon: pinIcon })
+          .bindPopup(`<strong>Sighting #${idx + 1}</strong><br>${sighting.cam}<br>${sighting.street}<br>Conf: ${(sighting.conf * 100).toFixed(1)}%`)
+          .addTo(state.map);
+
+        g_trajectoryDroppedPins.push(pinMarker);
+
+        // Flash toast notification
+        showToast(
+          `SIGHTING #${idx + 1} CHAINED: ${sighting.cam}`,
+          `Suspect ${veh.plate} detected at ${sighting.street} (${(sighting.conf * 100).toFixed(1)}% Conf)`,
+          sighting.mobile ? false : true
+        );
+      }
+    });
+  }
+}
+
+function updateBusCameraMeshNetwork() {
+  if (!state || !state.map || !g_meshNetworkEnabled) return;
+
+  // Clear previous mesh lines
+  g_busCameraMeshLines.forEach(line => state.map.removeLayer(line));
+  g_busCameraMeshLines = [];
+
+  // Connect buses to nearby fixed cameras within 2.2km
+  const MAX_MESH_DIST_KM = 2.2;
+
+  BUS_ROUTES.forEach(busRoute => {
+    const busPos = busRoute._currentLatLng || (busRoute.roadPath && busRoute.roadPath[0]) || (busRoute.waypoints && [busRoute.waypoints[0].lat, busRoute.waypoints[0].lng]);
+    if (!busPos) return;
+
+    FIXED_CAMERAS.forEach(cam => {
+      const distKm = getHaversineDistanceKm(busPos[0], busPos[1], cam.lat, cam.lng);
+      if (distKm <= MAX_MESH_DIST_KM) {
+        // Draw dashed animated mesh link
+        const meshLine = L.polyline([busPos, [cam.lat, cam.lng]], {
+          color: '#ec6e2a',
+          weight: 2,
+          opacity: 0.7,
+          dashArray: '5, 8',
+          className: 'mesh-link-pulse'
+        }).addTo(state.map);
+
+        g_busCameraMeshLines.push(meshLine);
+      }
+    });
+  });
+}
+
+function getHaversineDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function toggleMeshInterconnections() {
+  g_meshNetworkEnabled = !g_meshNetworkEnabled;
+  if (!g_meshNetworkEnabled) {
+    g_busCameraMeshLines.forEach(line => state.map.removeLayer(line));
+    g_busCameraMeshLines = [];
+    showToast('MESH NETWORK', 'Bus-to-Camera Interconnection overlay disabled');
+  } else {
+    showToast('MESH NETWORK', 'Bus-to-Camera Interconnection active and linked');
+  }
 }
