@@ -66,13 +66,17 @@ const context = {
 
 // Extract everything up to startSimulation
 const cutIdx = appJs.indexOf('// ========================= SIMULATION ENGINE');
-const setupCode = appJs.substring(0, cutIdx > 0 ? cutIdx : 20000) + "\nthis.BUS_ROUTES = BUS_ROUTES;\nthis.VEHICLES = VEHICLES;\nthis.advanceEntityAlongRoad = advanceEntityAlongRoad;\n";
+const setupCode = `(() => {
+${appJs.substring(0, cutIdx > 0 ? cutIdx : 20000)}
+return { BUS_ROUTES, VEHICLES, advanceEntityAlongRoad };
+})()`;
 
 vm.createContext(context);
-vm.runInContext(setupCode, context);
+const exported = vm.runInContext(setupCode, context);
 
-const BUS_ROUTES = context.BUS_ROUTES;
-const VEHICLES = context.VEHICLES;
+const BUS_ROUTES = exported.BUS_ROUTES;
+const VEHICLES = exported.VEHICLES;
+const advanceEntityAlongRoad = exported.advanceEntityAlongRoad;
 
 console.log('--- 1. BUS ROUTES ROAD PATH VERIFICATION ---');
 BUS_ROUTES.forEach((bus) => {
@@ -115,7 +119,6 @@ VEHICLES.forEach((veh) => {
 
 // 3. Test Entity Interpolation & Speed Consistency
 console.log('\n--- 3. MOTION SMOOTHNESS & SPEED DRIFT TEST ---');
-const advanceEntityAlongRoad = context.advanceEntityAlongRoad;
 
 const dt = 0.05; // 50ms ticks
 BUS_ROUTES.forEach(bus => {

@@ -3552,28 +3552,6 @@ function startVehicleRoadGlide() {
           if (bodyEl) bodyEl.style.transform = `rotate(${pos.heading.toFixed(1)}deg)`;
         }
       }
-
-      // Mobile ANPR scanner cone 50m ahead of bus
-      if (STATE.maps.gis) {
-        const fovDist = 0.00045; // ~50m in lat/lng
-        const rad = pos.heading * Math.PI / 180;
-        const fovLat = pos.lat + Math.cos(rad) * fovDist;
-        const fovLng = pos.lng + Math.sin(rad) * fovDist;
-
-        if (!STATE.busScannerCones[bus.id]) {
-          STATE.busScannerCones[bus.id] = L.circle([fovLat, fovLng], {
-            radius: 55,
-            color: '#fbbf24',
-            fillColor: '#fbbf24',
-            fillOpacity: 0.12,
-            weight: 1,
-            dashArray: '4 4'
-          }).addTo(STATE.maps.gis);
-          STATE.busScannerCones[bus.id].bindTooltip(`🚌 ${bus.id} Mobile ANPR Scanning Zone`, { sticky: true });
-        } else {
-          STATE.busScannerCones[bus.id].setLatLng([fovLat, fovLng]);
-        }
-      }
     });
 
     // 2. Update all Vehicles (Target + Ambient Traffic)
@@ -4331,9 +4309,6 @@ function startSimulation() {
   // Start continuous, building-free road glide along official arterial corridors
   startVehicleRoadGlide();
 
-  // Move buses
-  STATE.timers.bus = setInterval(moveBuses, CONFIG.SIM_SPEED);
-
   // Coverage
   const covEl = document.getElementById('gis-coverage');
   if (covEl) covEl.textContent = ((FIXED_CAMERAS.length * 0.8 + BUS_ROUTES.length * 2.2) / (FIXED_CAMERAS.length + BUS_ROUTES.length) * 35).toFixed(0) + '%';
@@ -4397,55 +4372,6 @@ function startSimulation() {
     const el = document.getElementById('hotlist-latency');
     if (el) el.textContent = (2.5 + Math.random() * 4.5).toFixed(1) + 'ms';
   }, 3000);
-}
-
-function moveBuses() {
-  if (!STATE.busScannerCones) STATE.busScannerCones = {};
-
-  BUS_ROUTES.forEach(bus => {
-    let idx = STATE.busWaypointIndex[bus.id];
-    const wps = bus.waypoints;
-    if (idx >= wps.length - 1) { STATE.busWaypointIndex[bus.id] = 0; idx = 0; }
-    const from = wps[idx], to = wps[idx + 1];
-    if (!to) return;
-    const t = (STATE.simTick % 5) / 5;
-    const lat = from.lat + (to.lat - from.lat) * t;
-    const lng = from.lng + (to.lng - from.lng) * t;
-    STATE.busPositions[bus.id] = { lat, lng };
-
-    const marker = STATE.markers.buses[bus.id];
-    if (marker) marker.setLatLng([lat, lng]);
-
-    // Render / update mobile ANPR scanner cone ahead of the bus on Tactical GIS Map
-    if (STATE.maps.gis) {
-      const dLng = to.lng - from.lng;
-      const dLat = to.lat - from.lat;
-      const heading = (Math.atan2(dLng, dLat) * 180 / Math.PI + 360) % 360;
-
-      // Small 50m forward scanner circle representing Hailo-8 NPU camera FOV
-      const fovDist = 0.0006;
-      const rad = heading * Math.PI / 180;
-      const fovLat = lat + Math.cos(rad) * fovDist;
-      const fovLng = lng + Math.sin(rad) * fovDist;
-
-      if (!STATE.busScannerCones[bus.id]) {
-        STATE.busScannerCones[bus.id] = L.circle([fovLat, fovLng], {
-          radius: 65,
-          color: '#fbbf24',
-          fillColor: '#fbbf24',
-          fillOpacity: 0.12,
-          weight: 1,
-          dashArray: '4 4'
-        }).addTo(STATE.maps.gis);
-        STATE.busScannerCones[bus.id].bindTooltip(` ${bus.id} Mobile ANPR Scanning Zone`, { sticky: true });
-      } else {
-        STATE.busScannerCones[bus.id].setLatLng([fovLat, fovLng]);
-      }
-    }
-
-    if (t >= 0.99) STATE.busWaypointIndex[bus.id] = idx + 1;
-  });
-  STATE.simTick++;
 }
 
 // ========================= GIS TIMELINE CONTROLS =========================
