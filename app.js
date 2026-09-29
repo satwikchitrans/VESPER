@@ -866,7 +866,7 @@ function renderSightingSnapshot(canvas, veh, step, stepIdx) {
   ctx.beginPath();
   ctx.roundRect(cx - carW/2, cy, carW, carH, 4);
   ctx.fill();
-  ctx.strokeStyle = '#00f0ff';
+  ctx.strokeStyle = '#38bdf8';
   ctx.lineWidth = 1;
   ctx.stroke();
 
@@ -7457,7 +7457,7 @@ function renderDashboardTrafficChart() {
     const y = h - 25 - barH;
 
     const grad = ctx.createLinearGradient(0, y, 0, h - 25);
-    grad.addColorStop(0, 'rgba(59, 130, 246, 0.6)');
+    grad.addColorStop(0, 'rgba(37, 99, 235, 0.7)');
     grad.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
 
     ctx.fillStyle = grad;
@@ -7475,9 +7475,9 @@ function renderDashboardTrafficChart() {
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
-  ctx.strokeStyle = '#00f0ff';
+  ctx.strokeStyle = '#38bdf8';
   ctx.lineWidth = 2.5;
-  ctx.shadowColor = 'rgba(0, 240, 255, 0.6)';
+  ctx.shadowColor = 'rgba(56, 189, 248, 0.4)';
   ctx.shadowBlur = 8;
   ctx.stroke();
   ctx.shadowBlur = 0; // reset
@@ -7490,7 +7490,7 @@ function renderDashboardTrafficChart() {
     ctx.beginPath();
     ctx.arc(x, y, 4, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#00f0ff';
+    ctx.fillStyle = '#38bdf8';
     ctx.beginPath();
     ctx.arc(x, y, 2.5, 0, Math.PI * 2);
     ctx.fill();
@@ -7499,7 +7499,7 @@ function renderDashboardTrafficChart() {
   // Congestion Threshold Line (Amber Dashed)
   const threshY = 20 + ((60 - 30) / 50) * (h - 50);
   ctx.setLineDash([4, 4]);
-  ctx.strokeStyle = 'rgba(245, 158, 11, 0.6)';
+  ctx.strokeStyle = 'rgba(249, 115, 22, 0.7)';
   ctx.lineWidth = 1.2;
   ctx.beginPath();
   ctx.moveTo(35, threshY);
