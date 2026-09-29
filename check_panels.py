@@ -1,12 +1,13 @@
 import re
 
 with open('index.html', 'r', encoding='utf-8') as f:
-    h = f.read()
+    lines = f.readlines()
 
-print("--- Panels ---")
-for m in re.finditer(r'<section[^>]+id="(window-[^"]+)"[^>]*>', h):
-    print(m.group(0))
+for i, line in enumerate(lines):
+    if '<section class="window-panel' in line:
+        print(f"Line {i+1}: {line.strip()}")
+        # print next 5 lines
+        for j in range(1, 6):
+            if i+j < len(lines):
+                print(f"   {lines[i+j].strip()[:80]}")
 
-print("--- Tabs ---")
-for m in re.finditer(r'<button[^>]+data-window="([^"]+)"[^>]*>', h):
-    print(m.group(0))

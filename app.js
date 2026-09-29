@@ -1164,6 +1164,7 @@ function switchWindow(windowId) {
 
   // Lazy initialize maps and content
   setTimeout(() => {
+    if (windowId === 'dashboard') { initDashboard(); }
     if (windowId === 'surveillance' && !STATE.mapsInitialized.surv) {
       initSurvMap();
       STATE.mapsInitialized.surv = true;
@@ -7151,3 +7152,368 @@ window.closeGodsEye = closeGodsEye;
 window.openLiveCameraModal = openLiveCameraModal;
 window.closeLiveCameraModal = closeLiveCameraModal;
 
+
+
+// ============================================================
+// EXECUTIVE TRAFFIC DASHBOARD & ARTERIAL FLOW ENGINE
+// ============================================================
+
+const DASHBOARD_DATA = {
+  currentRegime: 'normal',
+  selectedCorridor: 'c1',
+  chartMode: '24h',
+  predictHorizon: 15,
+  corridors: {
+    c1: {
+      name: 'Karol Bagh ↔ CP ↔ ITO ↔ Pragati Maidan',
+      vol: '4,120 veh/h',
+      speed: '34 km/h',
+      los: 'LOS B',
+      losClass: 'los-b',
+      cong: '22%',
+      sync: '94%',
+      capacity: '5,200 veh/hr (V/C: 0.79)',
+      density: '38.4 vehicles / km',
+      travelTime: '14.2 min (Baseline: 12.0 min)',
+      transitTSP: 'Route 419 Bus TSP Active (14.6 FPS)',
+      bottleneck: 'ITO Junction Westbound · Delay: +2.1m'
+    },
+    c2: {
+      name: 'AIIMS Flyover ↔ Ring Road ↔ Moolchand ↔ Nehru Place',
+      vol: '5,680 veh/h',
+      speed: '42 km/h',
+      los: 'LOS C',
+      losClass: 'los-c',
+      cong: '36%',
+      sync: '91%',
+      capacity: '6,400 veh/hr (V/C: 0.88)',
+      density: '48.2 vehicles / km',
+      travelTime: '18.5 min (Baseline: 14.5 min)',
+      transitTSP: 'Route 522 Bus TSP Active (14.8 FPS)',
+      bottleneck: 'Lajpat Nagar Ring Road Merge · Delay: +3.8m'
+    },
+    c3: {
+      name: 'Dhaula Kuan ↔ Sardar Patel Marg ↔ India Gate',
+      vol: '3,450 veh/h',
+      speed: '48 km/h',
+      los: 'LOS A',
+      losClass: 'los-a',
+      cong: '14%',
+      sync: '98%',
+      capacity: '5,000 veh/hr (V/C: 0.69)',
+      density: '24.1 vehicles / km',
+      travelTime: '11.0 min (Baseline: 10.5 min)',
+      transitTSP: 'Route 764 Bus TSP Active (15.0 FPS)',
+      bottleneck: 'Express Flow · Optimal Transit Green Wave'
+    },
+    c4: {
+      name: 'Connaught Place ↔ India Gate ↔ AIIMS ↔ Saket',
+      vol: '4,890 veh/h',
+      speed: '31 km/h',
+      los: 'LOS C',
+      losClass: 'los-c',
+      cong: '41%',
+      sync: '88%',
+      capacity: '5,500 veh/hr (V/C: 0.89)',
+      density: '52.6 vehicles / km',
+      travelTime: '21.4 min (Baseline: 16.0 min)',
+      transitTSP: 'Route 335 Express TSP Active (14.2 FPS)',
+      bottleneck: 'Aurobindo Marg Influx · Delay: +4.5m'
+    }
+  },
+  predictions: {
+    15: {
+      speed: '38.6 km/h (▲ +1.2 km/h)',
+      prob: '18% (Low Risk)',
+      choke: 'Lajpat Nagar Merge (34%)',
+      advisory: 'Maintain current green wave on C-01 & C-03. Route 522 bus mobile ANPR units will monitor Ring Road inflow.'
+    },
+    30: {
+      speed: '36.2 km/h (▼ -1.2 km/h)',
+      prob: '28% (Moderate Influx)',
+      choke: 'ITO Junction / Vikas Marg (46%)',
+      advisory: 'Prepare 8s cycle extension on North-South signal corridor at 16:30. DTC Bus headway normal.'
+    },
+    60: {
+      speed: '32.8 km/h (▼ -4.6 km/h)',
+      prob: '54% (Peak Hour Build-up)',
+      choke: 'Connaught Place Outer Circle (62%)',
+      advisory: 'Recommend automated detour advisory for commercial logistics to Ring Road Expressway.'
+    }
+  }
+};
+
+function initDashboard() {
+  renderDashboardTrafficChart();
+  updateDashboardMetrics();
+}
+
+function selectDashboardCorridor(corridorId) {
+  DASHBOARD_DATA.selectedCorridor = corridorId;
+  playSound('click');
+
+  document.querySelectorAll('.corridor-item').forEach(el => el.classList.remove('active'));
+  const activeEl = document.getElementById(`ci-${corridorId}`);
+  if (activeEl) activeEl.classList.add('active');
+
+  const c = DASHBOARD_DATA.corridors[corridorId];
+  if (!c) return;
+
+  const sccTitle = document.getElementById('scc-title');
+  if (sccTitle) sccTitle.textContent = `${corridorId.toUpperCase()}: ${c.name.toUpperCase()}`;
+
+  const sccCap = document.getElementById('scc-capacity');
+  if (sccCap) sccCap.textContent = c.capacity;
+
+  const sccDens = document.getElementById('scc-density');
+  if (sccDens) sccDens.textContent = c.density;
+
+  const sccTT = document.getElementById('scc-tt');
+  if (sccTT) sccTT.textContent = c.travelTime;
+
+  const sccTransit = document.getElementById('scc-transit');
+  if (sccTransit) sccTransit.textContent = c.transitTSP;
+}
+
+function onDashboardRegimeChange(regimeKey) {
+  DASHBOARD_DATA.currentRegime = regimeKey;
+  playSound('click');
+
+  const flowEl = document.getElementById('dash-kpi-flow');
+  const speedEl = document.getElementById('dash-kpi-speed');
+  const congEl = document.getElementById('dash-kpi-congestion');
+  const badgeEl = document.getElementById('dash-flow-badge');
+
+  if (regimeKey === 'am_peak') {
+    if (flowEl) flowEl.textContent = '178,400';
+    if (speedEl) speedEl.innerHTML = '29.2 <span class="dkc-unit">km/h</span>';
+    if (congEl) congEl.textContent = '44.6%';
+    if (badgeEl) { badgeEl.textContent = '▲ PEAK AM INFLUX'; badgeEl.className = 'dkc-badge amber'; }
+  } else if (regimeKey === 'pm_peak') {
+    if (flowEl) flowEl.textContent = '192,650';
+    if (speedEl) speedEl.innerHTML = '27.4 <span class="dkc-unit">km/h</span>';
+    if (congEl) congEl.textContent = '52.1%';
+    if (badgeEl) { badgeEl.textContent = '▲ PEAK PM COMMUTE'; badgeEl.className = 'dkc-badge amber'; }
+  } else if (regimeKey === 'night') {
+    if (flowEl) flowEl.textContent = '42,100';
+    if (speedEl) speedEl.innerHTML = '54.8 <span class="dkc-unit">km/h</span>';
+    if (congEl) congEl.textContent = '8.2%';
+    if (badgeEl) { badgeEl.textContent = '▼ FREE FLOW'; badgeEl.className = 'dkc-badge green'; }
+  } else {
+    if (flowEl) flowEl.textContent = '142,850';
+    if (speedEl) speedEl.innerHTML = '37.4 <span class="dkc-unit">km/h</span>';
+    if (congEl) congEl.textContent = '24.8%';
+    if (badgeEl) { badgeEl.textContent = '+4.8% NORMAL'; badgeEl.className = 'dkc-badge green'; }
+  }
+
+  renderDashboardTrafficChart();
+  showToast('TRAFFIC REGIME UPDATED', `Flow models recalibrated for ${regimeKey.toUpperCase().replace('_', ' ')}.`, 'cyan');
+}
+
+function setDashboardChartMode(mode) {
+  DASHBOARD_DATA.chartMode = mode;
+  playSound('click');
+
+  document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById(`btn-horizon-${mode}`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  renderDashboardTrafficChart();
+}
+
+function setDashboardPredictHorizon(mins) {
+  DASHBOARD_DATA.predictHorizon = mins;
+  playSound('click');
+
+  document.querySelectorAll('.dpb-horizon-toggles .dh-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById(`btn-pred-${mins}`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  const p = DASHBOARD_DATA.predictions[mins];
+  if (!p) return;
+
+  const spdEl = document.getElementById('pred-speed');
+  if (spdEl) spdEl.textContent = p.speed;
+
+  const probEl = document.getElementById('pred-prob');
+  if (probEl) probEl.textContent = p.prob;
+
+  const chokeEl = document.getElementById('pred-choke');
+  if (chokeEl) chokeEl.textContent = p.choke;
+
+  const advEl = document.getElementById('dpb-advisory');
+  if (advEl) advEl.innerHTML = `<span>💡 Advisory: <strong>${p.advisory}</strong></span>`;
+}
+
+function triggerGreenCorridorWave() {
+  playSound('beep');
+  showToast('GREEN WAVE SYNCHRONIZED', 'Corridor 1 (Karol Bagh - CP - ITO) & Corridor 3 signals aligned for 90s priority pulse.', 'green');
+
+  const sigIto = document.getElementById('sig-ito');
+  if (sigIto) {
+    sigIto.textContent = 'GREEN: 85s (WAVE)';
+    sigIto.className = 'ds-badge green';
+  }
+  const sigCp = document.getElementById('sig-cp');
+  if (sigCp) {
+    sigCp.textContent = 'GREEN: 65s (WAVE)';
+    sigCp.className = 'ds-badge green';
+  }
+}
+
+function recalculateSignalSplits() {
+  playSound('click');
+  showToast('AI ADAPTIVE SIGNAL OPTIMIZER', 'Induction loops & bus NPU density recalculated. Cycle efficiency: 98.4%.', 'cyan');
+}
+
+function broadcastCongestionAdvisory() {
+  playSound('alert');
+  showToast('BROADCAST DISPATCHED', 'Arterial speed advisory published to Delhi Police Traffic & DTC Transit Mesh.', 'amber');
+}
+
+function resetDashboardView() {
+  selectDashboardCorridor('c1');
+  const sel = document.getElementById('dash-time-regime');
+  if (sel) { sel.value = 'normal'; onDashboardRegimeChange('normal'); }
+  setDashboardPredictHorizon(15);
+}
+
+function exportDashboardTrafficJson() {
+  playSound('click');
+  const payload = {
+    timestamp: new Date().toISOString(),
+    system: "Project VESPER Executive Traffic Engine",
+    jurisdiction: "Delhi Police Traffic Management & DTC Mobile Mesh",
+    metrics: {
+      totalFleetFlowVehHr: 142850,
+      avgCorridorVelocityKmh: 37.4,
+      citywideCongestionPct: 24.8,
+      levelOfService: "LOS B",
+      anprScansPerMin: 3840,
+      adaptiveSignalInterventionsPerHour: 128,
+      dailyCarbonOffsetTonnes: 2.42
+    },
+    corridors: DASHBOARD_DATA.corridors,
+    predictions: DASHBOARD_DATA.predictions
+  };
+
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `VESPER_Traffic_Analysis_${Date.now()}.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+
+  showToast('TRAFFIC AUDIT EXPORTED', 'Municipal Traffic Analysis JSON downloaded successfully.', 'green');
+}
+
+function renderDashboardTrafficChart() {
+  const canvas = document.getElementById('dash-traffic-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // Background Grid Lines
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+  ctx.lineWidth = 1;
+  const rows = 5;
+  for (let r = 0; r <= rows; r++) {
+    const y = 20 + (r / rows) * (h - 50);
+    ctx.beginPath();
+    ctx.moveTo(35, y);
+    ctx.lineTo(w - 15, y);
+    ctx.stroke();
+
+    // Axis Labels (Speed km/h)
+    ctx.fillStyle = '#64748b';
+    ctx.font = '9px Inter, monospace';
+    ctx.textAlign = 'right';
+    const val = 60 - r * 10;
+    ctx.fillText(val + 'k', 30, y + 3);
+  }
+
+  // Hours Labels
+  const hours = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'];
+  const colW = (w - 50) / (hours.length - 1);
+  for (let i = 0; i < hours.length; i++) {
+    const x = 35 + i * colW;
+    ctx.fillStyle = '#64748b';
+    ctx.font = '9px Inter, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(hours[i], x, h - 8);
+  }
+
+  // Volume Bar Chart (Blue Bars)
+  const volumeData = [32, 24, 78, 54, 88, 65, 36];
+  const barW = 18;
+  for (let i = 0; i < volumeData.length; i++) {
+    const x = 35 + i * colW - barW / 2;
+    const barH = (volumeData[i] / 100) * (h - 60);
+    const y = h - 25 - barH;
+
+    const grad = ctx.createLinearGradient(0, y, 0, h - 25);
+    grad.addColorStop(0, 'rgba(59, 130, 246, 0.6)');
+    grad.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, y, barW, barH);
+    ctx.strokeStyle = 'rgba(59, 130, 246, 0.8)';
+    ctx.strokeRect(x, y, barW, barH);
+  }
+
+  // Average Velocity Curve (Cyan Line)
+  const speedData = [52, 54, 28, 38, 26, 34, 48];
+  ctx.beginPath();
+  for (let i = 0; i < speedData.length; i++) {
+    const x = 35 + i * colW;
+    const y = 20 + ((60 - speedData[i]) / 50) * (h - 50);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = '#00f0ff';
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = 'rgba(0, 240, 255, 0.6)';
+  ctx.shadowBlur = 8;
+  ctx.stroke();
+  ctx.shadowBlur = 0; // reset
+
+  // Dots on Speed Curve
+  for (let i = 0; i < speedData.length; i++) {
+    const x = 35 + i * colW;
+    const y = 20 + ((60 - speedData[i]) / 50) * (h - 50);
+    ctx.fillStyle = '#0b111e';
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#00f0ff';
+    ctx.beginPath();
+    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Congestion Threshold Line (Amber Dashed)
+  const threshY = 20 + ((60 - 30) / 50) * (h - 50);
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = 'rgba(245, 158, 11, 0.6)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(35, threshY);
+  ctx.lineTo(w - 15, threshY);
+  ctx.stroke();
+  ctx.setLineDash([]); // reset
+}
+
+function updateDashboardMetrics() {
+  // Live subtle fluctuation simulator for realism
+  const flowEl = document.getElementById('dash-kpi-flow');
+  if (flowEl && DASHBOARD_DATA.currentRegime === 'normal') {
+    const base = 142850;
+    const noise = Math.floor(Math.sin(Date.now() / 3000) * 120);
+    flowEl.textContent = (base + noise).toLocaleString();
+  }
+}
