@@ -1124,6 +1124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   startSimulation();
 
   selectVehicle('VEH-001');
+  switchWindow('gis');
 
   // Setup API controls & automatically ping and authenticate all 6 APIs
   setupApiKeyControls();
@@ -7079,23 +7080,31 @@ function initGovtThemeController() {
   const themeBtn = document.getElementById('btn-theme-toggle');
   const themeLabel = document.getElementById('theme-btn-label');
 
-  // Strictly enforce Official Government Theme
-  setPortalTheme('gov');
+  // Set default theme to sleek, modern dark-mode glassmorphism
+  const savedTheme = localStorage.getItem('vesper-theme') || 'tactical';
+  setPortalTheme(savedTheme);
 
   if (themeBtn) {
     themeBtn.addEventListener('click', () => {
-      setPortalTheme('gov');
-      showToast('THEME: GOVERNMENT COMMAND PORTAL', 'Indian Railways Royal Navy and Saffron Orange palette active.');
+      const isTactical = body.classList.contains('theme-tactical');
+      setPortalTheme(isTactical ? 'gov' : 'tactical');
+      showToast('THEME UPDATED', isTactical ? 'Switched to Government High-Contrast Theme' : 'Switched to Tactical Glassmorphism Theme');
       playSound('click');
     });
   }
 
   function setPortalTheme(theme) {
-    body.classList.add('theme-gov');
-    body.classList.remove('theme-tactical');
-    if (themeLabel) themeLabel.textContent = 'Theme: Government Portal';
-    if (themeBtn) themeBtn.title = 'Current: Government Official Government Portal Theme';
-    localStorage.setItem('vesper-theme', 'gov');
+    if (theme === 'gov') {
+      body.classList.add('theme-gov');
+      body.classList.remove('theme-tactical');
+      if (themeLabel) themeLabel.textContent = 'Theme: Government';
+      localStorage.setItem('vesper-theme', 'gov');
+    } else {
+      body.classList.remove('theme-gov');
+      body.classList.add('theme-tactical');
+      if (themeLabel) themeLabel.textContent = 'Theme: Tactical Dark';
+      localStorage.setItem('vesper-theme', 'tactical');
+    }
   }
 
   // Accessibility Font Sizers

@@ -109,41 +109,40 @@
       <div class="clock" id="system-clock">--:--:--</div>
       <div class="clock-label">IST (UTC+5:30) — NTP SYNCHRONIZED</div>
     </div>
-    <div class="top-bar-right" style="position: relative;">
-      <button class="top-bar-action" id="btn-topbar-godseye" onclick="openGodsEye()" style="background:linear-gradient(135deg,#00f0ff,#0284c7);color:#0b111e;font-weight:800;font-size:11px;padding:6px 14px;border-radius:4px;border:1px solid rgba(0,240,255,0.6);box-shadow:0 0 14px rgba(0,240,255,0.4);display:flex;align-items:center;gap:6px;cursor:pointer;" title="Launch Godseye 1.0 OSINT Geospatial Reconnaissance Globe">GODSEYE 3D MAP</button>
-      <a href="/editor.html" class="top-bar-action studio-btn-link" id="btn-open-studio" style="background:linear-gradient(135deg,#fb792b,#e05a10);color:#ffffff;border:1px solid rgba(255,255,255,0.3);font-weight:700;font-size:11px;padding:6px 14px;border-radius:4px;text-decoration:none;display:flex;align-items:center;gap:6px;box-shadow:0 0 12px rgba(251,121,43,0.4);" title="Open Dedicated Visual Studio Editor">VISUAL EDITOR</a>
-      <button class="top-bar-action api-status-action" id="btn-api-modal" title="Production API Integrations, Keys &amp; Health"><span class="api-live-dot"></span> <span id="nav-api-label">APIS: 6/6 LIVE</span> <span class="nav-api-lat" id="nav-api-lat">12.4ms</span></button>
-      <button class="top-bar-action alert" id="btn-trigger-hotlist">ALERT: PURSUIT BROADCAST</button>
+    <div class="top-bar-right">
+      <button class="top-bar-action" id="btn-topbar-godseye" onclick="openGodsEye()" style="background:linear-gradient(135deg,#00f0ff,#0284c7);color:#0b111e;font-weight:800;font-size:11px;padding:6px 14px;border-radius:4px;border:1px solid rgba(0,240,255,0.6);box-shadow:0 0 14px rgba(0,240,255,0.4);display:flex;align-items:center;gap:6px;cursor:pointer;" title="Launch Godseye 1.0 OSINT Geospatial Reconnaissance Globe">🛰️ GODSEYE 3D</button>
+      <button class="top-bar-action api-status-action" id="btn-api-modal" title="Production API Integrations & Health"><span class="api-live-dot"></span> <span id="nav-api-label">APIS: 6/6 LIVE</span></button>
+      <button class="top-bar-action alert" id="btn-trigger-hotlist">⚠️ PURSUIT ALERT</button>
       <button class="top-bar-action" id="btn-audio-toggle" title="Toggle Audio Sound">SOUND: ON</button>
       <button class="top-bar-action" id="btn-fullscreen-toggle" title="Toggle Fullscreen">FULLSCREEN</button>
-      <div class="stat-pill"><span class="pill-val" id="stat-nodes">0</span><span class="pill-label">Active Nodes</span></div>
-      <div class="stat-pill"><span class="pill-val" id="stat-detections">0</span><span class="pill-label">Detections</span></div>
-      <div class="stat-pill accent"><span class="pill-val" id="stat-alerts">0</span><span class="pill-label">Alerts</span></div>
     </div>
-  </header><nav id="window-nav">
+  </header>
+
+  <nav id="window-nav">
     <div class="nav-tabs-group">
-      <button class="nav-tab active" data-window="home" id="nav-home">
-        
-        <span class="nav-label">Mission Brief</span>
+      <button class="nav-tab active" data-window="gis" id="nav-gis">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Tactical GIS Map</span>
       </button>
       <button class="nav-tab" data-window="surveillance" id="nav-surveillance">
-        
+        <span class="nav-icon">📹</span>
         <span class="nav-label">Dual Surveillance</span>
       </button>
-      <button class="nav-tab" data-window="gis" id="nav-gis">
-        
-        <span class="nav-label">Tactical GIS</span>
+      <button class="nav-tab" data-window="grid" id="nav-grid">
+        <span class="nav-icon">⚡</span>
+        <span class="nav-label">Command Grid</span>
       </button>
       <button class="nav-tab" data-window="dossier" id="nav-dossier">
-        
+        <span class="nav-icon">📁</span>
         <span class="nav-label">Evidence Dossier</span>
       </button>
       <button class="nav-tab" data-window="ps124" id="nav-ps124">
-        
-        <span class="nav-label">Urban Traffic Analytics</span>
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Urban Analytics</span>
       </button>
-      <button class="nav-tab" data-window="grid" id="nav-grid">
-        <span class="nav-label">Command Grid</span>
+      <button class="nav-tab" data-window="home" id="nav-home">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Mission Brief</span>
       </button>
       <button class="nav-tab" data-window="alerts" id="nav-alerts">
         <span class="nav-label" style="display:flex;align-items:center;gap:6px;">
@@ -154,17 +153,17 @@
       </button>
     </div>
     <div class="nav-search-group" id="nav-plate-search-group">
-      <span class="ns-icon" style="font-weight:800;font-size:10px;color:var(--accent-blue);">PLATE:</span>
-      <input type="text" id="global-plate-input" class="global-plate-input" placeholder="Manual Plate Search (e.g. DL 1C AE 4921)..." autocomplete="off" spellcheck="false">
-      <button id="btn-global-plate-search" class="global-plate-btn" title="Search Sightings, View GPS &amp; Connect Expected Trajectory">TRACE GPS SIGHTINGS</button>
+      <span class="ns-icon" style="font-weight:800;font-size:11px;color:var(--accent-cyan);">🔍</span>
+      <input type="text" id="global-plate-input" class="global-plate-input" placeholder="Search Plate (e.g. DL 1C AE 4921)..." autocomplete="off" spellcheck="false">
+      <button id="btn-global-plate-search" class="global-plate-btn" title="Search Sightings & Trace Trajectory">SEARCH</button>
     </div>
     <div class="layout-toggle-group">
-      <span class="layout-label">LAYOUT:</span>
-      <button class="layout-btn active" data-layout="tabs" id="btn-layout-tabs" title="Single Full Tab Mode">TABS</button>
-      <button class="layout-btn" data-layout="split5025" id="btn-layout-split" title="50 | 25 | 25 Tri-Pane Mode">50:25:25 SPLIT</button>
+      <button class="layout-btn active" data-layout="tabs" id="btn-layout-tabs" title="Full Screen View">FULL VIEW</button>
+      <button class="layout-btn" data-layout="split5025" id="btn-layout-split" title="Multi-Pane Command Mode">TRI-PANE</button>
     </div>
-  </nav><main id="windows-container">
+  </nav>
 
+  <main id="windows-container">
     <!-- Draggable Splitters for 50:25:25 Command Grid Mode -->
     <div id="split-gutter-v" class="split-gutter vertical" title="Drag horizontally to resize Left / Right window width"></div>
     <div id="split-gutter-h" class="split-gutter horizontal" title="Drag vertically to resize Surveillance / PS124 window height"></div>
@@ -172,7 +171,7 @@
   <!-- ═══════════════════════════════════════════════════════════════════ -->
   <!-- WINDOW 1: HOMEPAGE / MISSION BRIEF & DEMO GUIDE                   -->
   <!-- ═══════════════════════════════════════════════════════════════════ -->
-  <section class="window-panel active" id="window-home">
+  <section class="window-panel" id="window-home">
     <div class="window-folder-header">
       <div class="wfh-title-group">
         
@@ -476,7 +475,7 @@
   <!-- ═══════════════════════════════════════════════════════════════════ -->
   <!-- WINDOW 3: TACTICAL GIS & TRAJECTORY RECONSTRUCTION                -->
   <!-- ═══════════════════════════════════════════════════════════════════ -->
-  <section class="window-panel" id="window-gis" data-pane="gis">
+  <section class="window-panel active" id="window-gis" data-pane="gis">
     <div class="window-folder-header">
       <div class="wfh-title-group">
         
