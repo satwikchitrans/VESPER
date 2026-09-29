@@ -8330,3 +8330,886 @@ body.theme-gov .home-problem-section {
   background: #2563eb;
   border-color: #60a5fa;
 }
+
+
+/* ============================================================
+   IRCTC OFFICIAL COLOR PALETTE & DESIGN SYSTEM ENHANCEMENT
+   ============================================================ */
+
+:root {
+  --irctc-blue: #213d77;
+  --irctc-blue-dark: #172b4d;
+  --irctc-blue-light: #2b4d96;
+  --irctc-orange: #fb792b;
+  --irctc-orange-hover: #e0651d;
+  --irctc-orange-dark: #d45914;
+  --irctc-white: #ffffff;
+  --irctc-gray-bg: #f4f6f9;
+  --irctc-gray-card: #ffffff;
+  --irctc-gray-border: #d1d5db;
+  --irctc-green: #0f8544;
+  --irctc-red: #d92525;
+}
+
+/* Default Government / IRCTC Portal Theme Overrides */
+body.theme-gov {
+  background: #f0f3f8 !important;
+  color: #172b4d !important;
+}
+
+/* IRCTC Top Bar */
+body.theme-gov #top-bar {
+  background: #213d77 !important;
+  border-bottom: 2px solid #fb792b !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.3) !important;
+}
+
+body.theme-gov #top-bar .gov-crest-symbol {
+  background: #fb792b !important;
+  color: #ffffff !important;
+}
+
+body.theme-gov #top-bar .system-status {
+  color: #e2e8f0 !important;
+}
+
+body.theme-gov #top-bar .clock {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+body.theme-gov #top-bar .clock-label {
+  color: #cbd5e1 !important;
+}
+
+body.theme-gov #top-bar .top-bar-action {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+body.theme-gov #top-bar .top-bar-action:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-color: #fb792b !important;
+}
+
+body.theme-gov #top-bar .top-bar-action.alert {
+  background: #d92525 !important;
+  border-color: #b91c1c !important;
+  color: #ffffff !important;
+}
+
+/* IRCTC Window Navigation Bar */
+body.theme-gov #window-nav {
+  background: #172b4d !important;
+  border-bottom: 2px solid #213d77 !important;
+}
+
+body.theme-gov .nav-tab {
+  background: transparent !important;
+  color: #cbd5e1 !important;
+  border: none !important;
+  font-weight: 700 !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+}
+
+body.theme-gov .nav-tab:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+body.theme-gov .nav-tab.active {
+  background: #fb792b !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(251, 121, 43, 0.4) !important;
+}
+
+body.theme-gov .global-plate-input {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #172b4d !important;
+}
+
+body.theme-gov .global-plate-btn {
+  background: #fb792b !important;
+  color: #ffffff !important;
+  border: 1px solid #ea580c !important;
+  font-weight: 800 !important;
+}
+
+body.theme-gov .global-plate-btn:hover {
+  background: #e0651d !important;
+}
+
+body.theme-gov .layout-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+body.theme-gov .layout-btn.active {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border-color: #3b82f6 !important;
+}
+
+/* IRCTC Window Folder Headers */
+body.theme-gov .window-folder-header {
+  background: #213d77 !important;
+  border-bottom: 2px solid #fb792b !important;
+  color: #ffffff !important;
+}
+
+body.theme-gov .window-folder-header .wfh-title {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+body.theme-gov .window-folder-header .wfh-tag {
+  background: #fb792b !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+body.theme-gov .window-folder-header .wfh-btn {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+body.theme-gov .window-folder-header .wfh-btn:hover {
+  background: #fb792b !important;
+  border-color: #ea580c !important;
+}
+
+/* IRCTC Executive Dashboard in Gov Theme */
+body.theme-gov #window-dashboard {
+  background: #f0f3f8 !important;
+}
+
+body.theme-gov .dashboard-layout {
+  background: #f0f3f8 !important;
+}
+
+body.theme-gov .dash-hero-banner {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-left: 5px solid #213d77 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-gov .dhb-left h2 {
+  color: #213d77 !important;
+}
+
+body.theme-gov .dhb-left p {
+  color: #4b5563 !important;
+}
+
+body.theme-gov .dhb-label {
+  color: #6b7280 !important;
+}
+
+body.theme-gov .dash-select {
+  background: #ffffff !important;
+  border: 1px solid #213d77 !important;
+  color: #213d77 !important;
+}
+
+body.theme-gov .green-wave-btn {
+  background: #0f8544 !important;
+  border: 1px solid #0b6b36 !important;
+  color: #ffffff !important;
+}
+
+body.theme-gov .export-btn {
+  background: #213d77 !important;
+  border: 1px solid #172b4d !important;
+  color: #ffffff !important;
+}
+
+body.theme-gov .dash-kpi-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-top: 3px solid #213d77 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.theme-gov .dash-kpi-card:hover {
+  border-top-color: #fb792b !important;
+}
+
+body.theme-gov .dkc-title {
+  color: #64748b !important;
+}
+
+body.theme-gov .dkc-value {
+  color: #172b4d !important;
+}
+
+body.theme-gov .dkc-sub {
+  color: #6b7280 !important;
+}
+
+body.theme-gov .dkc-progress-bar {
+  background: #e2e8f0 !important;
+}
+
+body.theme-gov .dash-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-gov .dcard-header {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+body.theme-gov .dcard-title {
+  color: #213d77 !important;
+}
+
+body.theme-gov .dcard-sub {
+  color: #6b7280 !important;
+}
+
+body.theme-gov .corridor-item {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+body.theme-gov .corridor-item:hover {
+  background: #edf2f7 !important;
+  border-color: #213d77 !important;
+}
+
+body.theme-gov .corridor-item.active {
+  background: #eef4ff !important;
+  border-color: #213d77 !important;
+  border-left: 4px solid #213d77 !important;
+}
+
+body.theme-gov .ci-name {
+  color: #172b4d !important;
+}
+
+body.theme-gov .ci-stat-col strong {
+  color: #172b4d !important;
+}
+
+body.theme-gov .ci-bottleneck {
+  color: #4b5563 !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+body.theme-gov .selected-corridor-card {
+  background: #f8fafc !important;
+  border: 1px solid #213d77 !important;
+}
+
+body.theme-gov .scc-title {
+  color: #213d77 !important;
+}
+
+body.theme-gov .scc-item strong {
+  color: #172b4d !important;
+}
+
+body.theme-gov .dash-chart-wrapper {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+body.theme-gov .ch-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+body.theme-gov .ch-btn.active {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border-color: #213d77 !important;
+}
+
+body.theme-gov .dash-modal-split-box {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+body.theme-gov .dms-title {
+  color: #213d77 !important;
+}
+
+body.theme-gov .dms-label {
+  color: #334155 !important;
+}
+
+body.theme-gov .dms-bar-track {
+  background: #e2e8f0 !important;
+}
+
+body.theme-gov .dms-pct {
+  color: #172b4d !important;
+}
+
+body.theme-gov .ds-item {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+body.theme-gov .ds-junction {
+  color: #172b4d !important;
+}
+
+body.theme-gov .dash-predictive-box {
+  background: #f8fafc !important;
+  border: 1px solid #213d77 !important;
+  border-left: 4px solid #fb792b !important;
+}
+
+body.theme-gov .dpb-title {
+  color: #213d77 !important;
+}
+
+body.theme-gov .dh-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+body.theme-gov .dh-btn.active {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border-color: #213d77 !important;
+}
+
+body.theme-gov .dpb-stat-row {
+  color: #4b5563 !important;
+}
+
+body.theme-gov .dpb-advisory {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-left: 3px solid #213d77 !important;
+  color: #334155 !important;
+}
+
+body.theme-gov .dpb-btn-broadcast {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border: 1px solid #172b4d !important;
+}
+
+body.theme-gov .dpb-btn-broadcast:hover {
+  background: #172b4d !important;
+}
+
+/* IRCTC Bottom Bar */
+body.theme-gov #bottom-bar {
+  background: #172b4d !important;
+  border-top: 1px solid #213d77 !important;
+  color: #cbd5e1 !important;
+}
+
+body.theme-gov #bottom-bar .bottom-val {
+  color: #ffffff !important;
+}
+
+
+/* ============================================================
+   16-CAMERA INTERCONNECTED MESH DIRECTORY (IRCTC STYLE)
+   ============================================================ */
+
+.full-width-card {
+  grid-column: 1 / -1;
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-top: 3px solid #213d77 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+.mesh-summary-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0fdf4;
+  color: #0f8544;
+  border: 1px solid #86efac;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.badge-dot.green {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #0f8544;
+  display: inline-block;
+  box-shadow: 0 0 6px #0f8544;
+}
+
+.camera-mesh-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .camera-mesh-grid { grid-template-columns: 1fr; }
+}
+
+.cm-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cm-group-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #213d77;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.badge-mini.blue {
+  background: #eff6ff;
+  color: #213d77;
+  border: 1px solid #bfdbfe;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.badge-mini.saffron {
+  background: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.cm-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.bus-group .cm-list {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 600px) {
+  .cm-list { grid-template-columns: 1fr; }
+}
+
+.cm-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cm-item:hover {
+  background: #eef4ff;
+  border-color: #213d77;
+  transform: translateY(-1px);
+}
+
+.cm-item.bus-item {
+  background: #fffbf5;
+  border: 1px solid #ffedd5;
+  border-left: 4px solid #fb792b;
+}
+
+.cm-item.bus-item:hover {
+  background: #fff7ed;
+  border-color: #fb792b;
+}
+
+.cm-badge {
+  font-size: 9px;
+  font-weight: 900;
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: #213d77;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.cm-badge.bus {
+  background: #fb792b;
+  color: #ffffff;
+}
+
+.cm-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cm-info strong {
+  font-size: 11px;
+  color: #172b4d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cm-info span {
+  font-size: 9.5px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cm-status {
+  font-size: 9px;
+  font-weight: 800;
+  color: #0f8544;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+
+/* ============================================================
+   IRCTC PALETTE OVERRIDES FOR EXECUTIVE TRAFFIC DASHBOARD
+   Official Indian Railways Royal Navy (#213d77) & Saffron (#fb792b)
+   ============================================================ */
+
+.theme-gov .dashboard-layout {
+  background: #f4f6f9;
+  color: #172b4d;
+}
+
+.theme-gov .dash-hero-banner {
+  background: linear-gradient(135deg, #213d77 0%, #182e57 100%);
+  border: 2px solid #fb792b;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(33, 61, 119, 0.22);
+}
+
+.theme-gov .dhb-left h2 {
+  color: #ffffff;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+}
+
+.theme-gov .dhb-left p {
+  color: #e2e8f0;
+}
+
+.theme-gov .dhb-label {
+  color: #cbd5e1;
+}
+
+.theme-gov .dash-select {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #213d77;
+  font-weight: 800;
+}
+
+.theme-gov .green-wave-btn {
+  background: linear-gradient(135deg, #fb792b 0%, #ea580c 100%);
+  border: 1px solid #f97316;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(251, 121, 43, 0.35);
+}
+
+.theme-gov .green-wave-btn:hover {
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  box-shadow: 0 4px 14px rgba(251, 121, 43, 0.5);
+}
+
+.theme-gov .export-btn {
+  background: #ffffff;
+  border: 1.5px solid #213d77;
+  color: #213d77;
+  font-weight: 800;
+}
+
+.theme-gov .export-btn:hover {
+  background: #e8f0fe;
+  color: #1b3569;
+}
+
+/* --- KPI CARDS (IRCTC WHITE ELEVATED WITH NAVY & SAFFRON ACCENTS) --- */
+.theme-gov .dash-kpi-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 3px solid #213d77;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.08);
+}
+
+.theme-gov .dash-kpi-card:hover {
+  border-top-color: #fb792b;
+  box-shadow: 0 4px 14px rgba(33, 61, 119, 0.16);
+}
+
+.theme-gov .dkc-title {
+  color: #5e6e82;
+  font-weight: 800;
+}
+
+.theme-gov .dkc-value {
+  color: #213d77;
+  font-weight: 900;
+}
+
+.theme-gov .dkc-unit {
+  color: #64748b;
+}
+
+.theme-gov .dkc-sub {
+  color: #64748b;
+}
+
+.theme-gov .dkc-progress-bar {
+  background: #e2e8f0;
+}
+
+.theme-gov .dkc-badge.green  { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.theme-gov .dkc-badge.cyan   { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.theme-gov .dkc-badge.purple { background: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
+.theme-gov .dkc-badge.amber  { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
+
+/* --- MAIN DASHBOARD CARDS --- */
+.theme-gov .dash-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 3px 12px rgba(33, 61, 119, 0.08);
+}
+
+.theme-gov .dcard-header {
+  border-bottom: 1.5px solid #edf2f7;
+}
+
+.theme-gov .dcard-title {
+  color: #213d77;
+  font-weight: 800;
+}
+
+.theme-gov .dcard-sub {
+  color: #64748b;
+}
+
+.theme-gov .dcard-tag.cyan {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+/* --- CORRIDOR LIST --- */
+.theme-gov .corridor-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.theme-gov .corridor-item:hover {
+  background: #f1f5f9;
+  border-color: #213d77;
+}
+
+.theme-gov .corridor-item.active {
+  background: #f0f7ff;
+  border: 2px solid #213d77;
+  box-shadow: 0 2px 10px rgba(33, 61, 119, 0.12);
+}
+
+.theme-gov .ci-id-tag {
+  background: #213d77;
+  color: #ffffff;
+  border: none;
+}
+
+.theme-gov .ci-name {
+  color: #172b4d;
+  font-weight: 800;
+}
+
+.theme-gov .ci-stat-col span {
+  color: #64748b;
+}
+
+.theme-gov .ci-stat-col strong {
+  color: #213d77;
+  font-weight: 800;
+}
+
+.theme-gov .ci-bottleneck {
+  color: #475569;
+  border-top: 1px solid #edf2f7;
+}
+
+.theme-gov .selected-corridor-card {
+  background: #f0f7ff;
+  border: 1.5px solid #213d77;
+}
+
+.theme-gov .scc-title {
+  color: #213d77;
+  font-weight: 900;
+}
+
+.theme-gov .scc-lbl {
+  color: #5e6e82;
+}
+
+.theme-gov .scc-item strong {
+  color: #172b4d;
+}
+
+/* --- CANVAS CHART IN IRCTC THEME --- */
+.theme-gov .ch-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+.theme-gov .ch-btn.active {
+  background: #213d77;
+  color: #ffffff;
+  border-color: #213d77;
+}
+
+.theme-gov .dash-chart-wrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.theme-gov .dash-chart-legend {
+  color: #475569;
+}
+
+.theme-gov .dcl-color.blue  { background: #213d77; }
+.theme-gov .dcl-color.cyan  { background: #fb792b; }
+.theme-gov .dcl-color.amber { background: #dc2626; }
+
+.theme-gov .dash-modal-split-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.theme-gov .dms-title {
+  color: #213d77;
+  font-weight: 800;
+}
+
+.theme-gov .dms-label {
+  color: #334155;
+  font-weight: 700;
+}
+
+.theme-gov .dms-bar-track {
+  background: #e2e8f0;
+}
+
+.theme-gov .dms-pct {
+  color: #213d77;
+  font-weight: 800;
+}
+
+.theme-gov .dms-bar-fill.blue   { background: #213d77; }
+.theme-gov .dms-bar-fill.green  { background: #10b981; }
+.theme-gov .dms-bar-fill.amber  { background: #fb792b; }
+.theme-gov .dms-bar-fill.purple { background: #8b5cf6; }
+
+/* --- SIGNALS & PREDICTION IN IRCTC THEME --- */
+.theme-gov .mini-action-btn {
+  background: #eff6ff;
+  border: 1px solid #213d77;
+  color: #213d77;
+}
+
+.theme-gov .mini-action-btn:hover {
+  background: #213d77;
+  color: #ffffff;
+}
+
+.theme-gov .ds-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.theme-gov .ds-junction {
+  color: #172b4d;
+  font-weight: 800;
+}
+
+.theme-gov .ds-meta {
+  color: #64748b;
+}
+
+.theme-gov .dash-predictive-box {
+  background: #fffaf5;
+  border: 1.5px solid #fb792b;
+}
+
+.theme-gov .dpb-title {
+  color: #c2410c;
+  font-weight: 900;
+}
+
+.theme-gov .dh-btn {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+.theme-gov .dh-btn.active {
+  background: #fb792b;
+  color: #ffffff;
+  border-color: #fb792b;
+}
+
+.theme-gov .dpb-stat-row {
+  color: #475569;
+}
+
+.theme-gov .dpb-stat-row strong.green { color: #059669; }
+.theme-gov .dpb-stat-row strong.cyan  { color: #213d77; }
+.theme-gov .dpb-stat-row strong.amber { color: #c2410c; }
+
+.theme-gov .dpb-advisory {
+  background: #ffffff;
+  border-left: 3px solid #fb792b;
+  border: 1px solid #fed7aa;
+  border-left-width: 3px;
+  color: #334155;
+}
+
+.theme-gov .dpb-btn-broadcast {
+  background: linear-gradient(135deg, #213d77 0%, #182e57 100%);
+  color: #ffffff;
+  border: 1px solid #213d77;
+}
+
+.theme-gov .dpb-btn-broadcast:hover {
+  background: linear-gradient(135deg, #182e57 0%, #0f172a 100%);
+}

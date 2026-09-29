@@ -100,7 +100,7 @@ const HOTLIST = [
 
 // ========================= STATE =========================
 const STATE = {
-  activeWindow: 'home',
+  activeWindow: 'dashboard',
   selectedVehicle: null,
   currentTrajectoryStep: {},
   simTick: 0,
@@ -866,7 +866,7 @@ function renderSightingSnapshot(canvas, veh, step, stepIdx) {
   ctx.beginPath();
   ctx.roundRect(cx - carW/2, cy, carW, carH, 4);
   ctx.fill();
-  ctx.strokeStyle = '#38bdf8';
+  ctx.strokeStyle = '#fb792b';
   ctx.lineWidth = 1;
   ctx.stroke();
 
@@ -3105,7 +3105,8 @@ function initFixedCameras(map) {
 
 // ========================= BUSES =========================
 function initBuses(map) {
-  BUS_ROUTES.forEach(bus => {
+  if (STATE.maps.gis) updateCameraInterconnectionMesh(STATE.maps.gis);
+    BUS_ROUTES.forEach(bus => {
     STATE.busWaypointIndex[bus.id] = 0;
     const startPt = (bus.roadPath && bus.roadPath.length) ? (Array.isArray(bus.roadPath[0]) ? bus.roadPath[0] : [bus.roadPath[0].lat, bus.roadPath[0].lng]) : [bus.waypoints[0].lat, bus.waypoints[0].lng];
     STATE.busPositions[bus.id] = { lat: startPt[0], lng: startPt[1] };
@@ -3542,6 +3543,7 @@ function startVehicleRoadGlide() {
 
     // 1. Update all DTC Transit Buses
     if (!STATE.busScannerCones) STATE.busScannerCones = {};
+    if (STATE.maps.gis) updateCameraInterconnectionMesh(STATE.maps.gis);
     BUS_ROUTES.forEach(bus => {
       const speedKmh = bus.speedKmh || 35;
       const deltaM = (speedKmh * 1000 / 3600) * dt;
@@ -4030,7 +4032,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
   // Click-to-Track Hint Prompt
   ctx.fillStyle = 'rgba(10, 14, 23, 0.75)';
   ctx.fillRect(6, h - 18, 205, 16);
-  ctx.fillStyle = '#38bdf8';
+  ctx.fillStyle = '#fb792b';
   ctx.font = 'bold 8px Inter';
   ctx.fillText(' Click any vehicle to acquire & track', 10, h - 6);
 
@@ -4941,7 +4943,8 @@ function initGodsEye() {
   });
 
   // Add mobile bus markers
-  BUS_ROUTES.forEach(bus => {
+  if (STATE.maps.gis) updateCameraInterconnectionMesh(STATE.maps.gis);
+    BUS_ROUTES.forEach(bus => {
     const icon = L.divIcon({ className: 'ge-marker-bus', iconSize: [12, 12], iconAnchor: [6, 6] });
     const wp = STATE.busPositions[bus.id] || bus.waypoints[0];
     const marker = L.marker([wp.lat, wp.lng], { icon }).addTo(map);
@@ -7013,7 +7016,7 @@ function initGovtThemeController() {
   const themeLabel = document.getElementById('theme-btn-label');
 
   // Set default theme to sleek, modern dark-mode glassmorphism
-  const savedTheme = localStorage.getItem('vesper-theme') || 'tactical';
+  const savedTheme = localStorage.getItem('vesper-theme') || 'gov';
   setPortalTheme(savedTheme);
 
   if (themeBtn) {
@@ -7414,12 +7417,20 @@ function renderDashboardTrafficChart() {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
+  const isGov = document.body.classList.contains('theme-gov');
+
   const w = canvas.width;
   const h = canvas.height;
   ctx.clearRect(0, 0, w, h);
 
+  // Background Fill for Theme
+  if (isGov) {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+  }
+
   // Background Grid Lines
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+  ctx.strokeStyle = isGov ? 'rgba(33, 61, 119, 0.1)' : 'rgba(255, 255, 255, 0.06)';
   ctx.lineWidth = 1;
   const rows = 5;
   for (let r = 0; r <= rows; r++) {
@@ -7430,8 +7441,8 @@ function renderDashboardTrafficChart() {
     ctx.stroke();
 
     // Axis Labels (Speed km/h)
-    ctx.fillStyle = '#64748b';
-    ctx.font = '9px Inter, monospace';
+    ctx.fillStyle = isGov ? '#5e6e82' : '#64748b';
+    ctx.font = 'bold 9px Inter, sans-serif';
     ctx.textAlign = 'right';
     const val = 60 - r * 10;
     ctx.fillText(val + 'k', 30, y + 3);
@@ -7442,13 +7453,13 @@ function renderDashboardTrafficChart() {
   const colW = (w - 50) / (hours.length - 1);
   for (let i = 0; i < hours.length; i++) {
     const x = 35 + i * colW;
-    ctx.fillStyle = '#64748b';
-    ctx.font = '9px Inter, monospace';
+    ctx.fillStyle = isGov ? '#5e6e82' : '#64748b';
+    ctx.font = 'bold 9px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(hours[i], x, h - 8);
   }
 
-  // Volume Bar Chart (Blue Bars)
+  // Volume Bar Chart (Royal Navy Bars in Gov mode, Blue in Tactical mode)
   const volumeData = [32, 24, 78, 54, 88, 65, 36];
   const barW = 18;
   for (let i = 0; i < volumeData.length; i++) {
@@ -7457,16 +7468,21 @@ function renderDashboardTrafficChart() {
     const y = h - 25 - barH;
 
     const grad = ctx.createLinearGradient(0, y, 0, h - 25);
-    grad.addColorStop(0, 'rgba(37, 99, 235, 0.7)');
-    grad.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
+    if (isGov) {
+      grad.addColorStop(0, 'rgba(33, 61, 119, 0.85)');
+      grad.addColorStop(1, 'rgba(33, 61, 119, 0.25)');
+    } else {
+      grad.addColorStop(0, 'rgba(59, 130, 246, 0.6)');
+      grad.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
+    }
 
     ctx.fillStyle = grad;
     ctx.fillRect(x, y, barW, barH);
-    ctx.strokeStyle = 'rgba(59, 130, 246, 0.8)';
+    ctx.strokeStyle = isGov ? '#213d77' : 'rgba(59, 130, 246, 0.8)';
     ctx.strokeRect(x, y, barW, barH);
   }
 
-  // Average Velocity Curve (Cyan Line)
+  // Average Velocity Curve (IRCTC Saffron #fb792b in Gov mode, Cyan #00f0ff in Tactical mode)
   const speedData = [52, 54, 28, 38, 26, 34, 48];
   ctx.beginPath();
   for (let i = 0; i < speedData.length; i++) {
@@ -7475,9 +7491,9 @@ function renderDashboardTrafficChart() {
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
-  ctx.strokeStyle = '#38bdf8';
-  ctx.lineWidth = 2.5;
-  ctx.shadowColor = 'rgba(56, 189, 248, 0.4)';
+  ctx.strokeStyle = isGov ? '#fb792b' : '#00f0ff';
+  ctx.lineWidth = isGov ? 3 : 2.5;
+  ctx.shadowColor = isGov ? 'rgba(251, 121, 43, 0.4)' : 'rgba(0, 240, 255, 0.6)';
   ctx.shadowBlur = 8;
   ctx.stroke();
   ctx.shadowBlur = 0; // reset
@@ -7486,20 +7502,20 @@ function renderDashboardTrafficChart() {
   for (let i = 0; i < speedData.length; i++) {
     const x = 35 + i * colW;
     const y = 20 + ((60 - speedData[i]) / 50) * (h - 50);
-    ctx.fillStyle = '#0b111e';
+    ctx.fillStyle = isGov ? '#ffffff' : '#0b111e';
     ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.arc(x, y, 4.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#38bdf8';
+    ctx.fillStyle = isGov ? '#fb792b' : '#00f0ff';
     ctx.beginPath();
-    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // Congestion Threshold Line (Amber Dashed)
+  // Congestion Threshold Line (Crimson Dashed)
   const threshY = 20 + ((60 - 30) / 50) * (h - 50);
   ctx.setLineDash([4, 4]);
-  ctx.strokeStyle = 'rgba(249, 115, 22, 0.7)';
+  ctx.strokeStyle = isGov ? 'rgba(220, 38, 38, 0.7)' : 'rgba(245, 158, 11, 0.6)';
   ctx.lineWidth = 1.2;
   ctx.beginPath();
   ctx.moveTo(35, threshY);
@@ -7516,4 +7532,49 @@ function updateDashboardMetrics() {
     const noise = Math.floor(Math.sin(Date.now() / 3000) * 120);
     flowEl.textContent = (base + noise).toLocaleString();
   }
+}
+
+
+// ============================================================
+// LIVE CAMERA NETWORK MESH INTERCONNECTION ENGINE
+// Interconnects all 12 Fixed Junction Cameras & 4 DTC Bus Mobile Cameras
+// ============================================================
+let _cameraMeshLayer = null;
+
+function updateCameraInterconnectionMesh(map) {
+  if (!map) return;
+  if (!_cameraMeshLayer) {
+    _cameraMeshLayer = L.layerGroup().addTo(map);
+  } else {
+    _cameraMeshLayer.clearLayers();
+  }
+
+  // For each mobile bus camera, find 2 nearest fixed cameras and draw optical telemetry mesh link
+  if (STATE.maps.gis) updateCameraInterconnectionMesh(STATE.maps.gis);
+    BUS_ROUTES.forEach(bus => {
+    const bPos = STATE.busPositions[bus.id];
+    if (!bPos) return;
+
+    // Sort fixed cameras by distance to this bus
+    const nearby = FIXED_CAMERAS.map(cam => {
+      const d = haversine(bPos.lat, bPos.lng, cam.lat, cam.lng);
+      return { cam, d };
+    }).sort((a, b) => a.d - b.d).slice(0, 2);
+
+    nearby.forEach(item => {
+      const cam = item.cam;
+      // Draw telemetry line connecting mobile bus camera to fixed junction camera
+      const poly = L.polyline([
+        [bPos.lat, bPos.lng],
+        [cam.lat, cam.lng]
+      ], {
+        color: '#fb792b',
+        weight: 1.5,
+        opacity: 0.55,
+        dashArray: '4, 6',
+        className: 'mesh-telemetry-link'
+      });
+      _cameraMeshLayer.addLayer(poly);
+    });
+  });
 }
