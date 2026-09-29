@@ -276,7 +276,7 @@ def build_pdf(filename="VESPER_Technical_Approach_Guide.pdf"):
         ],
         [
             Paragraph("Command UI", tbl_cell_style),
-            Paragraph("<b>IRCTC Palette Vanilla CSS</b>", tbl_cell_style),
+            Paragraph("<b>Govt Command Palette Vanilla CSS</b>", tbl_cell_style),
             Paragraph("Zero-Emoji Administrative Control Center", tbl_cell_style),
             Paragraph("Generic Dark Theme + Emojis", tbl_cell_style),
             Paragraph("Official gov look, high contrast, zero cross-OS render bugs.", tbl_cell_style)
@@ -414,9 +414,9 @@ def build_pdf(filename="VESPER_Technical_Approach_Guide.pdf"):
                        "<b>Manual face redaction</b> requires hundreds of human labor hours, delays emergency response times, and exposes private citizen images to control room operators."
         },
         {
-            "name": "12. IRCTC-Inspired Palette Vanilla CSS/JS Control Console",
+            "name": "12. Official Government Command Palette Vanilla CSS/JS Control Console",
             "category": "Front-End User Interface & Control Center HUD",
-            "what": "A pure Vanilla CSS/JS front-end interface built around the official IRCTC color scheme (Navy `#213d77`, Accent Orange `#fb792b`, Light Slate `#f0f4f8`) featuring a 50:25:25 tri-pane layout with zero unicode/emoji icons.",
+            "what": "A pure Vanilla CSS/JS front-end interface built around the official BEL / Government Defence portal color scheme (Navy `#213d77`, Accent Saffron `#fb792b`, Light Slate `#f0f4f8`) featuring a 50:25:25 tri-pane layout with zero unicode/emoji icons.",
             "why": "Meets government administrative UI accessibility guidelines, provides high-contrast visibility under 24/7 control room lighting, and guarantees crisp rendering across all screen resolutions without heavy framework overhead.",
             "where": "Powers the central command room web console used by traffic police officers and city managers.",
             "substitute": "Generic React/Tailwind dark-mode dashboard templates containing emoji icons.",
@@ -469,6 +469,12 @@ def build_pdf(filename="VESPER_Technical_Approach_Guide.pdf"):
 
     doc.build(story, canvasmaker=NumberedCanvas)
     print(f"PDF generated successfully at: {pdf_path}")
+
+    import shutil
+    user_downloads = os.path.expanduser(r"~\Downloads")
+    dest_path = os.path.join(user_downloads, filename)
+    shutil.copy(pdf_path, dest_path)
+    print(f"Copied to Downloads: {dest_path}")
 
 if __name__ == "__main__":
     build_pdf()

@@ -131,8 +131,8 @@ def build_simple_pdf(filename="VESPER_Tech_Stack_Simple_Guide.pdf"):
             "cat_title": "1. FRONTEND & MAP CONSOLE",
             "items": [
                 {
-                    "name": "Vanilla CSS3 (IRCTC Color Theme)",
-                    "what": "Plain CSS styling using official government colors (#213d77 Navy, #fb792b Orange).",
+                    "name": "Vanilla CSS3 (Official Government Command Theme)",
+                    "what": "Plain CSS styling using official government/BEL colors (#213d77 Navy, #fb792b Saffron Accent).",
                     "why": "Loads instantly, high contrast for 24/7 control rooms, 100% compliant with government rules.",
                     "where": "Command Center control dashboard styling.",
                     "substitute": "TailwindCSS / Bootstrap.",

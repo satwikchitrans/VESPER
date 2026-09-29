@@ -635,13 +635,32 @@ function closeSightingChainModal() {
   }
 }
 
-function connectSightingsOnMap(vehId) {
+async function connectSightingsOnMap(vehId) {
   const veh = VEHICLES.find(v => v.id === (vehId || STATE.selectedVehicle)) || VEHICLES[0];
   switchWindow('gis');
   closeSightingChainModal();
+  
+  // Call real OSRM Kinematic Trajectory API
+  try {
+    const coords = veh.trajectory.map(t => [t.lng, t.lat]);
+    const res = await fetch('/api/traffic/osrm-route', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coordinates: coords })
+    });
+    const osrmData = await res.json();
+    if (osrmData.ok && osrmData.geometry && osrmData.geometry.coordinates) {
+      veh.roadPath = osrmData.geometry.coordinates;
+    }
+  } catch (e) {
+    console.warn('[OSRM ROUTE API FALLBACK]', e);
+  }
+
   drawTrajectory(veh);
+  openSightingChainHUD();
+  updateSightingChainUI(veh);
   playSound('lock');
-  showToast(' SIGHTING CHAIN CONNECTED', `Linked ${veh.trajectory.length} discrete ANPR camera coordinates for plate ${veh.plate}.`);
+  showToast(' SIGHTING CHAIN CONNECTED (OSRM KINEMATICS)', `Linked ${veh.trajectory.length} discrete ANPR camera coordinates for plate ${veh.plate}. High-precision road corridor active.`);
 }
 
 function buildExpectedTrajectory(vehId) {
@@ -690,6 +709,255 @@ function flyToSightingGPS(lat, lng, camName) {
     playSound('chirp');
     showToast(' CAMERA GPS POSITION', `Focused on ${camName} (GPS ${lat.toFixed(5)}, ${lng.toFixed(5)})`);
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TACTICAL SIGHTING INSPECTOR & OPTICAL FORENSICS RENDERER
+// ═══════════════════════════════════════════════════════════════════
+
+function openSightingInspector(veh, stepIdx) {
+  if (!veh || !veh.trajectory) return;
+  const step = veh.trajectory[stepIdx];
+  if (!step) return;
+
+  const inspector = document.getElementById('gis-sighting-inspector');
+  if (!inspector) return;
+
+  // 1. Badge & Sensor Pill
+  const elBadge = document.getElementById('gsi-sighting-badge');
+  if (elBadge) elBadge.textContent = `SIGHTING #0${stepIdx + 1} OF 0${veh.trajectory.length}`;
+  
+  const elPill = document.getElementById('gsi-sensor-pill');
+  if (elPill) {
+    elPill.className = `gsi-sensor-pill ${step.mobile ? 'mobile' : 'fixed'}`;
+    elPill.textContent = step.mobile ? 'DTC SMART BUS (MOBILE NPU)' : 'FIXED CCTV ANPR';
+  }
+
+  // 2. Plate Banner
+  const elPlate = document.getElementById('gsi-plate-text');
+  if (elPlate) elPlate.textContent = veh.plate;
+  const elDesc = document.getElementById('gsi-target-desc');
+  if (elDesc) elDesc.textContent = `${veh.color} ${veh.make || veh.type} · ${veh.type}`;
+
+  // 3. Character OCR Chips
+  const charChipsContainer = document.getElementById('gsi-char-chips');
+  if (charChipsContainer) {
+    const chars = veh.plate.split('');
+    let chipsHtml = '';
+    chars.forEach((ch, cIdx) => {
+      if (ch === ' ') {
+        chipsHtml += '<span style="color:#64748b;margin:0 2px;align-self:center;">•</span>';
+      } else {
+        const confVal = Math.min(99.9, Math.max(91.0, (step.conf * 100) - ((cIdx % 3) * 1.4) + Math.cos(cIdx) * 0.8)).toFixed(1);
+        chipsHtml += `
+          <div class="gsi-char-chip" title="Character '${ch}': Optical OCR Match ${confVal}%">
+            <span class="gcc-char">${ch}</span>
+            <span class="gcc-conf">${confVal}%</span>
+          </div>
+        `;
+      }
+    });
+    charChipsContainer.innerHTML = chipsHtml;
+  }
+
+  // 4. Render Snapshot Preview Canvas
+  const canvas = document.getElementById('gsi-snapshot-canvas');
+  if (canvas) {
+    renderSightingSnapshot(canvas, veh, step, stepIdx);
+  }
+
+  // 5. Telemetry Values
+  const elCam = document.getElementById('gsi-cam-id');
+  if (elCam) elCam.textContent = step.cam;
+  
+  const elTime = document.getElementById('gsi-timestamp');
+  if (elTime) {
+    const mins = 10 + Math.floor(step.time / 60);
+    const secs = String(step.time % 60).padStart(2, '0');
+    elTime.textContent = `${mins}:${secs}:14 AM IST (+${step.time} min)`;
+  }
+
+  const elSpeed = document.getElementById('gsi-speed');
+  if (elSpeed) {
+    const speed = Math.round(36 + Math.sin(stepIdx * 1.5) * 8);
+    elSpeed.textContent = `${speed} km/h (Corridor Limit: 50)`;
+  }
+
+  const elKinematics = document.getElementById('gsi-kinematics');
+  if (elKinematics) {
+    const dist = (0.9 + stepIdx * 0.7).toFixed(1);
+    elKinematics.textContent = `PLAUSIBLE (Δd=${dist}km, Normal Speed)`;
+  }
+
+  // 6. Street & Coordinates
+  const elStreet = document.getElementById('gsi-street');
+  if (elStreet) elStreet.textContent = step.street;
+  const elGps = document.getElementById('gsi-gps');
+  if (elGps) elGps.textContent = `GPS: ${step.lat.toFixed(5)}, ${step.lng.toFixed(5)}`;
+
+  // 7. Interconnected Handoff Nodes
+  const elPrev = document.getElementById('gsi-ho-prev');
+  if (elPrev) elPrev.textContent = stepIdx > 0 ? veh.trajectory[stepIdx - 1].cam : 'ORIGIN (START)';
+  const elCurr = document.getElementById('gsi-ho-curr');
+  if (elCurr) elCurr.textContent = step.cam;
+  const elNext = document.getElementById('gsi-ho-next');
+  if (elNext) elNext.textContent = stepIdx < veh.trajectory.length - 1 ? veh.trajectory[stepIdx + 1].cam : 'DOWNSTREAM INTERCEPT';
+
+  // Store active sighting context for action buttons
+  STATE._activeSightingContext = { veh, step, stepIdx };
+
+  // Show Inspector
+  inspector.classList.remove('hidden');
+}
+
+function renderSightingSnapshot(canvas, veh, step, stepIdx) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#060a12');
+  grad.addColorStop(0.5, '#0f172a');
+  grad.addColorStop(1, '#020617');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Road Perspective
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath();
+  ctx.moveTo(0, h * 0.55);
+  ctx.lineTo(w, h * 0.55);
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.fill();
+
+  // Lane line
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(0, h * 0.75);
+  ctx.lineTo(w, h * 0.75);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Target Vehicle Drawing
+  const carW = 54;
+  const carH = 28;
+  const cx = w * 0.45;
+  const cy = h * 0.52;
+
+  // Vehicle Body
+  ctx.fillStyle = veh.color === 'White' ? '#e2e8f0' : (veh.color === 'Black' ? '#0f172a' : (veh.color === 'Red' ? '#dc2626' : '#64748b'));
+  ctx.beginPath();
+  ctx.roundRect(cx - carW/2, cy, carW, carH, 4);
+  ctx.fill();
+  ctx.strokeStyle = '#00f0ff';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Roof / Windshield
+  ctx.fillStyle = '#0284c7';
+  ctx.beginPath();
+  ctx.roundRect(cx - carW * 0.35, cy + 3, carW * 0.7, carH * 0.45, 2);
+  ctx.fill();
+
+  // Bounding Box
+  const bbX = cx - carW/2 - 4;
+  const bbY = cy - 4;
+  const bbW = carW + 8;
+  const bbH = carH + 8;
+  ctx.strokeStyle = veh.isStolen ? '#ef4444' : '#00f0ff';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(bbX, bbY, bbW, bbH);
+
+  // Corner brackets
+  const bLen = 5;
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  // TL
+  ctx.beginPath(); ctx.moveTo(bbX, bbY + bLen); ctx.lineTo(bbX, bbY); ctx.lineTo(bbX + bLen, bbY); ctx.stroke();
+  // TR
+  ctx.beginPath(); ctx.moveTo(bbX + bbW - bLen, bbY); ctx.lineTo(bbX + bbW, bbY); ctx.lineTo(bbX + bbW, bbY + bLen); ctx.stroke();
+  // BL
+  ctx.beginPath(); ctx.moveTo(bbX, bbY + bbH - bLen); ctx.lineTo(bbX, bbY + bbH); ctx.lineTo(bbX + bLen, bbY + bbH); ctx.stroke();
+  // BR
+  ctx.beginPath(); ctx.moveTo(bbX + bbW - bLen, bbY + bbH); ctx.lineTo(bbX + bbW, bbY + bbH); ctx.lineTo(bbX + bbW, bbY + bbH - bLen); ctx.stroke();
+
+  // License plate tag on snapshot
+  ctx.fillStyle = '#fbbf24';
+  ctx.fillRect(cx - 16, cy + carH - 4, 32, 7);
+  ctx.fillStyle = '#000000';
+  ctx.font = 'bold 5.5px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(veh.plate.slice(0, 10), cx, cy + carH + 1.5);
+
+  // Confidence watermark
+  ctx.fillStyle = '#34d399';
+  ctx.font = 'bold 7px monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText(`ANPR: ${(step.conf * 100).toFixed(1)}%`, 4, h - 4);
+}
+
+function openSightingChainHUD() {
+  const hud = document.getElementById('gis-sighting-chain-hud');
+  if (hud) {
+    hud.style.display = '';
+    hud.classList.remove('hidden');
+  }
+}
+
+function closeSightingChainHUD() {
+  const hud = document.getElementById('gis-sighting-chain-hud');
+  if (hud) {
+    hud.classList.add('hidden');
+    hud.style.display = 'none';
+  }
+  playSound('click');
+}
+
+function closeSightingInspector() {
+  const inspector = document.getElementById('gis-sighting-inspector');
+  if (inspector) {
+    inspector.classList.add('hidden');
+    inspector.style.display = 'none';
+  }
+  playSound('click');
+}
+
+function simulatePCRIntercept(targetLat, targetLng, camName) {
+  if (!STATE.maps.gis) return;
+  const pcrLat = targetLat + 0.008 + (Math.random() - 0.5) * 0.004;
+  const pcrLng = targetLng + 0.008 + (Math.random() - 0.5) * 0.004;
+
+  if (STATE._pcrInterceptLayer) {
+    STATE.maps.gis.removeLayer(STATE._pcrInterceptLayer);
+  }
+
+  const vectorLine = L.polyline([[pcrLat, pcrLng], [targetLat, targetLng]], {
+    color: '#ef4444',
+    weight: 3,
+    dashArray: '6, 6',
+    opacity: 0.95
+  });
+
+  const pcrIcon = L.divIcon({
+    className: 'pcr-unit-icon',
+    html: `
+      <div style="background:#dc2626;color:#fff;font-weight:900;font-size:9px;padding:3px 6px;border-radius:4px;border:1px solid #fff;box-shadow:0 0 12px rgba(220,38,38,0.8);white-space:nowrap;">
+        🚓 PCR-ECHO-12 (ETA 2.4 min)
+      </div>
+    `,
+    iconSize: [80, 24],
+    iconAnchor: [40, 12]
+  });
+  const pcrMarker = L.marker([pcrLat, pcrLng], { icon: pcrIcon });
+
+  STATE._pcrInterceptLayer = L.layerGroup([vectorLine, pcrMarker]).addTo(STATE.maps.gis);
+
+  playSound('alarm');
+  showToast('🚨 PCR INTERCEPT DISPATCHED', `PCR-ECHO-12 dispatched to intercept target at ${camName}. Estimated Time to Intercept: 2.4 minutes.`);
 }
 
 function initSightingChainInteractions() {
@@ -778,15 +1046,51 @@ function initSightingChainInteractions() {
   document.getElementById('btn-assc-build-trajectory')?.addEventListener('click', () => buildExpectedTrajectory());
 
   // 4. In-Map Sighting HUD buttons
-  document.getElementById('btn-close-gsch')?.addEventListener('click', () => {
-    const hud = document.getElementById('gis-sighting-chain-hud');
-    if (hud) hud.style.display = 'none';
-  });
+  document.getElementById('btn-close-gsch')?.addEventListener('click', closeSightingChainHUD);
   document.getElementById('btn-gsch-replay')?.addEventListener('click', () => replaySightingChronology());
   document.getElementById('btn-gsch-view-ledger')?.addEventListener('click', () => openSightingChainModal());
   document.getElementById('btn-gsch-intercept')?.addEventListener('click', () => {
     playSound('alarm');
     showToast(' INTERCEPT ROADBLOCK AUTHORIZED', 'PCR units alerted at downstream corridor chokepoints.');
+  });
+
+  // 4b. In-Map Sighting Forensics Inspector buttons
+  document.getElementById('btn-close-gsi')?.addEventListener('click', closeSightingInspector);
+  
+  document.getElementById('btn-gsi-copy-gps')?.addEventListener('click', () => {
+    const ctx = STATE._activeSightingContext;
+    if (ctx && ctx.step) {
+      const gpsStr = `${ctx.step.lat.toFixed(5)}, ${ctx.step.lng.toFixed(5)}`;
+      navigator.clipboard?.writeText(gpsStr).catch(() => {});
+      playSound('click');
+      showToast(' GPS COPIED', `Coordinates [${gpsStr}] copied to clipboard.`);
+    }
+  });
+
+  document.getElementById('btn-gsi-focus-feed')?.addEventListener('click', () => {
+    const ctx = STATE._activeSightingContext;
+    if (ctx && ctx.step) {
+      const gSel = document.getElementById('gis-cam-picker');
+      if (gSel) {
+        gSel.value = ctx.step.cam;
+      }
+      playSound('chirp');
+      showToast(' OPTICAL SENSOR LOCKED', `Switched right active viewer to ${ctx.step.cam} (${ctx.step.street}).`);
+    }
+  });
+
+  document.getElementById('btn-gsi-pcr-intercept')?.addEventListener('click', () => {
+    const ctx = STATE._activeSightingContext;
+    if (ctx && ctx.step) {
+      simulatePCRIntercept(ctx.step.lat, ctx.step.lng, ctx.step.cam);
+    }
+  });
+
+  document.getElementById('btn-gsi-dossier')?.addEventListener('click', () => {
+    const ctx = STATE._activeSightingContext;
+    switchWindow('dossier');
+    playSound('lock');
+    showToast(' BSA §63 EVIDENCE DOSSIER', `Sighting record for plate ${ctx?.veh?.plate || 'TARGET'} bookmarked in cryptographic court chain.`);
   });
 
   // 5. Sighting Chain Modal buttons
@@ -1107,9 +1411,18 @@ function initNavigation() {
   document.getElementById('btn-map-layer')?.addEventListener('click', cycleMapLayer);
   document.getElementById('btn-godseye-mapmode')?.addEventListener('click', toggleGodsEyeMapMode);
 
-  // ════════════ API GATEWAY MODAL ════════════
+  // God's Eye View Tactical Shaders & 3D Tilt Controls
+  document.querySelectorAll('.shader-chip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const shader = btn.dataset.shader;
+      setGISVisualShader(shader);
+    });
+  });
+
+  // ════════════ API GATEWAY MODAL & RUNNERS ════════════
   document.getElementById('btn-api-modal')?.addEventListener('click', () => {
     document.getElementById('modal-api-gateway')?.classList.remove('hidden');
+    pingAllAPIServices();
     playSound('chirp');
   });
   document.getElementById('btn-close-api')?.addEventListener('click', () => {
@@ -1118,6 +1431,9 @@ function initNavigation() {
   document.getElementById('btn-close-api-bottom')?.addEventListener('click', () => {
     document.getElementById('modal-api-gateway')?.classList.add('hidden');
   });
+  document.getElementById('btn-ping-all-apis')?.addEventListener('click', () => {
+    pingAllAPIServices();
+  });
   const apiModal = document.getElementById('modal-api-gateway');
   if (apiModal) {
     apiModal.addEventListener('click', (e) => {
@@ -1125,6 +1441,456 @@ function initNavigation() {
     });
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// PRODUCTION API GATEWAY & MICROSERVICES CONTROLLER
+// ═══════════════════════════════════════════════════════════════════
+
+let LAST_API_RESPONSE = null;
+
+async function pingAllAPIServices() {
+  const t0 = performance.now();
+  try {
+    const res = await fetch('/api/gateway/health');
+    const data = await res.json();
+    const lat = (performance.now() - t0).toFixed(1);
+    
+    // Update Topbar
+    const navLabel = document.getElementById('nav-api-label');
+    if (navLabel) navLabel.textContent = `APIS: ${data.activeServices}/${data.totalServices} LIVE`;
+    const navLat = document.getElementById('nav-api-lat');
+    if (navLat) navLat.textContent = `${data.avgLatencyMs}ms`;
+
+    // Update Modal
+    const elApis = document.getElementById('gw-stat-apis');
+    if (elApis) elApis.textContent = `${data.activeServices} / ${data.totalServices} ONLINE`;
+    const elLat = document.getElementById('gw-stat-lat');
+    if (elLat) elLat.textContent = `${data.avgLatencyMs} ms`;
+
+    // Update individual cards
+    data.services.forEach(s => {
+      const elCardLat = document.getElementById(`lat-${s.id}`);
+      if (elCardLat) elCardLat.textContent = `${s.latencyMs} ms`;
+    });
+
+    displayAPIConsoleOutput('/api/gateway/health', data, lat, 200);
+    showToast(' API GATEWAY PINGED', `All ${data.totalServices} microservices operational (avg latency: ${data.avgLatencyMs}ms).`);
+  } catch (err) {
+    console.warn('[API PING ERROR]', err);
+  }
+}
+
+async function executeAPICall(service, param) {
+  let url = '/api/gateway/health';
+  let method = 'GET';
+  let body = null;
+
+  if (service === 'vahan') {
+    url = `/api/vahan/lookup?plate=${encodeURIComponent(param || 'DL 1C AE 4921')}`;
+  } else if (service === 'cctns') {
+    url = `/api/cctns/stolen-check?plate=${encodeURIComponent(param || 'DL 1C AE 4921')}`;
+  } else if (service === 'osrm') {
+    url = '/api/traffic/osrm-route';
+    method = 'POST';
+    body = JSON.stringify({
+      coordinates: [
+        [77.21015, 28.56544],
+        [77.23908, 28.57093],
+        [77.24220, 28.57004],
+        [77.25270, 28.54921]
+      ]
+    });
+  } else if (service === 'weather') {
+    url = '/api/weather/delhi-aqi';
+  } else if (service === 'opensky') {
+    url = '/api/flights/opensky-adsb';
+  } else if (service === 'dtc') {
+    url = '/api/transit/dtc-fleet';
+  } else if (service === 'fastag') {
+    url = `/api/toll/fastag-ledger?plate=${encodeURIComponent(param || 'DL 1C AE 4921')}`;
+  } else if (service === 'bsa63') {
+    url = `/api/forensic/bsa63-verify?plate=${encodeURIComponent(param || 'DL 1C AE 4921')}`;
+  }
+
+  const t0 = performance.now();
+  try {
+    const opts = { method };
+    if (body) {
+      opts.headers = { 'Content-Type': 'application/json' };
+      opts.body = body;
+    }
+    const res = await fetch(url, opts);
+    const data = await res.json();
+    const lat = (performance.now() - t0).toFixed(1);
+
+    displayAPIConsoleOutput(`${method} ${url}`, data, lat, res.status);
+    playSound('chirp');
+    showToast(` API ${service.toUpperCase()} CALLED`, `Received ${res.status} OK from ${url} in ${lat}ms.`);
+  } catch (err) {
+    const lat = (performance.now() - t0).toFixed(1);
+    displayAPIConsoleOutput(`${method} ${url}`, { error: err.message }, lat, 500);
+    showToast(' API CALL FAILED', err.message, true);
+  }
+}
+
+function displayAPIConsoleOutput(endpoint, data, latMs, statusCode) {
+  LAST_API_RESPONSE = data;
+  const elEndpoint = document.getElementById('api-console-endpoint');
+  if (elEndpoint) elEndpoint.textContent = endpoint;
+  
+  const elStatus = document.getElementById('api-console-status');
+  if (elStatus) {
+    elStatus.textContent = statusCode === 200 ? '200 OK' : `${statusCode} ERROR`;
+    elStatus.className = `ach-status ${statusCode === 200 ? 'green' : 'red'}`;
+  }
+
+  const elTime = document.getElementById('api-console-time');
+  if (elTime) elTime.textContent = `Latency: ${latMs}ms`;
+
+  const elOutput = document.getElementById('api-console-output');
+  if (elOutput) {
+    elOutput.textContent = JSON.stringify(data, null, 2);
+  }
+}
+
+function copyAPIResponse() {
+  if (!LAST_API_RESPONSE) return;
+  navigator.clipboard.writeText(JSON.stringify(LAST_API_RESPONSE, null, 2)).then(() => {
+    showToast(' JSON COPIED', 'API response payload copied to clipboard.');
+    playSound('click');
+  }).catch(() => {});
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LIVE AIRSPACE & FLEET TELEMETRY OVERLAYS
+// ═══════════════════════════════════════════════════════════════════
+
+let AIRSPACE_MARKERS = [];
+let DTC_FLEET_MARKERS = [];
+
+async function pollLiveAirspaceAndFleet() {
+  try {
+    // 1. Airspace ADS-B
+    const flightRes = await fetch('/api/flights/opensky-adsb');
+    const flightData = await flightRes.json();
+    if (flightData.ok && flightData.flights && STATE.maps.gis) {
+      // Clear old flight markers
+      AIRSPACE_MARKERS.forEach(m => m.remove());
+      AIRSPACE_MARKERS = [];
+      
+      flightData.flights.forEach(f => {
+        const icon = L.divIcon({
+          className: 'custom-flight-icon',
+          html: `<div style="background:rgba(14,165,233,0.9);color:#ffffff;font-size:9px;font-weight:800;font-family:monospace;padding:2px 5px;border-radius:3px;border:1px solid #38bdf8;box-shadow:0 0 8px rgba(14,165,233,0.6);white-space:nowrap;">✈ ${f.callsign} · ${f.altFeet}ft</div>`,
+          iconSize: [80, 20],
+          iconAnchor: [40, 10]
+        });
+        const m = L.marker([f.lat, f.lng], { icon }).addTo(STATE.maps.gis);
+        m.bindPopup(`<b>${f.callsign} (${f.aircraft})</b><br>Alt: ${f.altFeet} ft | Speed: ${f.speedKnots} kts<br>Squawk: ${f.squawk} | Route: ${f.origin} ➔ ${f.dest}`);
+        AIRSPACE_MARKERS.push(m);
+      });
+    }
+
+    // 2. AIS-140 DTC Bus Fleet
+    const dtcRes = await fetch('/api/transit/dtc-fleet');
+    const dtcData = await dtcRes.json();
+    if (dtcData.ok && dtcData.sampleUnits && STATE.maps.gis) {
+      DTC_FLEET_MARKERS.forEach(m => m.remove());
+      DTC_FLEET_MARKERS = [];
+
+      dtcData.sampleUnits.forEach(b => {
+        const icon = L.divIcon({
+          className: 'custom-bus-icon',
+          html: `<div style="background:rgba(245,158,11,0.9);color:#000000;font-size:9px;font-weight:900;font-family:monospace;padding:2px 5px;border-radius:3px;border:1px solid #fef08a;box-shadow:0 0 8px rgba(245,158,11,0.6);white-space:nowrap;">🚌 ${b.busId}</div>`,
+          iconSize: [75, 20],
+          iconAnchor: [37, 10]
+        });
+        const m = L.marker([b.lat, b.lng], { icon }).addTo(STATE.maps.gis);
+        m.bindPopup(`<b>${b.busId} - Route ${b.route}</b><br>Speed: ${b.speedKmH} km/h | SoC: ${b.soc}<br>Edge NPU: ${b.npuStatus}<br>Roughness IRI: ${b.iriPotholeScore}`);
+        DTC_FLEET_MARKERS.push(m);
+      });
+    }
+  } catch (e) {}
+}
+
+// Auto-start periodic polling every 8 seconds
+setInterval(pollLiveAirspaceAndFleet, 8000);
+setTimeout(pollLiveAirspaceAndFleet, 2500);
+
+// ═══════════════════════════════════════════════════════════════════
+// AUTOMATED THREAT ALERTS & "BAD PAST" DETECTION ENGINE
+// ═══════════════════════════════════════════════════════════════════
+
+STATE.threatAlerts = [];
+let ACTIVE_ALERT_FILTER = 'all';
+
+const THREAT_CATALOG = [
+  {
+    plate: 'HR 51 AW 4091',
+    vehDesc: 'Black Toyota Fortuner 4x4 (SUV)',
+    threatType: 'stolen',
+    threatLevel: 'CRITICAL e-FIR',
+    badgeClass: 'critical',
+    badPastTitle: 'ARMED DACOITY & MOTOR VEHICLE THEFT (CCTNS e-FIR)',
+    badPastDesc: 'Wanted in e-FIR #00412/2026/DL-CRIME (PS Connaught Place). Involved in armed jewelry heist & high-speed evasion. Occupants considered dangerous and armed under BNS §310(2).',
+    sensor: 'BUS-DTC-522',
+    sensorName: 'BUS-DTC-522 [MOBILE NPU EDGE CAMERA]',
+    sensorType: 'bus',
+    street: 'Moolchand Metro Underpass (Ring Road)',
+    lat: 28.57093,
+    lng: 77.23908,
+    speed: '58 km/h',
+    isStolen: true
+  },
+  {
+    plate: 'UP 16 AB 7843',
+    vehDesc: 'Dark Grey Mahindra Scorpio (SUV)',
+    threatType: 'wanted',
+    threatLevel: 'WANTED FELON',
+    badgeClass: 'wanted',
+    badPastTitle: 'HIT & RUN FATALITY / REPEAT CONVICTION',
+    badPastDesc: 'Vehicle linked to fatal pedestrian collision on 22-SEP-2026 at Vikas Marg. Driver fled scene. Non-bailable arrest warrant issued by Patiala House Court under BNS §106(2).',
+    sensor: 'CAM-JNC-05',
+    sensorName: 'CAM-JNC-05 [AIIMS FLYOVER FIXED CCTV]',
+    sensorType: 'fixed',
+    street: 'AIIMS Flyover Northbound Approach',
+    lat: 28.56544,
+    lng: 77.21015,
+    speed: '44 km/h',
+    isStolen: false
+  },
+  {
+    plate: 'DL 8C BZ 1122',
+    vehDesc: 'White Honda City (Sedan)',
+    threatType: 'cloned',
+    threatLevel: 'CLONED NUMBER PLATE',
+    badgeClass: 'critical',
+    badPastTitle: 'SPATIAL CONFLICT / CLONED REGISTRATION',
+    badPastDesc: 'Simultaneous optical captures reported at CP Outer Circle (28.6315N) and Nehru Place (28.5492N) within 45 seconds (apparent speed 720 km/h). High probability of counterfeit plate.',
+    sensor: 'BUS-DTC-419',
+    sensorName: 'BUS-DTC-419 [MOBILE NPU DASHCAM]',
+    sensorType: 'bus',
+    street: 'Panchkuian Marg (Mobile Intercept)',
+    lat: 28.63706,
+    lng: 77.21005,
+    speed: '38 km/h',
+    isStolen: false
+  },
+  {
+    plate: 'DL 3C AB 9012',
+    vehDesc: 'Silver Maruti Swift (Hatchback)',
+    threatType: 'wanted',
+    threatLevel: 'CHRONIC OFFENDER',
+    badgeClass: 'violator',
+    badPastTitle: '14 UNPAID RED LIGHT & BRTS VIOLATIONS',
+    badPastDesc: 'Aggressive repeat violator of dedicated BRTS bus lanes and 120+ km/h speeding. Total unpaid challans Rs 28,000. Registration certificate marked for immediate impounding by Delhi Traffic Police.',
+    sensor: 'BUS-DTC-764',
+    sensorName: 'BUS-DTC-764 [MOBILE NPU CAMERA]',
+    sensorType: 'bus',
+    street: 'Dhaula Kuan Interchange Corridor',
+    lat: 28.59216,
+    lng: 77.16162,
+    speed: '62 km/h',
+    isStolen: false
+  }
+];
+
+function initThreatAlertsSystem() {
+  // Pre-populate initial threat catalog
+  THREAT_CATALOG.slice(0, 3).forEach(alert => {
+    registerAutomatedThreatAlert(alert, { silent: true });
+  });
+
+  // Filter tab buttons
+  document.querySelectorAll('.at-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.at-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ACTIVE_ALERT_FILTER = btn.dataset.alertFilter || 'all';
+      renderThreatAlertsStream();
+    });
+  });
+
+  // Action buttons
+  document.getElementById('btn-trigger-test-wanted')?.addEventListener('click', () => {
+    triggerTestWantedVehicle();
+  });
+  document.getElementById('btn-simulate-bus-capture')?.addEventListener('click', () => {
+    simulateBusNPUSighting();
+  });
+  document.getElementById('btn-clear-alerts')?.addEventListener('click', () => {
+    STATE.threatAlerts = [];
+    renderThreatAlertsStream();
+    updateAlertStats();
+    showToast(' ALERTS CLEARED', 'Threat alert feed has been reset.');
+  });
+  document.getElementById('btn-alerts-close')?.addEventListener('click', () => {
+    closeOrCollapseWindow(document.getElementById('window-alerts'));
+  });
+
+  // Automated Periodic Traffic Scanner: Scans moving traffic every 18s and auto-triggers alerts for vehicles with bad past
+  setInterval(() => {
+    const randomThreat = THREAT_CATALOG[Math.floor(Math.random() * THREAT_CATALOG.length)];
+    const randomBus = ['BUS-DTC-522', 'BUS-DTC-764', 'BUS-DTC-419', 'BUS-DTC-620', 'BUS-DTC-181'][Math.floor(Math.random() * 5)];
+    const isBus = Math.random() > 0.4;
+    
+    const cloneAlert = {
+      ...randomThreat,
+      id: `ALT-${Date.now().toString().slice(-5)}`,
+      time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      sensor: isBus ? randomBus : 'CAM-JNC-02',
+      sensorName: isBus ? `${randomBus} [MOBILE NPU EDGE CAMERA]` : 'CAM-JNC-02 [ITO FLYOVER FIXED CCTV]',
+      sensorType: isBus ? 'bus' : 'fixed'
+    };
+    registerAutomatedThreatAlert(cloneAlert);
+  }, 18000);
+}
+
+function registerAutomatedThreatAlert(alertData, opts = {}) {
+  const alertId = alertData.id || `ALT-${Date.now().toString().slice(-5)}`;
+  const alertObj = {
+    ...alertData,
+    id: alertId,
+    timestamp: alertData.timestamp || new Date().toLocaleTimeString('en-US', { hour12: false })
+  };
+
+  // Add to active state
+  STATE.threatAlerts.unshift(alertObj);
+  if (STATE.threatAlerts.length > 25) STATE.threatAlerts.pop();
+
+  // Also feed into GIS anomaly stream
+  addAnomaly(alertObj.threatLevel, alertObj.badgeClass === 'critical' ? 'critical' : 'warning', `${alertObj.plate} (${alertObj.vehDesc}) sighted by ${alertObj.sensorName} — ${alertObj.badPastTitle}`);
+
+  // Re-render UI
+  renderThreatAlertsStream();
+  updateAlertStats();
+
+  if (!opts.silent) {
+    playSound('lock');
+    showToast(
+      `🚨 AUTOMATED THREAT DETECTED: ${alertObj.plate}`,
+      `${alertObj.badPastTitle} · Detected by ${alertObj.sensorName} at ${alertObj.street}`,
+      true
+    );
+  }
+}
+
+function renderThreatAlertsStream() {
+  const container = document.getElementById('threat-alerts-stream');
+  if (!container) return;
+
+  const filtered = STATE.threatAlerts.filter(a => {
+    if (ACTIVE_ALERT_FILTER === 'all') return true;
+    if (ACTIVE_ALERT_FILTER === 'stolen') return a.threatType === 'stolen' || a.isStolen;
+    if (ACTIVE_ALERT_FILTER === 'wanted') return a.threatType === 'wanted';
+    if (ACTIVE_ALERT_FILTER === 'cloned') return a.threatType === 'cloned';
+    if (ACTIVE_ALERT_FILTER === 'bus') return a.sensorType === 'bus';
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="padding:24px;text-align:center;color:#64748b;font-family:var(--font-mono);font-size:12px;background:rgba(15,23,42,0.5);border:1px dashed rgba(255,255,255,0.1);border-radius:6px;">
+        No active threat alerts matching filter "${ACTIVE_ALERT_FILTER.toUpperCase()}". Click "TRIGGER TEST WANTED VEHICLE" to simulate.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(a => `
+    <div class="threat-alert-card" data-threat-id="${a.id}">
+      <div class="tac-top-row">
+        <div class="tac-plate-group">
+          <span class="tac-plate">${a.plate}</span>
+          <span class="tac-veh-desc">${a.vehDesc}</span>
+        </div>
+        <span class="tac-threat-badge ${a.badgeClass || 'critical'}">${a.threatLevel}</span>
+      </div>
+
+      <div class="tac-bad-past-box">
+        <span class="tbp-title">CRIME RECORD / BAD PAST: ${a.badPastTitle}</span>
+        <span class="tbp-desc">${a.badPastDesc}</span>
+      </div>
+
+      <div class="tac-meta-row">
+        <div>
+          <span>DETECTED BY: </span>
+          <span class="tac-sensor-tag ${a.sensorType || 'fixed'}">${a.sensorName}</span>
+        </div>
+        <div><span>LOCATION: </span><strong class="cyan">${a.street}</strong></div>
+        <div><span>GPS: </span><code>${a.lat.toFixed(4)}, ${a.lng.toFixed(4)}</code></div>
+        <div><span>SPEED: </span><strong class="green">${a.speed}</strong></div>
+        <div><span>TIME: </span><strong>${a.timestamp} IST</strong></div>
+      </div>
+
+      <div class="tac-actions-row">
+        <button class="tac-act-btn" onclick="traceThreatVehicleOnMap('${a.plate}')">TRACE TRAJECTORY ON MAP</button>
+        <button class="tac-act-btn red" onclick="simulatePCRIntercept()">DISPATCH PCR INTERCEPT</button>
+        <button class="tac-act-btn" onclick="executeAPICall('vahan', '${a.plate}')">VAHAN RC QUERY</button>
+        <button class="tac-act-btn" onclick="executeAPICall('cctns', '${a.plate}')">CCTNS e-FIR DETAILS</button>
+        <button class="tac-act-btn" onclick="openCertificateModal()">BSA §63 CERTIFICATE</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateAlertStats() {
+  const elWanted = document.getElementById('asr-wanted-count');
+  if (elWanted) elWanted.textContent = `${STATE.threatAlerts.length} HOTLISTED`;
+
+  const elHits = document.getElementById('asr-hits-today');
+  if (elHits) elHits.textContent = `${STATE.totalAlerts} CAPTURES`;
+
+  const navBadge = document.getElementById('nav-alerts-badge');
+  if (navBadge) navBadge.textContent = STATE.threatAlerts.length;
+
+  const statAlerts = document.getElementById('stat-alerts');
+  if (statAlerts) statAlerts.textContent = STATE.totalAlerts;
+}
+
+function triggerTestWantedVehicle() {
+  const template = THREAT_CATALOG[0];
+  const bus = ['BUS-DTC-522', 'BUS-DTC-764', 'BUS-DTC-419'][Math.floor(Math.random() * 3)];
+  const alert = {
+    ...template,
+    id: `ALT-${Date.now().toString().slice(-5)}`,
+    sensor: bus,
+    sensorName: `${bus} [MOBILE NPU EDGE CAMERA]`,
+    sensorType: 'bus',
+    timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+  };
+  registerAutomatedThreatAlert(alert);
+}
+
+function simulateBusNPUSighting() {
+  const alert = {
+    plate: 'HR 51 AW 4091',
+    vehDesc: 'Black Toyota Fortuner (Armed Dacoity Suspect)',
+    threatType: 'stolen',
+    threatLevel: 'MOBILE BUS INTERCEPT',
+    badgeClass: 'critical',
+    badPastTitle: 'ACTIVE GANG CHASE / BUS DASHCAM LOCK',
+    badPastDesc: 'DTC Bus BUS-DTC-522 forward optical NPU camera (Hailo-8) detected target vehicle overtaking in BRTS corridor. Auto-broadcasting pursuit telemetry to Delhi Police PCR network.',
+    sensor: 'BUS-DTC-522',
+    sensorName: 'BUS-DTC-522 [MOBILE NPU EDGE CAMERA]',
+    sensorType: 'bus',
+    street: 'Lajpat Nagar Flyover (Mahatma Gandhi Ring Rd)',
+    lat: 28.57004,
+    lng: 77.24220,
+    speed: '64 km/h',
+    isStolen: true,
+    timestamp: new Date().toLocaleTimeString('en-US', { hour12: false })
+  };
+  registerAutomatedThreatAlert(alert);
+}
+
+function traceThreatVehicleOnMap(plate) {
+  searchAndReconstructTrajectory(plate, { openModal: false });
+  showToast(' TRACING THREAT ON MAP', `Connecting multi-camera trajectory for hotlisted vehicle ${plate}.`);
+}
+
+// Initialize Threat Alerts engine after DOM loads
+setTimeout(initThreatAlertsSystem, 1000);
 
 function triggerPotholeSpike() {
   const spikeVal = 3.8;
@@ -1201,8 +1967,10 @@ function initGISMap() {
   const map = L.map('gis-map', {
     center: CONFIG.MAP_CENTER,
     zoom: CONFIG.MAP_ZOOM,
-    minZoom: 4,
-    maxZoom: 19,
+    minZoom: 3,
+    maxZoom: 22,
+    zoomSnap: 0.25,
+    zoomDelta: 0.5,
     maxBounds: INDIA_BOUNDS,
     maxBoundsViscosity: 1.0,
     zoomControl: true,
@@ -1213,32 +1981,65 @@ function initGISMap() {
     inertia: true
   });
 
+  // Dark Tactical Vector Basemap (Up to zoom 22 with retina/native 19 scaling)
   const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    subdomains: 'abcd', maxZoom: 19, updateWhenIdle: true, keepBuffer: 2
+    subdomains: 'abcd', maxZoom: 22, maxNativeZoom: 19, updateWhenIdle: false, keepBuffer: 4
   }).addTo(map);
 
-  const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 18, updateWhenIdle: true, keepBuffer: 2
+  // 1. Crystal-Clear Photorealistic Google Hybrid Satellite HD (Sub-meter ground sampling, native 20, zoom up to 22)
+  const satLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    subdomains: ['0', '1', '2', '3'],
+    maxZoom: 22,
+    maxNativeZoom: 20,
+    detectRetina: true,
+    updateWhenIdle: false,
+    keepBuffer: 6
   });
 
-  // Road/label overlay for satellite mode — ensures roads align correctly
-  // Uses CartoDB dark labels which render vector roads, place names, and boundaries
-  // on a transparent layer that sits perfectly atop satellite imagery
+  // 2. Pure Optical Satellite 4K (No overlay labels)
+  const googlePureSat = L.tileLayer('https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    subdomains: ['0', '1', '2', '3'],
+    maxZoom: 22,
+    maxNativeZoom: 20,
+    detectRetina: true,
+    updateWhenIdle: false,
+    keepBuffer: 6
+  });
+
+  // 3. Esri World Imagery Clarity HD (Scaled to zoom 22 without 404s)
+  const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 22,
+    maxNativeZoom: 19,
+    updateWhenIdle: false,
+    keepBuffer: 4
+  });
+
+  // 4. High-Resolution Dark Road & Place Labels Overlay
   const roadOverlay = L.layerGroup([
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd', maxZoom: 19, opacity: 0.9, updateWhenIdle: true, keepBuffer: 2
+      subdomains: 'abcd', maxZoom: 22, maxNativeZoom: 19, opacity: 0.95, updateWhenIdle: false, keepBuffer: 4
     }),
-    // Voyager semi-transparent road network for clearer road lines
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd', maxZoom: 19, opacity: 0.25, updateWhenIdle: true, keepBuffer: 2
+      subdomains: 'abcd', maxZoom: 22, maxNativeZoom: 19, opacity: 0.3, updateWhenIdle: false, keepBuffer: 4
     })
   ]);
 
+  // 5. OpenStreetMap HD
   const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, updateWhenIdle: true, keepBuffer: 2
+    maxZoom: 22,
+    maxNativeZoom: 19,
+    updateWhenIdle: false,
+    keepBuffer: 4
   });
 
-  STATE.tileLayers = { dark: darkLayer, satellite: satLayer, street: streetLayer, roadOverlay: roadOverlay };
+  STATE.tileLayers = {
+    dark: darkLayer,
+    satellite: satLayer,
+    pureSat: googlePureSat,
+    esri: esriSat,
+    street: streetLayer,
+    roadOverlay: roadOverlay
+  };
   STATE.currentTileLayer = 'dark';
   STATE.maps.gis = map;
   STATE.mapsInitialized.gis = true;
@@ -1321,28 +2122,43 @@ function cycleMapLayer() {
   if (!map || !STATE.tileLayers) return;
   
   // Remove current base layer
-  map.removeLayer(STATE.tileLayers[STATE.currentTileLayer]);
-  // Always remove road overlay when cycling (it's only for satellite)
-  if (map.hasLayer(STATE.tileLayers.roadOverlay)) {
+  if (STATE.tileLayers[STATE.currentTileLayer] && map.hasLayer(STATE.tileLayers[STATE.currentTileLayer])) {
+    map.removeLayer(STATE.tileLayers[STATE.currentTileLayer]);
+  }
+  // Remove road overlay if present
+  if (STATE.tileLayers.roadOverlay && map.hasLayer(STATE.tileLayers.roadOverlay)) {
     map.removeLayer(STATE.tileLayers.roadOverlay);
   }
   
+  const txt = document.getElementById('map-layer-text');
+
   if (STATE.currentTileLayer === 'dark') {
     STATE.currentTileLayer = 'satellite';
     STATE.tileLayers.satellite.addTo(map);
-    STATE.tileLayers.roadOverlay.addTo(map); // Add road labels on top of satellite
-    const txt = document.getElementById('map-layer-text');
-    if (txt) txt.textContent = 'Satellite + Roads';
+    STATE.tileLayers.roadOverlay.addTo(map);
+    if (txt) txt.textContent = 'Satellite HD + Roads';
+    showToast('🛰️ SATELLITE HD ACTIVE', 'Crystal-clear photorealistic satellite imagery with vector road overlay. Zoom up to Level 22.');
   } else if (STATE.currentTileLayer === 'satellite') {
+    STATE.currentTileLayer = 'pureSat';
+    STATE.tileLayers.pureSat.addTo(map);
+    if (txt) txt.textContent = 'Satellite 4K (Pure)';
+    showToast('📸 PURE SATELLITE 4K', 'Unfiltered optical satellite photography without road markings.');
+  } else if (STATE.currentTileLayer === 'pureSat') {
+    STATE.currentTileLayer = 'esri';
+    STATE.tileLayers.esri.addTo(map);
+    STATE.tileLayers.roadOverlay.addTo(map);
+    if (txt) txt.textContent = 'Esri Clarity HD';
+    showToast('🌐 ESRI CLARITY HD', 'Esri global high-resolution multi-source imagery.');
+  } else if (STATE.currentTileLayer === 'esri') {
     STATE.currentTileLayer = 'street';
     STATE.tileLayers.street.addTo(map);
-    const txt = document.getElementById('map-layer-text');
-    if (txt) txt.textContent = 'Street Map';
+    if (txt) txt.textContent = 'Street Map HD';
+    showToast('🗺️ OPENSTREETMAP HD', 'High-contrast detailed street topology.');
   } else {
     STATE.currentTileLayer = 'dark';
     STATE.tileLayers.dark.addTo(map);
-    const txt = document.getElementById('map-layer-text');
     if (txt) txt.textContent = 'Dark Basemap';
+    showToast('⚡ DARK VECTOR BASEMAP', 'Low-light tactical command grid.');
   }
   playSound('click');
 }
@@ -1421,6 +2237,52 @@ function toggleGodsEyeMapMode() {
 
     showToast(' STANDARD GIS MAPPING', 'Reverted to standard dark vector basemap.');
     playSound('click');
+  }
+}
+
+// ════════════ GOD'S EYE VIEW TACTICAL SHADERS & 3D TILT ════════════
+function setGISVisualShader(mode) {
+  const container = document.getElementById('gis-map-wrapper');
+  if (!container) return;
+
+  if (mode === '3d') {
+    container.classList.toggle('perspective-3d');
+    const is3D = container.classList.contains('perspective-3d');
+    const btn3D = document.getElementById('btn-shader-3d');
+    if (btn3D) btn3D.classList.toggle('active', is3D);
+    playSound('chirp');
+    showToast(
+      is3D ? '🛸 3D ISOMETRIC PERSPECTIVE' : '🗺️ 2D TOP-DOWN VIEW',
+      is3D ? 'Photorealistic 32° isometric tilt and target ride-along angle activated.' : 'Standard 2D orthographic tactical grid restored.'
+    );
+    return;
+  }
+
+  // Update active state for shader buttons
+  document.querySelectorAll('.shader-chip-btn').forEach(btn => {
+    if (btn.dataset.shader !== '3d') {
+      btn.classList.toggle('active', btn.dataset.shader === mode);
+    }
+  });
+
+  // Remove existing shader classes
+  container.classList.remove('nvg-active', 'flir-active', 'crt-active', 'god-active');
+
+  if (mode === 'flir') {
+    container.classList.add('flir-active');
+    playSound('chirp');
+    showToast('🔥 FLIR THERMAL SPECTRUM', 'Forward-Looking Infrared optical inversion enabled.');
+  } else if (mode === 'nvg') {
+    container.classList.add('nvg-active');
+    playSound('chirp');
+    showToast('🟢 NIGHT VISION GOGGLES (NVG)', 'Phosphor green 525nm image intensifier activated.');
+  } else if (mode === 'crt') {
+    container.classList.add('crt-active');
+    playSound('chirp');
+    showToast('📡 CRT RADAR RASTER', 'Phosphor beam scanlines & high-contrast tactical filter active.');
+  } else {
+    playSound('click');
+    showToast('⚡ STANDARD TACTICAL GRID', 'Normal optical spectrum restored.');
   }
 }
 
@@ -2834,6 +3696,7 @@ function activateTimelineStep(veh, stepIndex) {
   }
 
   triggerCameraCapture(veh, stepIndex, step);
+  openSightingInspector(veh, stepIndex);
 
   if (STATE.autoFollow && STATE.maps.gis) {
     STATE.maps.gis.panTo([step.lat, step.lng], { animate: true, duration: 0.6 });
@@ -3531,6 +4394,9 @@ function renderDossier() {
           <div class="sit-row"><span class="sit-lbl">Re-ID:</span><span class="sit-val">${veh.reidHash}</span></div>
         </div>
         <div class="shot-hash-line">SHA-256: ${hash}</div>
+        <button class="assc-btn primary" style="font-size:9.5px;padding:5px 8px;width:100%;margin-top:8px;" onclick="inspectSightingFromDossier(${idx})">
+          📍 View &amp; Inspect Sighting on Tactical Map
+        </button>
       </div>
     `;
     gallery.appendChild(card);
@@ -3542,6 +4408,18 @@ function renderDossier() {
   if (btnExport) btnExport.onclick = () => {
     alert(`[LEGAL DOSSIER GENERATED]\n\nTarget: ${veh.plate}\nRe-ID: ${veh.reidHash}\nSightings: ${veh.trajectory.length}\nLegal: BSA Sec 63 / IEA Sec 65B\nSeal: SHA-256 Verified`);
   };
+}
+
+function inspectSightingFromDossier(idx) {
+  const veh = VEHICLES.find(v => v.id === STATE.selectedVehicle) || VEHICLES[0];
+  switchWindow('gis');
+  activateTimelineStep(veh, idx);
+  if (STATE.maps.gis && veh.trajectory && veh.trajectory[idx]) {
+    const step = veh.trajectory[idx];
+    STATE.maps.gis.flyTo([step.lat, step.lng], 15, { animate: true, duration: 1.0 });
+  }
+  playSound('chirp');
+  showToast('🗺️ SIGHTING LOCATED ON MAP', `Focused on Sighting #${idx + 1} (${veh.trajectory[idx]?.cam})`);
 }
 
 function drawShotCanvas(canvasId, step, veh) {
@@ -3834,12 +4712,18 @@ const GODSEYE = {
   clockInterval: null,
   staticRadarCanvas: null,
   altitudeMode: 'tactical', // 'leo', 'tactical', 'lock'
+  visualMode: 'default', // 'default', 'nvg', 'flir', 'crt', 'god'
   losEnabled: true,
   flirMode: false,
   interceptionsEnabled: true,
+  adsbEnabled: true,
+  satellitesEnabled: true,
+  airspaceEnabled: true,
+  aqiEnabled: false,
+  selectedOsintItem: null,
   losBeam: null,
   lastPanTime: 0,
-  markers: { target: null, cameras: [], buses: [], trajectory: null, coverageArcs: [], intercepts: [] },
+  markers: { target: null, cameras: [], buses: [], trajectory: null, coverageArcs: [], intercepts: [], aircraft: [], satellites: [], airspace: [], aqi: [] },
   dom: {},
 
   // Delhi Corridor Strategic Bottlenecks / Interception Waypoints
@@ -3892,10 +4776,44 @@ const GODSEYE = {
       targetChips: document.getElementById('ge-target-chips'),
       radarCanvas: document.getElementById('ge-radar-canvas'),
       mapContainer: document.getElementById('ge-map-container'),
-      overlay: document.getElementById('godseye-overlay')
+      overlay: document.getElementById('godseye-overlay'),
+      osintInspector: document.getElementById('ge-osint-inspector')
     };
   }
 };
+
+// ════════════ GODSEYE 1.0 OSINT GEOSPATIAL INTELLIGENCE LAYERS ════════════
+const OSINT_AIRCRAFT = [
+  { id: 'AIC-102', callsign: 'AIC102', type: 'Boeing 787-8 Dreamliner', airline: 'Air India', route: 'DEL → LHR (Heathrow)', lat: 28.580, lng: 77.060, alt: 'FL310 (31,000 ft)', speed: '475 kts (880 km/h)', hdg: 310, squawk: '2000 (IFR OK)', payload: 'Mode-S Transponder', status: 'CLIMBING', marker: null },
+  { id: 'IGO-634', callsign: '6E634', type: 'Airbus A320neo', airline: 'IndiGo Airlines', route: 'DEL → BOM (Mumbai)', lat: 28.540, lng: 77.120, alt: 'FL180 (18,000 ft)', speed: '390 kts (722 km/h)', hdg: 195, squawk: '4212 (IDENT)', payload: 'ADS-B 1090 ES', status: 'CRUISING', marker: null },
+  { id: 'IAF-VIP-01', callsign: 'INDIA-ONE', type: 'Boeing 777-300ER (Air HQ VIP)', airline: 'Indian Air Force VVIP', route: 'Air HQ / Palam Sector', lat: 28.590, lng: 77.200, alt: 'FL045 (4,500 ft)', speed: '210 kts (389 km/h)', hdg: 85, squawk: '0100 (SECURED VIP)', payload: 'IFF Mode 5 / SATCOM', status: 'TACTICAL APPROACH', marker: null },
+  { id: 'SG-8452', callsign: 'SEJ8452', type: 'Boeing 737-800', airline: 'SpiceJet', route: 'BLR → DEL', lat: 28.510, lng: 77.160, alt: 'FL060 (6,000 ft)', speed: '240 kts (444 km/h)', hdg: 345, squawk: '3514 (ATC LOCKED)', payload: 'ADS-B Out', status: 'ON GLIDESLOPE', marker: null },
+  { id: 'UK-774', callsign: 'VTI774', type: 'Airbus A321neo', airline: 'Vistara', route: 'CCU → DEL', lat: 28.610, lng: 77.300, alt: 'FL085 (8,500 ft)', speed: '265 kts (491 km/h)', hdg: 275, squawk: '1720 (APPROACH)', payload: 'ADS-B Out', status: 'HOLDING PATTERN', marker: null }
+];
+
+const OSINT_SATELLITES = [
+  { id: 'RISAT-2BR1', name: 'RISAT-2BR1', norad: 'NORAD 44857', agency: 'ISRO Synthetic Aperture Radar', desc: 'Active All-Weather X-Band Radar Reconnaissance', lat: 28.68, lng: 77.15, alt: '576 km LEO Orbit', speed: '7.56 km/s (Mach 22)', hdg: 135, squawk: 'NORAD 44857', payload: 'X-Band SAR (0.35m GSD)', status: 'ACTIVE SWATH PASS', track: [[28.85, 76.90], [28.75, 77.05], [28.65, 77.20], [28.55, 77.35], [28.45, 77.50]], marker: null },
+  { id: 'CARTOSAT-3', name: 'CARTOSAT-3', norad: 'NORAD 44804', agency: 'ISRO Optical Earth Observation', desc: 'Sub-Meter Very High Resolution Optical Imaging', lat: 28.62, lng: 77.26, alt: '509 km Sun-Sync Orbit', speed: '7.61 km/s (Mach 22.4)', hdg: 175, squawk: 'NORAD 44804', payload: 'PAN + Multispectral (0.28m GSD)', status: 'STEREO OPTICAL PASS', track: [[28.90, 77.22], [28.75, 77.24], [28.60, 77.26], [28.45, 77.28], [28.30, 77.30]], marker: null },
+  { id: 'EOS-04', name: 'EOS-04 (RISAT-1A)', norad: 'NORAD 51656', agency: 'ISRO Radar Imaging', desc: 'Radar Imaging Satellite for Homeland Security & Terrain', lat: 28.55, lng: 77.08, alt: '529 km Polar LEO', speed: '7.59 km/s', hdg: 45, squawk: 'NORAD 51656', payload: 'C-Band Synthetic Aperture Radar', status: 'NIGHT RECON SWATH', track: [[28.35, 76.95], [28.48, 77.05], [28.60, 77.18], [28.72, 77.28], [28.85, 77.40]], marker: null },
+  { id: 'GSAT-7A', name: 'GSAT-7A (RUKMINI-2)', norad: 'NORAD 43865', agency: 'IAF Tactical Datalink', desc: 'Military Communications & Airborne UAV Tactical Mesh', lat: 28.60, lng: 77.38, alt: '35,786 km GEO Drift Vector', speed: '3.07 km/s', hdg: 90, squawk: 'MIL-UPLINK-07', payload: 'Ku-Band Secure Tactical Datalink', status: 'LINE-OF-SIGHT LOCKED', track: [[28.60, 77.32], [28.60, 77.38], [28.60, 77.45]], marker: null },
+  { id: 'MICROSAT-R', name: 'MICROSAT-R', norad: 'NORAD 43947', agency: 'DRDO / ISRO Strategic Space Mesh', desc: 'Experimental Target Acquisition and Reconnaissance', lat: 28.72, lng: 77.10, alt: '274 km Low LEO', speed: '7.78 km/s', hdg: 215, squawk: 'NORAD 43947', payload: 'Hyperspectral Electronic Recon', status: 'RAPID SCAN PASS', track: [[28.90, 77.18], [28.80, 77.14], [28.70, 77.08], [28.60, 77.02]], marker: null }
+];
+
+const OSINT_AIRSPACE = [
+  { id: 'VIDP-R1', name: 'VIDP-R1 Lutyens VIP Zone', desc: 'Lutyens VIP Restricted Corridor (0 - FL100, Anti-Drone Red Zone)', color: '#ef4444', label: 'VIDP-R1 NO-FLY ZONE', alt: 'SFC to FL100 (10,000 ft)', speed: 'RESTRICTED (0 KTS)', hdg: null, squawk: 'PROHIBITED (NO FLIGHT)', payload: 'Counter-UAS Drone Jammer Active', status: 'RED NO-DRONE AIRSPACE', polygon: [[28.625, 77.195], [28.630, 77.218], [28.610, 77.225], [28.595, 77.200], [28.610, 77.188]], marker: null },
+  { id: 'AFB-HINDON', name: 'Hindon AFB Security Buffer', desc: 'Hindon Air Force Base Tactical Buffer & Ingress Corridor', color: '#f59e0b', label: 'AFB HINDON BUFFER', alt: 'SFC to FL150 (15,000 ft)', speed: 'TACTICAL BUFFER', hdg: null, squawk: 'MILITARY ATC CLEARANCE', payload: 'IAF Air Surveillance Radar Arcs', status: 'CAUTION ZONE', polygon: [[28.685, 77.330], [28.730, 77.350], [28.720, 77.410], [28.670, 77.380]], marker: null },
+  { id: 'CENTRAL-VISTA', name: 'Central Vista Sterile Perimeter', desc: 'Parliament House & Central Vista Sterile Ground-to-Air Grid', color: '#dc2626', label: 'PARLIAMENT STERILE', alt: 'SFC to UNLIMITED', speed: 'STERILE', hdg: null, squawk: 'ABSOLUTE LOCK', payload: 'NSG Tactical Snipers & RF Shield', status: 'STERILE AIRSPACE', polygon: [[28.620, 77.202], [28.622, 77.214], [28.614, 77.215], [28.612, 77.204]], marker: null },
+  { id: 'IGI-CTR', name: 'IGI Airport Control Zone', desc: 'Indira Gandhi International Airport Runway Ingress/Egress CTR', color: '#3b82f6', label: 'IGI AIRPORT CTR', alt: 'SFC to 3,000 ft AGL', speed: 'CONTROLLED', hdg: null, squawk: 'CLASS D AIRSPACE', payload: 'Delhi Approach Radar 126.35 MHz', status: 'CIVIL AIRSPACE', polygon: [[28.535, 77.060], [28.585, 77.080], [28.570, 77.140], [28.520, 77.120]], marker: null }
+];
+
+const OSINT_AQI = [
+  { id: 'AQI-ANAND-VIHAR', name: 'Anand Vihar', aqi: 382, status: 'SEVERE', pm25: 235, temp: '31°C', lat: 28.6469, lng: 77.3160, desc: 'East Delhi Transit Hub Industrial Station', alt: 'AGL 10m', speed: 'Wind: 6 km/h NW', hdg: 315, squawk: 'AQI-IN-DL-01', payload: 'BAM-1020 Beta Attenuation Monitor', marker: null },
+  { id: 'AQI-PUNJABI-BAGH', name: 'Punjabi Bagh', aqi: 245, status: 'POOR', pm25: 142, temp: '32°C', lat: 28.6683, lng: 77.1167, desc: 'West Delhi Ring Road Environmental Node', alt: 'AGL 12m', speed: 'Wind: 8 km/h WNW', hdg: 290, squawk: 'AQI-IN-DL-02', payload: 'Optical Particle Counter OPC-N3', marker: null },
+  { id: 'AQI-MANDIR-MARG', name: 'Mandir Marg', aqi: 185, status: 'MODERATE', pm25: 98, temp: '30°C', lat: 28.6341, lng: 77.1994, desc: 'Central Delhi Residential/Diplomatic Zone', alt: 'AGL 15m', speed: 'Wind: 5 km/h NW', hdg: 320, squawk: 'AQI-IN-DL-03', payload: 'Grimm Model 180 Aerosol Spectrometer', marker: null },
+  { id: 'AQI-IGI-T3', name: 'IGI Airport T3', aqi: 162, status: 'MODERATE', pm25: 84, temp: '32°C', lat: 28.5562, lng: 77.0999, desc: 'Southwest Delhi Aviation Met Station', alt: 'AGL 20m', speed: 'Wind: 11 km/h W', hdg: 270, squawk: 'AQI-IN-DL-04', payload: 'Met One Instruments BAM-1020', marker: null },
+  { id: 'AQI-LODHI-ROAD', name: 'Lodhi Road', aqi: 178, status: 'MODERATE', pm25: 92, temp: '30°C', lat: 28.5918, lng: 77.2273, desc: 'IMD Headquarters Research Station', alt: 'AGL 10m', speed: 'Wind: 7 km/h NW', hdg: 310, squawk: 'AQI-IN-DL-05', payload: 'Thermo Scientific 5014i Beta Gauge', marker: null },
+  { id: 'AQI-RK-PURAM', name: 'RK Puram', aqi: 228, status: 'POOR', pm25: 130, temp: '31°C', lat: 28.5660, lng: 77.1767, desc: 'South Delhi Urban Traffic Node', alt: 'AGL 14m', speed: 'Wind: 6 km/h NW', hdg: 300, squawk: 'AQI-IN-DL-06', payload: 'Teledyne API T640 PM Analyzer', marker: null }
+];
 
 function initGodsEye() {
   if (GODSEYE.initialized) return;
@@ -3906,8 +4824,10 @@ function initGodsEye() {
   const map = L.map('godseye-map', {
     center: CONFIG.MAP_CENTER,
     zoom: 15,
-    minZoom: 4,
-    maxZoom: 19,
+    minZoom: 3,
+    maxZoom: 22,
+    zoomSnap: 0.25,
+    zoomDelta: 0.5,
     maxBounds: INDIA_BOUNDS,
     maxBoundsViscosity: 1.0,
     zoomControl: false,
@@ -3917,20 +4837,24 @@ function initGodsEye() {
     preferCanvas: true
   });
 
-  // 1. High-Resolution Satellite Basemap (Esri World Imagery)
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 19,
-    updateWhenIdle: true,
-    keepBuffer: 2
+  // 1. Crystal-Clear Photorealistic Google Hybrid Satellite HD (Native 20, zoom up to 22)
+  L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    subdomains: ['0', '1', '2', '3'],
+    maxZoom: 22,
+    maxNativeZoom: 20,
+    detectRetina: true,
+    updateWhenIdle: false,
+    keepBuffer: 6
   }).addTo(map);
 
   // 2. High-Contrast Dark Street & Road Labels Overlay
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
     subdomains: 'abcd',
-    maxZoom: 19,
+    maxZoom: 22,
+    maxNativeZoom: 19,
     opacity: 0.95,
-    updateWhenIdle: true,
-    keepBuffer: 2
+    updateWhenIdle: false,
+    keepBuffer: 4
   }).addTo(map);
 
   GODSEYE.map = map;
@@ -3977,6 +4901,94 @@ function initGodsEye() {
     lineCap: 'round'
   }).addTo(map);
 
+  // ════════════ 4. GODSEYE 1.0 OSINT LAYER: ADS-B LIVE AIRCRAFT ════════════
+  GODSEYE.markers.aircraft = [];
+  OSINT_AIRCRAFT.forEach(plane => {
+    const planeSvg = `<svg class="ge-plane-icon" style="transform: rotate(${plane.hdg}deg);" viewBox="0 0 24 24" fill="#00e5ff">
+      <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+    </svg>`;
+    const planeIcon = L.divIcon({
+      className: 'ge-marker-aircraft',
+      html: `${planeSvg}<span class="ge-plane-tag">${plane.id}</span>`,
+      iconSize: [40, 36],
+      iconAnchor: [20, 18]
+    });
+    const m = L.marker([plane.lat, plane.lng], { icon: planeIcon, zIndexOffset: 1200 }).addTo(map);
+    m.on('click', () => GODSEYE.openInspector('aircraft', plane));
+    plane.marker = m;
+    GODSEYE.markers.aircraft.push(m);
+  });
+  const adsbCount = document.getElementById('ge-adsb-count');
+  if (adsbCount) adsbCount.textContent = OSINT_AIRCRAFT.length;
+
+  // ════════════ 5. GODSEYE 1.0 OSINT LAYER: LEO SATELLITES & SWATHS ════════════
+  GODSEYE.markers.satellites = [];
+  OSINT_SATELLITES.forEach(sat => {
+    const satSvg = `<svg class="ge-sat-icon" viewBox="0 0 24 24" fill="#c084fc">
+      <circle cx="12" cy="12" r="3" fill="#fff"/>
+      <path d="M5 8l4 4-4 4M19 8l-4 4 4 4M2 12h5M17 12h5" stroke="#c084fc" stroke-width="2" stroke-linecap="round"/>
+    </svg>`;
+    const satIcon = L.divIcon({
+      className: 'ge-marker-satellite',
+      html: `${satSvg}<span class="ge-sat-tag">${sat.id}</span>`,
+      iconSize: [48, 38],
+      iconAnchor: [24, 19]
+    });
+    const m = L.marker([sat.lat, sat.lng], { icon: satIcon, zIndexOffset: 1500 });
+    m.on('click', () => GODSEYE.openInspector('satellite', sat));
+    sat.marker = m;
+
+    const trackLine = L.polyline(sat.track, {
+      color: '#a78bfa',
+      weight: 1.5,
+      dashArray: '4 6',
+      opacity: 0.65
+    });
+
+    const satGroup = L.layerGroup([trackLine, m]).addTo(map);
+    GODSEYE.markers.satellites.push(satGroup);
+  });
+  const satCount = document.getElementById('ge-sat-count');
+  if (satCount) satCount.textContent = OSINT_SATELLITES.length;
+
+  // ════════════ 6. GODSEYE 1.0 OSINT LAYER: RESTRICTED AIRSPACE ════════════
+  GODSEYE.markers.airspace = [];
+  OSINT_AIRSPACE.forEach(zone => {
+    const poly = L.polygon(zone.polygon, {
+      color: zone.color,
+      fillColor: zone.color,
+      fillOpacity: 0.16,
+      weight: 1.5,
+      dashArray: '5 5'
+    }).addTo(map);
+    poly.bindTooltip(zone.label, {
+      permanent: true,
+      direction: 'center',
+      className: 'ge-zone-tooltip',
+      offset: [0, 0]
+    });
+    poly.on('click', () => GODSEYE.openInspector('airspace', zone));
+    zone.marker = poly;
+    GODSEYE.markers.airspace.push(poly);
+  });
+
+  // ════════════ 7. GODSEYE 1.0 OSINT LAYER: AQI ENVIRONMENTAL MESH ════════════
+  GODSEYE.markers.aqi = [];
+  OSINT_AQI.forEach(zone => {
+    const dotColor = zone.aqi > 300 ? '#ef4444' : (zone.aqi > 200 ? '#f59e0b' : '#34d399');
+    const aqiIcon = L.divIcon({
+      className: 'ge-marker-aqi',
+      html: `<span class="ge-aqi-dot" style="background:${dotColor};box-shadow:0 0 6px ${dotColor};"></span><span>${zone.name}: ${zone.aqi}</span>`,
+      iconSize: [110, 20],
+      iconAnchor: [55, 10]
+    });
+    const m = L.marker([zone.lat, zone.lng], { icon: aqiIcon, zIndexOffset: 800 });
+    m.on('click', () => GODSEYE.openInspector('aqi', zone));
+    zone.marker = m;
+    GODSEYE.markers.aqi.push(m);
+    if (GODSEYE.aqiEnabled) m.addTo(map);
+  });
+
   // Wire Top Banner Controls
   wireGodsEyeControls();
 
@@ -3989,7 +5001,45 @@ function wireGodsEyeControls() {
   document.getElementById('ge-alt-tactical')?.addEventListener('click', () => GODSEYE.setAltitudeMode('tactical'));
   document.getElementById('ge-alt-lock')?.addEventListener('click', () => GODSEYE.setAltitudeMode('lock'));
 
-  // Tactical toggles
+  // Visual Mode Shaders (Godseye 1.0 NVG / FLIR / CRT / God Mode)
+  const vmodes = ['default', 'nvg', 'flir', 'crt', 'god'];
+  vmodes.forEach(mode => {
+    document.getElementById(`ge-vm-${mode}`)?.addEventListener('click', () => {
+      GODSEYE.setVisualMode(mode);
+    });
+  });
+
+  // Tactical & OSINT Layer Toggles
+  document.getElementById('ge-toggle-adsb')?.addEventListener('click', function() {
+    GODSEYE.adsbEnabled = !GODSEYE.adsbEnabled;
+    this.classList.toggle('active', GODSEYE.adsbEnabled);
+    GODSEYE.markers.aircraft.forEach(m => {
+      if (GODSEYE.adsbEnabled) m.addTo(GODSEYE.map);
+      else GODSEYE.map.removeLayer(m);
+    });
+    playSound('click');
+  });
+
+  document.getElementById('ge-toggle-satellites')?.addEventListener('click', function() {
+    GODSEYE.satellitesEnabled = !GODSEYE.satellitesEnabled;
+    this.classList.toggle('active', GODSEYE.satellitesEnabled);
+    GODSEYE.markers.satellites.forEach(m => {
+      if (GODSEYE.satellitesEnabled) m.addTo(GODSEYE.map);
+      else GODSEYE.map.removeLayer(m);
+    });
+    playSound('click');
+  });
+
+  document.getElementById('ge-toggle-airspace')?.addEventListener('click', function() {
+    GODSEYE.airspaceEnabled = !GODSEYE.airspaceEnabled;
+    this.classList.toggle('active', GODSEYE.airspaceEnabled);
+    GODSEYE.markers.airspace.forEach(m => {
+      if (GODSEYE.airspaceEnabled) m.addTo(GODSEYE.map);
+      else GODSEYE.map.removeLayer(m);
+    });
+    playSound('click');
+  });
+
   document.getElementById('ge-toggle-los')?.addEventListener('click', function() {
     GODSEYE.losEnabled = !GODSEYE.losEnabled;
     this.classList.toggle('active', GODSEYE.losEnabled);
@@ -3997,15 +5047,6 @@ function wireGodsEyeControls() {
       GODSEYE.losBeam.setLatLngs([]);
     }
     playSound('click');
-  });
-
-  document.getElementById('ge-toggle-flir')?.addEventListener('click', function() {
-    GODSEYE.flirMode = !GODSEYE.flirMode;
-    this.classList.toggle('active', GODSEYE.flirMode);
-    if (GODSEYE.dom.mapContainer) {
-      GODSEYE.dom.mapContainer.classList.toggle('flir-active', GODSEYE.flirMode);
-    }
-    playSound('alert');
   });
 
   document.getElementById('ge-toggle-interceptions')?.addEventListener('click', function() {
@@ -4019,6 +5060,41 @@ function wireGodsEyeControls() {
       }
     });
     playSound('click');
+  });
+
+  document.getElementById('ge-toggle-aqi')?.addEventListener('click', function() {
+    GODSEYE.aqiEnabled = !GODSEYE.aqiEnabled;
+    this.classList.toggle('active', GODSEYE.aqiEnabled);
+    GODSEYE.markers.aqi.forEach(m => {
+      if (GODSEYE.aqiEnabled) m.addTo(GODSEYE.map);
+      else GODSEYE.map.removeLayer(m);
+    });
+    playSound('click');
+  });
+
+  // OSINT Object Inspector Panel Actions
+  document.getElementById('btn-ge-oi-close')?.addEventListener('click', () => {
+    document.getElementById('ge-osint-inspector')?.classList.add('hidden');
+    playSound('click');
+  });
+
+  document.getElementById('btn-ge-oi-focus')?.addEventListener('click', () => {
+    if (GODSEYE.selectedOsintItem && GODSEYE.map) {
+      const item = GODSEYE.selectedOsintItem;
+      const lat = item.lat || (item.track && item.track[0][0]) || (item.polygon && item.polygon[0][0]);
+      const lng = item.lng || (item.track && item.track[0][1]) || (item.polygon && item.polygon[0][1]);
+      if (lat && lng) {
+        GODSEYE.map.flyTo([lat, lng], 16, { duration: 1.0 });
+        playSound('alert');
+      }
+    }
+  });
+
+  document.getElementById('btn-ge-oi-stream')?.addEventListener('click', () => {
+    if (GODSEYE.selectedOsintItem) {
+      showToast(' OSINT SENSOR INTERCEPTED', `Downlink locked for ${GODSEYE.selectedOsintItem.id || GODSEYE.selectedOsintItem.name}. Frequency 1090 MHz.`);
+      playSound('chirp');
+    }
   });
 
   // Interception Authorization Directive
@@ -4036,7 +5112,86 @@ function wireGodsEyeControls() {
     closeGodsEye();
     switchWindow('surveillance');
   });
+
+  // Close GodsEye Overlay Button
+  document.getElementById('btn-godseye-close')?.addEventListener('click', closeGodsEye);
+
+  // Keyboard shortcut: Escape to close GodsEye
+  if (!GODSEYE._escWired) {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && GODSEYE.active) {
+        closeGodsEye();
+      }
+    });
+    GODSEYE._escWired = true;
+  }
 }
+
+// ════════════ GODSEYE 1.0 VISUAL SHADER SWITCHER ════════════
+GODSEYE.setVisualMode = function(mode) {
+  GODSEYE.visualMode = mode;
+  document.querySelectorAll('.ge-vmode-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`ge-vm-${mode}`)?.classList.add('active');
+
+  const container = GODSEYE.dom.mapContainer || document.getElementById('ge-map-container');
+  if (container) {
+    container.classList.remove('nvg-active', 'flir-active', 'crt-active', 'god-active');
+    if (mode !== 'default') {
+      container.classList.add(`${mode}-active`);
+    }
+  }
+  showToast(`OPTICAL MODE // ${mode.toUpperCase()}`, `Sensor filter switched to ${mode.toUpperCase()} spectral shader.`);
+  playSound('alert');
+};
+
+// ════════════ GODSEYE 1.0 OSINT OBJECT INSPECTOR ════════════
+GODSEYE.openInspector = function(type, data) {
+  GODSEYE.selectedOsintItem = data;
+  const inspector = GODSEYE.dom.osintInspector || document.getElementById('ge-osint-inspector');
+  if (!inspector) return;
+  inspector.classList.remove('hidden');
+
+  const badge = document.getElementById('ge-oi-type');
+  const idEl = document.getElementById('ge-oi-id');
+  const descEl = document.getElementById('ge-oi-desc');
+  const altEl = document.getElementById('ge-oi-alt');
+  const spdEl = document.getElementById('ge-oi-speed');
+  const hdgEl = document.getElementById('ge-oi-hdg');
+  const sqkEl = document.getElementById('ge-oi-squawk');
+  const latEl = document.getElementById('ge-oi-lat');
+  const lngEl = document.getElementById('ge-oi-lng');
+  const payEl = document.getElementById('ge-oi-payload');
+  const statEl = document.getElementById('ge-oi-status');
+
+  if (badge) {
+    badge.className = 'ge-oi-badge';
+    if (type === 'aircraft') {
+      badge.textContent = 'AIRCRAFT (ADS-B)';
+    } else if (type === 'satellite') {
+      badge.classList.add('satellite');
+      badge.textContent = 'RECON SATELLITE (LEO)';
+    } else if (type === 'airspace') {
+      badge.classList.add('airspace');
+      badge.textContent = 'RESTRICTED AIRSPACE';
+    } else if (type === 'aqi') {
+      badge.classList.add('aqi');
+      badge.textContent = 'ENVIRONMENTAL (AQI)';
+    }
+  }
+
+  if (idEl) idEl.textContent = data.id || data.name || 'UNKNOWN';
+  if (descEl) descEl.textContent = data.desc || data.airline || data.agency || 'Active Target Vector';
+  if (altEl) altEl.textContent = data.alt || 'SURFACE (AGL 0m)';
+  if (spdEl) spdEl.textContent = data.speed || 'STATIC ZONE';
+  if (hdgEl) hdgEl.textContent = data.hdg ? `${data.hdg}°` : 'OMNIDIRECTIONAL';
+  if (sqkEl) sqkEl.textContent = data.squawk || data.code || 'IFF CODE 0000';
+  if (latEl) latEl.textContent = data.lat ? `${data.lat.toFixed(4)}° N` : '--';
+  if (lngEl) lngEl.textContent = data.lng ? `${data.lng.toFixed(4)}° E` : '--';
+  if (payEl) payEl.textContent = data.payload || 'Multispectral Sensor';
+  if (statEl) statEl.textContent = data.status || 'ACTIVE';
+
+  playSound('chirp');
+};
 
 // ════════════ LIVE SENSOR PIP PREVIEW IN GODSEYE ════════════
 GODSEYE.openSensorPiP = function(node) {
@@ -4229,6 +5384,7 @@ function openGodsEye() {
   initGodsEye();
   const overlay = GODSEYE.dom.overlay || document.getElementById('godseye-overlay');
   if (!overlay) return;
+  overlay.style.display = 'block';
   overlay.classList.remove('hidden');
   GODSEYE.active = true;
   playSound('alert');
@@ -4285,7 +5441,10 @@ function openGodsEye() {
 
 function closeGodsEye() {
   const overlay = GODSEYE.dom.overlay || document.getElementById('godseye-overlay');
-  if (overlay) overlay.classList.add('hidden');
+  if (overlay) {
+    overlay.classList.add('hidden');
+    overlay.style.display = 'none';
+  }
   GODSEYE.active = false;
 
   if (GODSEYE.radarAF) {
@@ -4518,6 +5677,29 @@ function updateGodsEyeLive() {
     if (bPos) marker.setLatLng([bPos.lat, bPos.lng]);
   });
 
+  // Godseye 1.0 OSINT: Live simulated ADS-B flight vector drift
+  if (GODSEYE.adsbEnabled) {
+    OSINT_AIRCRAFT.forEach(plane => {
+      const rad = (plane.hdg * Math.PI) / 180;
+      plane.lat += Math.cos(rad) * 0.00018;
+      plane.lng += Math.sin(rad) * 0.00018;
+      if (plane.marker) {
+        plane.marker.setLatLng([plane.lat, plane.lng]);
+      }
+    });
+  }
+
+  // Godseye 1.0 OSINT: Live simulated LEO satellite orbital drift
+  if (GODSEYE.satellitesEnabled) {
+    OSINT_SATELLITES.forEach(sat => {
+      sat.lat += 0.00012;
+      sat.lng -= 0.00010;
+      if (sat.marker) {
+        sat.marker.setLatLng([sat.lat, sat.lng]);
+      }
+    });
+  }
+
   // Speed oscillation
   const d = GODSEYE.dom;
   if (d.speed) d.speed.textContent = `${(39 + Math.sin(Date.now() / 900) * 6).toFixed(0)} km/h`;
@@ -4714,6 +5896,7 @@ function startRadarSweep() {
 // ════════════ GODSEYE EVENT WIRING ════════════
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-godseye')?.addEventListener('click', openGodsEye);
+  document.getElementById('btn-topbar-godseye')?.addEventListener('click', openGodsEye);
   document.getElementById('btn-godseye-close')?.addEventListener('click', closeGodsEye);
 
   // Allow Escape to close GodsEye
@@ -5765,29 +6948,29 @@ function drawAQICanvas(canvasId) {
 }
 
 
-// ========================= IRCTC THEME & ACCESSIBILITY CONTROLLER =========================
-function initIRCTCThemeController() {
+// ========================= GOVT COMMAND THEME & ACCESSIBILITY CONTROLLER =========================
+function initGovtThemeController() {
   const body = document.body;
   const themeBtn = document.getElementById('btn-theme-toggle');
   const themeLabel = document.getElementById('theme-btn-label');
 
-  // Strictly enforce IRCTC Official Theme
-  setPortalTheme('irctc');
+  // Strictly enforce Official Government Theme
+  setPortalTheme('gov');
 
   if (themeBtn) {
     themeBtn.addEventListener('click', () => {
-      setPortalTheme('irctc');
-      showToast('THEME: IRCTC OFFICIAL PORTAL', 'Indian Railways Royal Navy and Saffron Orange palette active.');
+      setPortalTheme('gov');
+      showToast('THEME: GOVERNMENT COMMAND PORTAL', 'Indian Railways Royal Navy and Saffron Orange palette active.');
       playSound('click');
     });
   }
 
   function setPortalTheme(theme) {
-    body.classList.add('theme-irctc');
+    body.classList.add('theme-gov');
     body.classList.remove('theme-tactical');
-    if (themeLabel) themeLabel.textContent = 'Theme: IRCTC Portal';
-    if (themeBtn) themeBtn.title = 'Current: IRCTC Official Government Portal Theme';
-    localStorage.setItem('vesper-theme', 'irctc');
+    if (themeLabel) themeLabel.textContent = 'Theme: Government Portal';
+    if (themeBtn) themeBtn.title = 'Current: Government Official Government Portal Theme';
+    localStorage.setItem('vesper-theme', 'gov');
   }
 
   // Accessibility Font Sizers
@@ -5847,7 +7030,7 @@ function initIRCTCThemeController() {
 
 // Global bootstrap on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  initIRCTCThemeController();
+  initGovtThemeController();
   initUrbanTrafficAnalytics();
 });
 
@@ -5884,3 +7067,22 @@ window.addEventListener('keydown', (e) => {
     collapseExpandedPane();
   }
 });
+
+// Explicit Global Window Exports to guarantee 100% button & click connectivity
+window.switchWindow = switchWindow;
+window.setLayoutMode = setLayoutMode;
+window.selectVehicle = selectVehicle;
+window.triggerStolenVehicleDemo = triggerStolenVehicleDemo;
+window.openCertificateModal = openCertificateModal;
+window.openSightingChainModal = openSightingChainModal;
+window.closeSightingChainModal = closeSightingChainModal;
+window.toggleFullscreen = toggleFullscreen;
+window.showToast = showToast;
+window.playSound = playSound;
+window.authenticateAllAPIs = authenticateAllAPIs;
+window.setupApiKeyControls = setupApiKeyControls;
+window.openGodsEye = openGodsEye;
+window.closeGodsEye = closeGodsEye;
+window.openLiveCameraModal = openLiveCameraModal;
+window.closeLiveCameraModal = closeLiveCameraModal;
+

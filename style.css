@@ -5,7 +5,7 @@
 
 /* ----------- CSS CUSTOM PROPERTIES ----------- */
 :root {
-  /* IRCTC Official Website Color Palette */
+  /* Official Government Color Palette */
   --bg-primary: #f0f4f8;
   --bg-secondary: #ffffff;
   --bg-tertiary: #e2e8f0;
@@ -1712,39 +1712,48 @@ body.mode-split5025 .pane-split-badge {
 
 .godseye-hud { width: 100%; height: 100%; position: relative; overflow: hidden; }
 
-/* ─── Top Banner ─── */
+/* ─── Top Banner (Godseye 1.0 OSINT) ─── */
 .ge-top-banner {
   position: absolute; top: 0; left: 0; right: 0; z-index: 10;
   display: flex; align-items: center; justify-content: space-between;
-  height: 52px; padding: 0 16px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 70%, transparent 100%);
-  border-bottom: 1px solid rgba(0,229,255,0.18);
-  backdrop-filter: blur(12px);
+  height: 54px; padding: 0 16px;
+  background: linear-gradient(180deg, rgba(6,10,20,0.96) 0%, rgba(6,10,20,0.8) 75%, transparent 100%);
+  border-bottom: 1px solid rgba(0,229,255,0.22);
+  backdrop-filter: blur(14px);
 }
-.ge-top-left { display: flex; align-items: center; gap: 12px; }
+.ge-top-left { display: flex; align-items: center; gap: 10px; }
+.ge-brand-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3);
+  padding: 3px 8px; border-radius: 4px;
+}
 .ge-logo {
-  font-family: var(--font-mono); font-size: 17px; font-weight: 900; letter-spacing: 3px;
-  background: linear-gradient(135deg, #00e5ff, #a78bfa, #00e5ff);
+  font-family: var(--font-mono); font-size: 15px; font-weight: 900; letter-spacing: 2px;
+  background: linear-gradient(135deg, #00e5ff, #38bdf8, #818cf8);
   background-size: 200% 200%; animation: geLogoShift 4s ease infinite;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 12px rgba(0,229,255,0.5));
+  filter: drop-shadow(0 0 10px rgba(0,229,255,0.6));
+}
+.ge-tag {
+  font-family: var(--font-mono); font-size: 8px; font-weight: 800; letter-spacing: 1px;
+  color: #0a0e17; background: #00e5ff; padding: 1px 4px; border-radius: 2px;
 }
 @keyframes geLogoShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-.ge-subtitle { font-size: 8px; font-weight: 700; letter-spacing: 1.5px; color: rgba(148,163,184,0.7); }
+.ge-subtitle { font-size: 8px; font-weight: 700; letter-spacing: 1.2px; color: rgba(148,163,184,0.7); max-width: 200px; line-height: 1.1; }
 
 /* Quick Switcher for Targets */
-.ge-target-quickswitch { display: flex; align-items: center; gap: 6px; margin-left: 10px; }
+.ge-target-quickswitch { display: flex; align-items: center; gap: 6px; margin-left: 6px; }
 .ge-target-chip {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 3px 8px; font-family: var(--font-mono); font-size: 9px; font-weight: 700;
-  background: rgba(15,23,42,0.8); border: 1px solid rgba(0,229,255,0.2);
+  background: rgba(15,23,42,0.85); border: 1px solid rgba(0,229,255,0.25);
   border-radius: 12px; color: var(--text-secondary); cursor: pointer;
   transition: var(--transition-fast); user-select: none;
 }
-.ge-target-chip:hover { border-color: var(--accent-cyan); color: #fff; background: rgba(0,229,255,0.12); }
+.ge-target-chip:hover { border-color: var(--accent-cyan); color: #fff; background: rgba(0,229,255,0.15); }
 .ge-target-chip.active {
   border-color: var(--accent-cyan); background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(167,139,250,0.2));
-  color: #00e5ff; box-shadow: 0 0 12px rgba(0,229,255,0.35);
+  color: #00e5ff; box-shadow: 0 0 12px rgba(0,229,255,0.4);
 }
 .ge-target-chip.stolen { border-color: rgba(248,113,113,0.35); color: #f87171; }
 .ge-target-chip.stolen.active {
@@ -1752,16 +1761,35 @@ body.mode-split5025 .pane-split-badge {
   color: #fca5a5; box-shadow: 0 0 14px rgba(239,68,68,0.45);
 }
 
-.ge-top-center { display: flex; align-items: center; gap: 16px; }
+.ge-top-center { display: flex; align-items: center; gap: 12px; }
+
+/* Godseye 1.0 Visual Filter Shaders (NVG / FLIR / CRT / God Mode) */
+.ge-visual-modes {
+  display: flex; align-items: center; gap: 2px;
+  background: rgba(10,14,23,0.9); border: 1px solid rgba(167,139,250,0.3);
+  border-radius: 20px; padding: 2px 4px;
+}
+.ge-vmode-btn {
+  background: transparent; border: none; color: rgba(167,139,250,0.8);
+  font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.5px;
+  padding: 3px 7px; border-radius: 12px; cursor: pointer;
+  transition: var(--transition-fast);
+}
+.ge-vmode-btn:hover { color: #fff; background: rgba(167,139,250,0.15); }
+.ge-vmode-btn.active {
+  background: linear-gradient(135deg, #a78bfa, #818cf8); color: #0a0e17; font-weight: 800;
+  box-shadow: 0 0 10px rgba(167,139,250,0.6);
+}
+
 .ge-altitude-modes {
   display: flex; align-items: center; gap: 2px;
-  background: rgba(10,14,23,0.85); border: 1px solid rgba(0,229,255,0.22);
+  background: rgba(10,14,23,0.9); border: 1px solid rgba(0,229,255,0.25);
   border-radius: 20px; padding: 2px 4px;
 }
 .ge-alt-btn {
   background: transparent; border: none; color: rgba(148,163,184,0.85);
-  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
-  padding: 3px 9px; border-radius: 14px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 8.5px; font-weight: 700;
+  padding: 3px 8px; border-radius: 14px; cursor: pointer;
   transition: var(--transition-fast);
 }
 .ge-alt-btn:hover { color: #00e5ff; background: rgba(0,229,255,0.1); }
@@ -1770,17 +1798,19 @@ body.mode-split5025 .pane-split-badge {
   box-shadow: 0 0 12px rgba(0,229,255,0.5);
 }
 .ge-clock-wrap { text-align: center; }
-.ge-clock { font-family: var(--font-mono); font-size: 18px; font-weight: 800; color: #00e5ff; letter-spacing: 2px; text-shadow: 0 0 16px rgba(0,229,255,0.4); }
-.ge-clock-sub { display: block; font-size: 7px; color: rgba(148,163,184,0.5); letter-spacing: 1.5px; margin-top: -3px; }
+.ge-clock { font-family: var(--font-mono); font-size: 16px; font-weight: 800; color: #00e5ff; letter-spacing: 2px; text-shadow: 0 0 14px rgba(0,229,255,0.5); }
+.ge-clock-sub { display: block; font-size: 7px; color: rgba(148,163,184,0.6); letter-spacing: 1px; margin-top: -3px; }
 
-.ge-top-right { display: flex; align-items: center; gap: 10px; }
-.ge-toggles { display: flex; align-items: center; gap: 5px; }
+.ge-top-right { display: flex; align-items: center; gap: 8px; }
+.ge-toggles { display: flex; align-items: center; gap: 4px; }
 .ge-toggle-btn {
-  background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.25);
+  background: rgba(15,23,42,0.85); border: 1px solid rgba(148,163,184,0.25);
   border-radius: 12px; font-family: var(--font-mono); font-size: 8px; font-weight: 700;
-  color: rgba(148,163,184,0.85); padding: 3px 8px; cursor: pointer;
+  color: rgba(148,163,184,0.85); padding: 3px 7px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px;
   transition: var(--transition-fast);
 }
+.ge-tb-icon { font-size: 9px; }
 .ge-toggle-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 .ge-toggle-btn.active {
   border-color: rgba(52,211,153,0.6); background: rgba(52,211,153,0.15);
@@ -1788,28 +1818,169 @@ body.mode-split5025 .pane-split-badge {
 }
 
 .ge-status-pill {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: var(--accent-green);
-  padding: 4px 10px; border: 1px solid rgba(52,211,153,0.3); border-radius: 20px;
-  background: rgba(52,211,153,0.08);
+  display: flex; align-items: center; gap: 5px;
+  font-size: 8.5px; font-weight: 700; letter-spacing: 1.2px; color: var(--accent-green);
+  padding: 4px 8px; border: 1px solid rgba(52,211,153,0.3); border-radius: 20px;
+  background: rgba(52,211,153,0.08); white-space: nowrap;
 }
-.ge-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: pulse-dot 2s infinite; }
+.ge-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: pulse-dot 2s infinite; }
 .ge-close-btn {
-  padding: 5px 14px; border: 1px solid rgba(248,113,113,0.3); border-radius: var(--radius-sm);
-  background: rgba(248,113,113,0.08); color: var(--accent-red);
+  padding: 5px 12px; border: 1px solid rgba(248,113,113,0.35); border-radius: var(--radius-sm);
+  background: rgba(248,113,113,0.1); color: var(--accent-red);
   font-family: var(--font-sans); font-size: 10px; font-weight: 800; letter-spacing: 1px;
   cursor: pointer; transition: var(--transition-fast);
 }
-.ge-close-btn:hover { background: rgba(248,113,113,0.2); border-color: var(--accent-red); box-shadow: 0 0 15px rgba(248,113,113,0.3); }
+.ge-close-btn:hover { background: rgba(248,113,113,0.25); border-color: var(--accent-red); box-shadow: 0 0 15px rgba(248,113,113,0.4); }
 
-/* ─── Map Container ─── */
-.ge-map-container { position: absolute; top: 52px; left: 0; right: 0; bottom: 44px; z-index: 1; }
+/* ─── Map Container & Shaders ─── */
+.ge-map-container { position: absolute; top: 54px; left: 0; right: 0; bottom: 44px; z-index: 1; overflow: hidden; }
 .ge-map { width: 100%; height: 100%; }
 
-/* FLIR Infrared Thermal Satellite Filter Mode */
+/* NVG Mode (Night Vision Green Phosphor) */
+.ge-map-container.nvg-active .leaflet-tile-pane {
+  filter: brightness(1.2) contrast(1.8) sepia(1) hue-rotate(85deg) saturate(4.5);
+  transition: filter 0.3s ease;
+}
+.ge-map-container.nvg-active::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 4;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 65, 0.12) 50%),
+              radial-gradient(circle, transparent 60%, rgba(0, 20, 5, 0.75) 100%);
+  background-size: 100% 3px, 100% 100%;
+}
+
+/* FLIR Mode (Forward-Looking Infrared Thermal) */
 .ge-map-container.flir-active .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) saturate(2.4) contrast(1.35) brightness(0.92);
-  transition: filter 0.4s ease;
+  filter: invert(1) hue-rotate(180deg) saturate(2.8) contrast(1.45) brightness(0.95);
+  transition: filter 0.3s ease;
+}
+.ge-map-container.flir-active::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 4;
+  background: radial-gradient(circle, transparent 65%, rgba(40, 0, 80, 0.6) 100%);
+}
+
+/* CRT Radar Mode */
+.ge-map-container.crt-active .leaflet-tile-pane {
+  filter: contrast(1.4) brightness(0.85) saturate(1.6);
+  transition: filter 0.3s ease;
+}
+.ge-map-container.crt-active::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 4;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+              radial-gradient(circle, transparent 55%, rgba(0, 0, 0, 0.85) 100%);
+  background-size: 100% 4px, 100% 100%;
+}
+
+/* God Mode (OSINT High-Contrast Neon) */
+.ge-map-container.god-active .leaflet-tile-pane {
+  filter: saturate(2.2) contrast(1.6) brightness(1.1) drop-shadow(0 0 8px rgba(0,229,255,0.4));
+  transition: filter 0.3s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* TACTICAL GIS MAP SHADERS & 3D ISOMETRIC TILT (GOD'S EYE VIEW)      */
+/* ═══════════════════════════════════════════════════════════════════ */
+.gis-shader-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(10, 14, 23, 0.92);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 14px;
+  padding: 2px 4px;
+}
+.shader-chip-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.shader-chip-btn:hover {
+  color: #00f0ff;
+  background: rgba(0, 240, 255, 0.12);
+}
+.shader-chip-btn.active {
+  background: #00f0ff;
+  color: #0b111e;
+  font-weight: 900;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+.shader-chip-btn.accent-3d.active {
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+/* NVG Mode for Main GIS Map */
+.gis-map-container.nvg-active .leaflet-tile-pane {
+  filter: brightness(1.2) contrast(1.8) sepia(1) hue-rotate(85deg) saturate(4.5);
+  transition: filter 0.3s ease;
+}
+.gis-map-container.nvg-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 400;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 65, 0.12) 50%),
+              radial-gradient(circle, transparent 60%, rgba(0, 20, 5, 0.75) 100%);
+  background-size: 100% 3px, 100% 100%;
+}
+
+/* FLIR Thermal Mode for Main GIS Map */
+.gis-map-container.flir-active .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) saturate(2.8) contrast(1.45) brightness(0.95);
+  transition: filter 0.3s ease;
+}
+.gis-map-container.flir-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 400;
+  background: radial-gradient(circle, transparent 65%, rgba(40, 0, 80, 0.6) 100%);
+}
+
+/* CRT Radar Mode for Main GIS Map */
+.gis-map-container.crt-active .leaflet-tile-pane {
+  filter: contrast(1.4) brightness(0.85) saturate(1.6);
+  transition: filter 0.3s ease;
+}
+.gis-map-container.crt-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 400;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+              radial-gradient(circle, transparent 55%, rgba(0, 0, 0, 0.85) 100%);
+  background-size: 100% 4px, 100% 100%;
+}
+
+/* 3D Isometric & Photorealistic Perspective Ride-Along */
+.gis-map-container.perspective-3d {
+  perspective: 1000px;
+}
+.gis-map-container.perspective-3d #gis-map {
+  transform: rotateX(32deg) scale(1.12);
+  transform-origin: 50% 85%;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.95);
+}
+.ge-map-container.perspective-3d {
+  perspective: 1000px;
+}
+.ge-map-container.perspective-3d #godseye-map {
+  transform: rotateX(32deg) scale(1.12);
+  transform-origin: 50% 85%;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.95);
 }
 
 /* ─── Radar Sweep Canvas ─── */
@@ -1999,7 +2170,64 @@ body.mode-split5025 .pane-split-badge {
 .ge-bv.amber { color: var(--accent-yellow); }
 .ge-bv.red { color: var(--accent-red); }
 
-/* ─── GodsEye Map Markers ─── */
+/* ─── Godseye 1.0 OSINT Object Inspector Panel ─── */
+.ge-osint-inspector {
+  position: absolute; bottom: 58px; right: 280px; z-index: 12;
+  width: 320px; background: rgba(10,14,23,0.92);
+  border: 1px solid rgba(0,229,255,0.35); border-radius: 6px;
+  backdrop-filter: blur(14px); box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(0,229,255,0.15);
+  animation: geSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+.ge-osint-inspector.hidden { display: none; }
+@keyframes geSlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.ge-oi-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px; background: rgba(0,229,255,0.08); border-bottom: 1px solid rgba(0,229,255,0.2);
+}
+.ge-oi-title-wrap { display: flex; align-items: center; gap: 8px; }
+.ge-oi-badge {
+  font-family: var(--font-mono); font-size: 7.5px; font-weight: 800;
+  color: #0a0e17; background: #00e5ff; padding: 2px 5px; border-radius: 2px;
+  letter-spacing: 0.8px;
+}
+.ge-oi-badge.satellite { background: #a78bfa; color: #0a0e17; }
+.ge-oi-badge.airspace { background: #ef4444; color: #fff; }
+.ge-oi-badge.aqi { background: #f59e0b; color: #0a0e17; }
+.ge-oi-name { font-family: var(--font-mono); font-size: 11px; font-weight: 800; color: #fff; letter-spacing: 1px; }
+.ge-oi-close {
+  background: transparent; border: none; color: #94a3b8; font-size: 11px;
+  cursor: pointer; padding: 2px 6px; border-radius: 3px;
+}
+.ge-oi-close:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
+.ge-oi-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.ge-oi-meta { font-size: 9px; color: #94a3b8; font-weight: 500; line-height: 1.3; }
+.ge-oi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+.ge-oi-cell { display: flex; flex-direction: column; gap: 1px; }
+.ge-oi-lbl { font-size: 7px; font-weight: 700; letter-spacing: 0.8px; color: rgba(148,163,184,0.7); }
+.ge-oi-val { font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; color: #e2e8f0; }
+.ge-oi-val.cyan { color: #00e5ff; }
+.ge-oi-val.green { color: #34d399; }
+.ge-oi-val.amber { color: #fbbf24; }
+.ge-oi-val.red { color: #f87171; }
+.ge-oi-val.purple { color: #c084fc; }
+
+.ge-oi-actions { display: flex; gap: 6px; margin-top: 4px; }
+.ge-oi-btn {
+  flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+  color: #cbd5e1; font-family: var(--font-mono); font-size: 8px; font-weight: 700;
+  padding: 4px 6px; border-radius: 3px; cursor: pointer; transition: var(--transition-fast);
+  text-align: center;
+}
+.ge-oi-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.ge-oi-btn.primary {
+  background: rgba(0,229,255,0.15); border-color: rgba(0,229,255,0.4); color: #00e5ff;
+}
+.ge-oi-btn.primary:hover { background: rgba(0,229,255,0.28); color: #fff; }
+
+/* ─── GodsEye Map Markers (Godseye 1.0 OSINT) ─── */
 .ge-marker-target {
   width: 22px; height: 22px; border-radius: 50%;
   background: radial-gradient(circle, rgba(248,113,113,0.9) 0%, rgba(248,113,113,0.2) 60%, transparent 70%);
@@ -2011,6 +2239,7 @@ body.mode-split5025 .pane-split-badge {
   0%,100% { transform: scale(1); box-shadow: 0 0 20px rgba(248,113,113,0.6); }
   50% { transform: scale(1.25); box-shadow: 0 0 35px rgba(248,113,113,0.8); }
 }
+
 .ge-marker-cam {
   width: 12px; height: 12px; border-radius: 50%;
   background: rgba(0,229,255,0.7); border: 1.5px solid var(--accent-cyan);
@@ -2033,6 +2262,48 @@ body.mode-split5025 .pane-split-badge {
   0%,100% { transform: scale(1); box-shadow: 0 0 14px rgba(239,68,68,0.7); }
   50% { transform: scale(1.2); box-shadow: 0 0 24px rgba(239,68,68,1); }
 }
+
+/* Aircraft (ADS-B) Tactical Marker */
+.ge-marker-aircraft {
+  display: flex; flex-direction: column; align-items: center; cursor: pointer;
+}
+.ge-plane-icon {
+  width: 22px; height: 22px;
+  filter: drop-shadow(0 0 6px rgba(0,229,255,0.8));
+  transition: transform 0.4s ease;
+}
+.ge-plane-tag {
+  font-family: var(--font-mono); font-size: 7.5px; font-weight: 800;
+  color: #00e5ff; background: rgba(10,14,23,0.85); border: 1px solid rgba(0,229,255,0.35);
+  padding: 1px 4px; border-radius: 3px; margin-top: -2px; white-space: nowrap;
+}
+.ge-plane-tag.emergency {
+  color: #ef4444; border-color: #ef4444; animation: geTargetPulse 1s infinite;
+}
+
+/* Satellite LEO Marker */
+.ge-marker-satellite {
+  display: flex; flex-direction: column; align-items: center; cursor: pointer;
+}
+.ge-sat-icon {
+  width: 24px; height: 24px;
+  filter: drop-shadow(0 0 8px rgba(167,139,250,0.9));
+}
+.ge-sat-tag {
+  font-family: var(--font-mono); font-size: 7px; font-weight: 800;
+  color: #c084fc; background: rgba(10,14,23,0.85); border: 1px solid rgba(167,139,250,0.4);
+  padding: 1px 4px; border-radius: 3px; margin-top: -3px; white-space: nowrap;
+}
+
+/* AQI Environmental Marker */
+.ge-marker-aqi {
+  display: flex; align-items: center; gap: 4px; cursor: pointer;
+  background: rgba(10,14,23,0.85); border: 1px solid rgba(245,158,11,0.4);
+  padding: 2px 6px; border-radius: 10px; font-family: var(--font-mono); font-size: 7.5px;
+  color: #fbbf24; font-weight: 700; white-space: nowrap;
+  box-shadow: 0 0 8px rgba(245,158,11,0.25);
+}
+.ge-aqi-dot { width: 5px; height: 5px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
 
 /* ─────────────────────────────────────────────────────────── */
 /* HERO API BANNER (MISSION BRIEF)                            */
@@ -3872,13 +4143,13 @@ body.mode-split5025 .pane-split-badge {
 }
 
 /* ============================================================
-   IRCTC OFFICIAL NEXT-GEN GOVERNMENT PORTAL DESIGN SYSTEM
+   OFFICIAL NEXT-GEN GOVERNMENT COMMAND PORTAL DESIGN SYSTEM
    Indian Railways Royal Navy Blue (#213d77), Saffron (#fb792b),
    and Crisp Official Government White Aesthetics
    ============================================================ */
 
-/* ─── 1. IRCTC CRIS UTILITY TOP STRIP ─── */
-.irctc-utility-bar {
+/* ─── 1. GOVERNMENT UTILITY TOP STRIP ─── */
+.gov-utility-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3928,7 +4199,7 @@ body.mode-split5025 .pane-split-badge {
   margin: 0 16px;
   overflow: hidden;
 }
-.irctc-marquee-wrap {
+.gov-marquee-wrap {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -3957,13 +4228,13 @@ body.mode-split5025 .pane-split-badge {
   display: inline-block;
   font-size: 10px;
   color: #fde047;
-  animation: irctc-ticker 32s linear infinite;
+  animation: gov-ticker 32s linear infinite;
 }
-@keyframes irctc-ticker {
+@keyframes gov-ticker {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
-.irctc-marquee-wrap:hover .im-ticker-text {
+.gov-marquee-wrap:hover .im-ticker-text {
   animation-play-state: paused;
 }
 
@@ -4025,13 +4296,13 @@ body.mode-split5025 .pane-split-badge {
   filter: brightness(1.08);
 }
 
-/* ─── 2. IRCTC MAIN LOGO BRANDING IN HEADER ─── */
-.irctc-logo-group {
+/* ─── 2. GOVT COMMAND MAIN LOGO BRANDING IN HEADER ─── */
+.gov-logo-group {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.irctc-round-crest {
+.gov-round-crest {
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -4043,42 +4314,42 @@ body.mode-split5025 .pane-split-badge {
   position: relative;
   box-shadow: 0 2px 6px rgba(33, 61, 119, 0.25);
 }
-.irctc-crest-symbol {
+.gov-crest-symbol {
   font-size: 20px;
 }
-.irctc-text-col {
+.gov-text-col {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.irctc-title-line {
+.gov-title-line {
   display: flex;
   align-items: center;
   gap: 6px;
   font-family: var(--font-sans);
 }
-.irctc-name-hi {
+.gov-name-hi {
   font-size: 14px;
   font-weight: 800;
   color: #213d77;
 }
-.irctc-name-en {
+.gov-name-en {
   font-size: 16px;
   font-weight: 900;
   color: #fb792b;
   letter-spacing: 0.5px;
 }
-.irctc-pipe {
+.gov-pipe {
   color: #94a3b8;
   font-weight: 300;
 }
-.irctc-sub-name {
+.gov-sub-name {
   font-size: 9px;
   font-weight: 700;
   color: #213d77;
   letter-spacing: 0.5px;
 }
-.irctc-vesper-line {
+.gov-vesper-line {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -4097,7 +4368,7 @@ body.mode-split5025 .pane-split-badge {
   color: #64748b;
   font-weight: 500;
 }
-.system-status.irctc-status {
+.system-status.gov-status {
   background: rgba(16, 124, 65, 0.08);
   border: 1px solid rgba(16, 124, 65, 0.25);
   color: #107c41;
@@ -4108,8 +4379,8 @@ body.mode-split5025 .pane-split-badge {
   margin-left: 12px;
 }
 
-/* ─── 3. THEME: IRCTC OFFICIAL GOVERNMENT PORTAL (body.theme-irctc) ─── */
-body.theme-irctc {
+/* ─── 3. THEME: GOVERNMENT OFFICIAL GOVERNMENT PORTAL (body.theme-gov) ─── */
+body.theme-gov {
   --bg-primary: #f0f4f8;
   --bg-secondary: #ffffff;
   --bg-tertiary: #e2e8f0;
@@ -4137,87 +4408,87 @@ body.theme-irctc {
   color: var(--text-primary);
 }
 
-/* Top bar in IRCTC mode */
-body.theme-irctc #top-bar {
+/* Top bar in GOVT COMMAND mode */
+body.theme-gov #top-bar {
   background: #ffffff;
   border-bottom: 3px solid #fb792b;
   box-shadow: 0 2px 8px rgba(33, 61, 119, 0.08);
   color: #172b4d;
 }
-body.theme-irctc #system-clock {
+body.theme-gov #system-clock {
   color: #213d77;
   font-weight: 800;
 }
-body.theme-irctc .clock-label {
+body.theme-gov .clock-label {
   color: #64748b;
 }
-body.theme-irctc .top-bar-action {
+body.theme-gov .top-bar-action {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   color: #213d77;
   font-weight: 600;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
-body.theme-irctc .top-bar-action:hover {
+body.theme-gov .top-bar-action:hover {
   background: #e8f0fe;
   border-color: #213d77;
   color: #1b3569;
 }
-body.theme-irctc .top-bar-action.alert {
+body.theme-gov .top-bar-action.alert {
   background: #fef2f2;
   border-color: #f87171;
   color: #dc2626;
 }
-body.theme-irctc .stat-pill {
+body.theme-gov .stat-pill {
   background: #e8f0fe;
   border: 1px solid #bfdbfe;
   color: #1e40af;
 }
-body.theme-irctc .stat-pill .pill-val {
+body.theme-gov .stat-pill .pill-val {
   color: #1e3a8a;
   font-weight: 800;
 }
-body.theme-irctc .stat-pill.accent {
+body.theme-gov .stat-pill.accent {
   background: #fff7ed;
   border-color: #fed7aa;
   color: #c2410c;
 }
-body.theme-irctc .stat-pill.accent .pill-val {
+body.theme-gov .stat-pill.accent .pill-val {
   color: #ea580c;
 }
 
-/* IRCTC Royal Navy Navigation Bar */
-body.theme-irctc #window-nav {
+/* GOVT COMMAND Royal Navy Navigation Bar */
+body.theme-gov #window-nav {
   background: linear-gradient(135deg, #182e57 0%, #213d77 100%);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
 }
-body.theme-irctc .nav-tab {
+body.theme-gov .nav-tab {
   color: #e2e8f0;
   border-bottom: 4px solid transparent;
   font-weight: 600;
   transition: all 0.15s ease;
 }
-body.theme-irctc .nav-tab:hover {
+body.theme-gov .nav-tab:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
-body.theme-irctc .nav-tab.active {
+body.theme-gov .nav-tab.active {
   background: rgba(255, 255, 255, 0.16);
   color: #ffffff;
   border-bottom: 4px solid #fb792b;
   font-weight: 800;
 }
-body.theme-irctc .layout-label {
+body.theme-gov .layout-label {
   color: #93c5fd;
   font-weight: 700;
 }
-body.theme-irctc .layout-btn {
+body.theme-gov .layout-btn {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
 }
-body.theme-irctc .layout-btn.active {
+body.theme-gov .layout-btn.active {
   background: #fb792b;
   border-color: #ffedd5;
   color: #ffffff;
@@ -4225,413 +4496,413 @@ body.theme-irctc .layout-btn.active {
 }
 
 /* Window Panel Headers & Card Containers */
-body.theme-irctc .window-panel {
+body.theme-gov .window-panel {
   background: #f0f4f8;
 }
-body.theme-irctc .window-folder-header {
+body.theme-gov .window-folder-header {
   background: linear-gradient(90deg, #1b3569 0%, #213d77 100%);
   color: #ffffff;
   border-bottom: 2px solid #fb792b;
 }
-body.theme-irctc .wfh-title {
+body.theme-gov .wfh-title {
   color: #ffffff;
   font-weight: 800;
 }
-body.theme-irctc .wfh-tag {
+body.theme-gov .wfh-tag {
   background: #fb792b;
   color: #ffffff;
   font-weight: 800;
 }
-body.theme-irctc .wfh-btn {
+body.theme-gov .wfh-btn {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
 }
-body.theme-irctc .wfh-btn:hover {
+body.theme-gov .wfh-btn:hover {
   background: #fb792b;
   border-color: #ffffff;
 }
 
-/* Home Window & Banners in IRCTC Style */
-body.theme-irctc .home-hero {
+/* Home Window & Banners in GOVT COMMAND Style */
+body.theme-gov .home-hero {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(33, 61, 119, 0.08);
 }
-body.theme-irctc .hero-badge {
+body.theme-gov .hero-badge {
   background: #e8f0fe;
   color: #213d77;
   border: 1px solid #bfdbfe;
   font-weight: 800;
 }
-body.theme-irctc .hero-title {
+body.theme-gov .hero-title {
   color: #172b4d;
 }
-body.theme-irctc .hero-title .gradient-text {
+body.theme-gov .hero-title .gradient-text {
   background: linear-gradient(135deg, #213d77 0%, #fb792b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-body.theme-irctc .hero-subtitle {
+body.theme-gov .hero-subtitle {
   color: #fb792b;
   font-weight: 700;
 }
-body.theme-irctc .hero-desc {
+body.theme-gov .hero-desc {
   color: #475569;
 }
-body.theme-irctc .hero-cta {
+body.theme-gov .hero-cta {
   background: linear-gradient(135deg, #fb792b 0%, #ea580c 100%);
   color: #ffffff;
   box-shadow: 0 2px 6px rgba(251, 121, 43, 0.3);
   border: none;
 }
-body.theme-irctc .hero-cta.secondary {
+body.theme-gov .hero-cta.secondary {
   background: #213d77;
   color: #ffffff;
   border: 1px solid #1b3569;
 }
-body.theme-irctc .hero-stat-card {
+body.theme-gov .hero-stat-card {
   background: #f8fafc;
   border: 1px solid #cbd5e1;
 }
-body.theme-irctc .hs-val {
+body.theme-gov .hs-val {
   color: #213d77;
   font-weight: 900;
 }
-body.theme-irctc .hs-label {
+body.theme-gov .hs-label {
   color: #172b4d;
   font-weight: 700;
 }
-body.theme-irctc .hero-api-banner {
+body.theme-gov .hero-api-banner {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-left: 4px solid #213d77;
   box-shadow: 0 2px 8px rgba(33, 61, 119, 0.06);
 }
-body.theme-irctc .hab-title {
+body.theme-gov .hab-title {
   color: #172b4d;
   font-weight: 800;
 }
-body.theme-irctc .hab-desc {
+body.theme-gov .hab-desc {
   color: #64748b;
 }
 
 /* Guide & Problem Cards */
-body.theme-irctc .guide-step {
+body.theme-gov .guide-step {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
-body.theme-irctc .guide-step:hover {
+body.theme-gov .guide-step:hover {
   border-color: #213d77;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(33, 61, 119, 0.12);
 }
-body.theme-irctc .gs-num {
+body.theme-gov .gs-num {
   background: #213d77;
   color: #ffffff;
 }
-body.theme-irctc .guide-step:hover .gs-num {
+body.theme-gov .guide-step:hover .gs-num {
   background: #fb792b;
 }
-body.theme-irctc .gs-content h3 {
+body.theme-gov .gs-content h3 {
   color: #172b4d;
 }
-body.theme-irctc .gs-content p {
+body.theme-gov .gs-content p {
   color: #475569;
 }
-body.theme-irctc .problem-card {
+body.theme-gov .problem-card {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
-body.theme-irctc .problem-card.danger {
+body.theme-gov .problem-card.danger {
   border-top: 4px solid #dc2626;
 }
-body.theme-irctc .problem-card.success {
+body.theme-gov .problem-card.success {
   border-top: 4px solid #15803d;
 }
-body.theme-irctc .pc-title {
+body.theme-gov .pc-title {
   color: #172b4d;
 }
-body.theme-irctc .pc-list li {
+body.theme-gov .pc-list li {
   color: #334155;
 }
 
-/* IRCTC STYLE: Target Acquisition & "Book Ticket / PNR" Widget */
-body.theme-irctc .target-acquisition-suite {
+/* GOVT COMMAND STYLE: Target Acquisition & "Book Ticket / PNR" Widget */
+body.theme-gov .target-acquisition-suite {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   box-shadow: 0 3px 10px rgba(33, 61, 119, 0.08);
   border-top: 4px solid #fb792b;
 }
-body.theme-irctc .panel-title {
+body.theme-gov .panel-title {
   color: #213d77;
   font-weight: 800;
 }
-body.theme-irctc .acq-tabs {
+body.theme-gov .acq-tabs {
   background: #e8f0fe;
   border-radius: 4px;
   padding: 3px;
   border: 1px solid #cbd5e1;
 }
-body.theme-irctc .acq-tab {
+body.theme-gov .acq-tab {
   background: transparent;
   color: #213d77;
   font-weight: 700;
   border-radius: 3px;
 }
-body.theme-irctc .acq-tab:hover {
+body.theme-gov .acq-tab:hover {
   background: rgba(33, 61, 119, 0.1);
 }
-body.theme-irctc .acq-tab.active {
+body.theme-gov .acq-tab.active {
   background: #213d77;
   color: #ffffff;
   box-shadow: 0 2px 4px rgba(33, 61, 119, 0.2);
 }
-body.theme-irctc .acq-input,
-body.theme-irctc .acq-select {
+body.theme-gov .acq-input,
+body.theme-gov .acq-select {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   color: #172b4d;
   font-weight: 600;
 }
-body.theme-irctc .acq-input:focus,
-body.theme-irctc .acq-select:focus {
+body.theme-gov .acq-input:focus,
+body.theme-gov .acq-select:focus {
   border-color: #213d77;
   box-shadow: 0 0 0 3px rgba(33, 61, 119, 0.15);
   background: #ffffff;
 }
-body.theme-irctc .acq-btn.primary {
+body.theme-gov .acq-btn.primary {
   background: linear-gradient(135deg, #fb792b 0%, #ea580c 100%);
   color: #ffffff;
   font-weight: 800;
   box-shadow: 0 2px 6px rgba(251, 121, 43, 0.35);
   border: none;
 }
-body.theme-irctc .acq-btn.feature-btn {
+body.theme-gov .acq-btn.feature-btn {
   background: linear-gradient(135deg, #213d77 0%, #1b3569 100%);
   color: #ffffff;
   font-weight: 800;
 }
-body.theme-irctc .acq-chip {
+body.theme-gov .acq-chip {
   background: #f1f5f9;
   border: 1px solid #cbd5e1;
   color: #334155;
 }
-body.theme-irctc .acq-chip:hover,
-body.theme-irctc .acq-chip.active {
+body.theme-gov .acq-chip:hover,
+body.theme-gov .acq-chip.active {
   background: #e8f0fe;
   border-color: #213d77;
   color: #1e3a8a;
   font-weight: 700;
 }
-body.theme-irctc .acq-chip.stolen {
+body.theme-gov .acq-chip.stolen {
   background: #fef2f2;
   border-color: #fca5a5;
   color: #b91c1c;
 }
 
-/* Surveillance Feeds in IRCTC Style */
-body.theme-irctc .surv-feed-card {
+/* Surveillance Feeds in GOVT COMMAND Style */
+body.theme-gov .surv-feed-card {
   background: #ffffff;
   border: 2px solid #213d77;
   box-shadow: 0 3px 10px rgba(33, 61, 119, 0.1);
 }
-body.theme-irctc .sfc-header {
+body.theme-gov .sfc-header {
   background: #f8fafc;
   border-bottom: 1px solid #e2e8f0;
 }
-body.theme-irctc .sfc-cam-id {
+body.theme-gov .sfc-cam-id {
   color: #213d77;
   font-weight: 800;
 }
-body.theme-irctc .sfc-meta {
+body.theme-gov .sfc-meta {
   color: #64748b;
 }
-body.theme-irctc .surv-target-hud {
+body.theme-gov .surv-target-hud {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-left: 4px solid #fb792b;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
-body.theme-irctc .sth-plate {
+body.theme-gov .sth-plate {
   color: #213d77;
   font-weight: 900;
 }
-body.theme-irctc .sth-stat-lbl {
+body.theme-gov .sth-stat-lbl {
   color: #64748b;
 }
-body.theme-irctc .sth-stat-val {
+body.theme-gov .sth-stat-val {
   color: #172b4d;
   font-weight: 800;
 }
 
-/* Urban Traffic Analytics in IRCTC Style */
-body.theme-irctc .ps124-hero-banner {
+/* Urban Traffic Analytics in GOVT COMMAND Style */
+body.theme-gov .ps124-hero-banner {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-left: 4px solid #213d77;
   box-shadow: 0 2px 8px rgba(33, 61, 119, 0.06);
 }
-body.theme-irctc .ps124-hero-banner h2 {
+body.theme-gov .ps124-hero-banner h2 {
   color: #172b4d;
 }
-body.theme-irctc .ps124-hero-banner p {
+body.theme-gov .ps124-hero-banner p {
   color: #475569;
 }
-body.theme-irctc .uta-nav-bar {
+body.theme-gov .uta-nav-bar {
   background: #e8f0fe;
   border: 1px solid #cbd5e1;
 }
-body.theme-irctc .uta-tab-btn {
+body.theme-gov .uta-tab-btn {
   color: #213d77;
   font-weight: 700;
 }
-body.theme-irctc .uta-tab-btn.active {
+body.theme-gov .uta-tab-btn.active {
   background: #213d77;
   color: #ffffff;
   border-bottom: 3px solid #fb792b;
 }
-body.theme-irctc .ums-card {
+body.theme-gov .ums-card {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
-body.theme-irctc .ums-lbl {
+body.theme-gov .ums-lbl {
   color: #64748b;
 }
-body.theme-irctc .ums-val {
+body.theme-gov .ums-val {
   color: #213d77;
   font-weight: 900;
 }
-body.theme-irctc .ums-val.cyan {
+body.theme-gov .ums-val.cyan {
   color: #0284c7;
 }
-body.theme-irctc .ums-val.green {
+body.theme-gov .ums-val.green {
   color: #15803d;
 }
 
 /* Railway Reservation Chart Style O-D Flow Table */
-body.theme-irctc .od-matrix-table {
+body.theme-gov .od-matrix-table {
   background: #ffffff;
   border: 1px solid #cbd5e1;
 }
-body.theme-irctc .od-matrix-table thead th {
+body.theme-gov .od-matrix-table thead th {
   background: #213d77;
   color: #ffffff;
   font-weight: 800;
   border: 1px solid #1b3569;
 }
-body.theme-irctc .od-matrix-table tbody tr:nth-child(even) {
+body.theme-gov .od-matrix-table tbody tr:nth-child(even) {
   background: #f8fafc;
 }
-body.theme-irctc .od-matrix-table tbody th {
+body.theme-gov .od-matrix-table tbody th {
   background: #e8f0fe !important;
   color: #1e3a8a;
   font-weight: 700;
   border: 1px solid #cbd5e1;
 }
-body.theme-irctc .od-matrix-table td {
+body.theme-gov .od-matrix-table td {
   border: 1px solid #e2e8f0;
   color: #172b4d;
   font-weight: 700;
 }
-body.theme-irctc .od-matrix-table td:hover {
+body.theme-gov .od-matrix-table td:hover {
   background: #fff7ed;
   border-color: #fb792b;
 }
-body.theme-irctc .od-cell-diag {
+body.theme-gov .od-cell-diag {
   background: #f1f5f9;
   color: #94a3b8;
 }
 
 /* Corridor Cards */
-body.theme-irctc .corridor-card {
+body.theme-gov .corridor-card {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
-body.theme-irctc .cc-name {
+body.theme-gov .cc-name {
   color: #172b4d;
   font-weight: 800;
 }
-body.theme-irctc .cc-speed-val {
+body.theme-gov .cc-speed-val {
   color: #213d77;
   font-weight: 900;
 }
-body.theme-irctc .cc-meter {
+body.theme-gov .cc-meter {
   background: #e2e8f0;
 }
 
-/* System Architecture Window in IRCTC Style */
-body.theme-irctc .techstack-hero {
+/* System Architecture Window in GOVT COMMAND Style */
+body.theme-gov .techstack-hero {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-left: 4px solid #213d77;
   box-shadow: 0 2px 8px rgba(33, 61, 119, 0.06);
 }
-body.theme-irctc .techstack-hero h2 {
+body.theme-gov .techstack-hero h2 {
   color: #172b4d;
 }
-body.theme-irctc .techstack-hero p {
+body.theme-gov .techstack-hero p {
   color: #475569;
 }
-body.theme-irctc .ts-tab-bar {
+body.theme-gov .ts-tab-bar {
   background: #e8f0fe;
   border: 1px solid #cbd5e1;
 }
-body.theme-irctc .ts-tab-btn {
+body.theme-gov .ts-tab-btn {
   color: #213d77;
   font-weight: 700;
 }
-body.theme-irctc .ts-tab-btn.active {
+body.theme-gov .ts-tab-btn.active {
   background: #213d77;
   color: #ffffff;
   border-bottom: 3px solid #fb792b;
 }
-body.theme-irctc .ts-card,
-body.theme-irctc .ts-lab-card {
+body.theme-gov .ts-card,
+body.theme-gov .ts-lab-card {
   background: #ffffff;
   border: 1px solid #cbd5e1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
-body.theme-irctc .tsc-title {
+body.theme-gov .tsc-title {
   color: #213d77;
   font-weight: 800;
 }
-body.theme-irctc .tsc-list li {
+body.theme-gov .tsc-list li {
   color: #334155;
   border-bottom: 1px solid #f1f5f9;
 }
-body.theme-irctc .tsl-title {
+body.theme-gov .tsl-title {
   color: #172b4d;
   font-weight: 800;
 }
-body.theme-irctc .tsl-desc {
+body.theme-gov .tsl-desc {
   color: #475569;
 }
 
 /* Bottom Bar */
-body.theme-irctc #bottom-bar {
+body.theme-gov #bottom-bar {
   background: #112240;
   border-top: 2px solid #fb792b;
   color: #cbd5e1;
 }
-body.theme-irctc .bottom-label {
+body.theme-gov .bottom-label {
   color: #fb792b;
   font-weight: 800;
 }
-body.theme-irctc .bottom-val {
+body.theme-gov .bottom-val {
   color: #ffffff;
 }
 
 /* Map Containers */
-body.theme-irctc #gis-map,
-body.theme-irctc #grid-map,
-body.theme-irctc #surv-map-wrap {
+body.theme-gov #gis-map,
+body.theme-gov #grid-map,
+body.theme-gov #surv-map-wrap {
   border: 2px solid #213d77;
   box-shadow: 0 2px 8px rgba(33, 61, 119, 0.12);
 }
@@ -5097,18 +5368,25 @@ body.theme-irctc #surv-map-wrap {
 /* Tactical In-Map Sighting Chain & Trajectory HUD */
 .gis-sighting-chain-hud {
   position: absolute;
-  top: 54px;
-  right: 16px;
-  z-index: 500;
+  top: 56px;
+  right: 14px;
+  z-index: 520;
   width: 320px;
-  background: rgba(10, 14, 23, 0.94);
-  border: 1px solid rgba(0, 229, 255, 0.4);
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 120px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  background: rgba(10, 14, 23, 0.96);
+  border: 1px solid rgba(0, 229, 255, 0.45);
   border-radius: var(--radius-md);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 229, 255, 0.15);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 229, 255, 0.18);
+  backdrop-filter: blur(14px);
   padding: 12px 14px;
   animation: slide-in-up 0.25s ease;
   font-family: var(--font-mono);
+}
+.gis-sighting-chain-hud.hidden {
+  display: none !important;
 }
 .gsch-header {
   display: flex;
@@ -5220,7 +5498,310 @@ body.theme-irctc #surv-map-wrap {
   color: #fff;
 }
 
-/* ANPR SIGHTING CHAIN & EXPECTED TRAJECTORY DOSSIER MODAL */
+/* ═══════════════════════════════════════════════════════════════════ */
+/* TACTICAL GIS SIGHTING INSPECTOR & FORENSIC INTERCONNECTION DRAWER  */
+/* ═══════════════════════════════════════════════════════════════════ */
+.gis-sighting-inspector {
+  position: absolute;
+  top: 56px;
+  left: 14px;
+  z-index: 520;
+  width: 370px;
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 120px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  background: rgba(8, 14, 26, 0.96);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 240, 255, 0.2);
+  backdrop-filter: blur(16px);
+  padding: 12px 14px;
+  animation: slide-in-down 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-mono);
+  color: #f1f5f9;
+}
+.gis-sighting-inspector.hidden {
+  display: none !important;
+}
+.gsi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+.gsi-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gsi-badge {
+  font-size: 9px;
+  font-weight: 900;
+  color: #00f0ff;
+  letter-spacing: 0.8px;
+  background: rgba(0, 240, 255, 0.12);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+.gsi-sensor-pill {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+.gsi-sensor-pill.fixed {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+.gsi-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.gsi-close-btn:hover {
+  color: #fff;
+  background: rgba(239, 68, 68, 0.25);
+}
+.gsi-plate-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+}
+.gsi-plate-text {
+  font-size: 16px;
+  font-weight: 900;
+  color: #00f0ff;
+  letter-spacing: 1px;
+}
+.gsi-target-desc {
+  font-size: 10px;
+  color: #cbd5e1;
+}
+.gsi-ocr-breakdown {
+  margin-bottom: 8px;
+}
+.gsi-sec-lbl {
+  font-size: 8px;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
+}
+.gsi-char-chips {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.gsi-char-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(2, 6, 23, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 3px;
+  padding: 2px 4px;
+  min-width: 22px;
+}
+.gsi-char-chip .gcc-char {
+  font-size: 11px;
+  font-weight: 900;
+  color: #ffffff;
+}
+.gsi-char-chip .gcc-conf {
+  font-size: 7px;
+  font-weight: 700;
+  color: #34d399;
+}
+.gsi-preview-telemetry-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.gsi-canvas-wrap {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  background: #020617;
+  height: 80px;
+}
+.gsi-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.gsi-canvas-tag {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 7px;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.8);
+  color: #00f0ff;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+.gsi-telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+}
+.gsi-telem-item {
+  background: rgba(15, 23, 42, 0.75);
+  padding: 3px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.gsi-telem-item .gt-lbl {
+  font-size: 7px;
+  font-weight: 700;
+  color: #64748b;
+  display: block;
+}
+.gsi-telem-item .gt-val {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+.gsi-telem-item .gt-val.cyan { color: #00f0ff; }
+.gsi-telem-item .gt-val.green { color: #34d399; }
+.gsi-telem-item .gt-val.amber { color: #fbbf24; }
+
+.gsi-location-bar {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 6px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.glb-street {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 1px;
+}
+.glb-gps {
+  font-size: 8.5px;
+  color: #fbbf24;
+  font-family: var(--font-mono);
+}
+.glb-copy-btn {
+  background: rgba(0, 240, 255, 0.15);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  color: #00f0ff;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 3px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.glb-copy-btn:hover {
+  background: #00f0ff;
+  color: #000;
+}
+.gsi-handoff-strip {
+  background: rgba(2, 6, 23, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  padding: 5px 8px;
+  margin-bottom: 10px;
+}
+.gsi-handoff-nodes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  font-size: 8.5px;
+}
+.gh-node {
+  background: rgba(30, 41, 59, 0.8);
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #94a3b8;
+  font-weight: 700;
+}
+.gh-node.active {
+  background: rgba(0, 240, 255, 0.25);
+  border: 1px solid #00f0ff;
+  color: #00f0ff;
+  font-weight: 900;
+}
+.gh-node.next {
+  color: #fbbf24;
+}
+.gh-arrow {
+  color: #64748b;
+  font-size: 8px;
+}
+.gsi-actions-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.gsi-btn {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 9.5px;
+  font-weight: 800;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+}
+.gsi-btn.cyan {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: #00f0ff;
+  color: #00f0ff;
+}
+.gsi-btn.cyan:hover {
+  background: #00f0ff;
+  color: #000;
+}
+.gsi-btn.amber {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+.gsi-btn.amber:hover {
+  background: #fbbf24;
+  color: #000;
+}
+.gsi-btn.purple {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: #a855f7;
+  color: #d8b4fe;
+}
+.gsi-btn.purple:hover {
+  background: #a855f7;
+  color: #fff;
+}
 .sc-modal-card {
   width: 900px;
   max-width: 95vw;
@@ -5751,7 +6332,7 @@ body.mode-split5025 #window-ps124:not(.pane-expanded) .uta-content-pane {
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   IRCTC OFFICIAL DESIGN SYSTEM: ALIGNMENT & CONTRAST ENHANCEMENTS
+   GOVERNMENT OFFICIAL DESIGN SYSTEM: ALIGNMENT & CONTRAST ENHANCEMENTS
    ═══════════════════════════════════════════════════════════════════ */
 
 /* Top bar alignment */
@@ -5763,7 +6344,7 @@ body.mode-split5025 #window-ps124:not(.pane-expanded) .uta-content-pane {
 
 /* Section Title Contrast Fix (Dark Blue on Light Grey) */
 .section-title-large,
-body.theme-irctc .section-title-large {
+body.theme-gov .section-title-large {
   font-size: 17px !important;
   font-weight: 800 !important;
   color: #213d77 !important;
@@ -5776,24 +6357,24 @@ body.theme-irctc .section-title-large {
 
 /* Problem Card List Strong Contrast Fix (Dark Navy on White) */
 .pc-list strong,
-body.theme-irctc .pc-list strong {
+body.theme-gov .pc-list strong {
   color: #172b4d !important;
   font-weight: 800 !important;
 }
 .pc-list li,
-body.theme-irctc .pc-list li {
+body.theme-gov .pc-list li {
   color: #334155 !important;
   margin-bottom: 4px !important;
 }
 
 /* Window Home Clean 32px Alignment Grid */
-body.theme-irctc #window-home {
+body.theme-gov #window-home {
   background: #f0f4f8 !important;
   overflow-y: auto !important;
   padding: 0 !important;
 }
 
-body.theme-irctc .home-hero {
+body.theme-gov .home-hero {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
@@ -5807,12 +6388,12 @@ body.theme-irctc .home-hero {
   min-height: auto !important;
 }
 
-body.theme-irctc .hero-content {
+body.theme-gov .hero-content {
   max-width: 680px !important;
   text-align: left !important;
 }
 
-body.theme-irctc .hero-title {
+body.theme-gov .hero-title {
   color: #172b4d !important;
   font-size: 38px !important;
   font-weight: 900 !important;
@@ -5821,7 +6402,7 @@ body.theme-irctc .hero-title {
   text-align: left !important;
 }
 
-body.theme-irctc .hero-subtitle {
+body.theme-gov .hero-subtitle {
   color: #fb792b !important;
   font-size: 14.5px !important;
   font-weight: 700 !important;
@@ -5829,7 +6410,7 @@ body.theme-irctc .hero-subtitle {
   text-align: left !important;
 }
 
-body.theme-irctc .hero-desc {
+body.theme-gov .hero-desc {
   color: #475569 !important;
   font-size: 12.5px !important;
   line-height: 1.6 !important;
@@ -5837,7 +6418,7 @@ body.theme-irctc .hero-desc {
   text-align: left !important;
 }
 
-body.theme-irctc .hero-cta-group {
+body.theme-gov .hero-cta-group {
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
@@ -5847,7 +6428,7 @@ body.theme-irctc .hero-cta-group {
   width: 100% !important;
 }
 
-/* 3 Mission Brief Hero Buttons in IRCTC Palette */
+/* 3 Mission Brief Hero Buttons in GOVT COMMAND Palette */
 .hero-cta {
   display: inline-flex !important;
   align-items: center !important;
@@ -5865,7 +6446,7 @@ body.theme-irctc .hero-cta-group {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Button 1: Launch Live Ops (Official IRCTC Orange) */
+/* Button 1: Launch Live Ops (Official Saffron Accent) */
 #btn-launch-ops,
 .hero-cta-primary {
   background: linear-gradient(135deg, #fb792b 0%, #ea580c 100%) !important;
@@ -5880,7 +6461,7 @@ body.theme-irctc .hero-cta-group {
   box-shadow: 0 5px 14px rgba(251, 121, 43, 0.5) !important;
 }
 
-/* Button 2: Command Center (Official IRCTC Navy Blue) */
+/* Button 2: Command Center (Official Royal Navy Blue) */
 #btn-hero-split-launch,
 .hero-cta-split {
   background: #213d77 !important;
@@ -5910,8 +6491,8 @@ body.theme-irctc .hero-cta-group {
   box-shadow: 0 5px 14px rgba(220, 38, 38, 0.45) !important;
 }
 
-/* API Banner 32px Alignment & Clean IRCTC Styling */
-body.theme-irctc .hero-api-banner {
+/* API Banner 32px Alignment & Clean GOVT COMMAND Styling */
+body.theme-gov .hero-api-banner {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-left: 4px solid #213d77 !important;
@@ -5960,12 +6541,12 @@ body.theme-irctc .hero-api-banner {
 }
 
 /* Home Guide Section 32px Alignment */
-body.theme-irctc .home-guide-section {
+body.theme-gov .home-guide-section {
   padding: 24px 32px 0 32px !important;
 }
 
 /* Guide Step Cards */
-body.theme-irctc .guide-step {
+body.theme-gov .guide-step {
   display: flex !important;
   align-items: flex-start !important;
   gap: 12px !important;
@@ -5977,12 +6558,12 @@ body.theme-irctc .guide-step {
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
-body.theme-irctc .guide-step:hover {
+body.theme-gov .guide-step:hover {
   border-color: #213d77 !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 16px rgba(33, 61, 119, 0.12) !important;
 }
-body.theme-irctc .gs-num {
+body.theme-gov .gs-num {
   width: 30px !important;
   height: 30px !important;
   border-radius: 50% !important;
@@ -5996,26 +6577,26 @@ body.theme-irctc .gs-num {
   flex-shrink: 0 !important;
   margin-top: 1px !important;
 }
-body.theme-irctc .guide-step:hover .gs-num {
+body.theme-gov .guide-step:hover .gs-num {
   background: #fb792b !important;
 }
-body.theme-irctc .gs-content {
+body.theme-gov .gs-content {
   flex: 1 !important;
   min-width: 0 !important;
 }
-body.theme-irctc .gs-content h3 {
+body.theme-gov .gs-content h3 {
   font-size: 13px !important;
   font-weight: 800 !important;
   color: #172b4d !important;
   margin: 0 0 4px 0 !important;
 }
-body.theme-irctc .gs-content p {
+body.theme-gov .gs-content p {
   font-size: 11px !important;
   color: #475569 !important;
   line-height: 1.45 !important;
   margin: 0 !important;
 }
-body.theme-irctc .gs-content strong {
+body.theme-gov .gs-content strong {
   color: #213d77 !important;
   font-weight: 700 !important;
 }
@@ -6041,7 +6622,7 @@ body.theme-irctc .gs-content strong {
 }
 
 /* Home Problem Section 32px Alignment */
-body.theme-irctc .home-problem-section {
+body.theme-gov .home-problem-section {
   padding: 20px 32px 36px 32px !important;
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
@@ -6117,3 +6698,892 @@ body.theme-irctc .home-problem-section {
 .global-plate-btn:hover {
   background: #ea580c !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   API GATEWAY & MICROSERVICES COMMAND MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.api-modal-card {
+  background: linear-gradient(180deg, #090e17 0%, #0c1322 100%);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 240, 255, 0.15);
+  border-radius: 8px;
+  width: 92vw;
+  max-width: 1180px;
+  height: 88vh;
+  max-height: 820px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 10000;
+  animation: apiModalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes apiModalSlide {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.api-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: rgba(13, 20, 36, 0.95);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+}
+
+.api-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.api-modal-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #00f0ff;
+  letter-spacing: 0.8px;
+  font-family: var(--font-mono);
+}
+
+.api-modal-subtitle {
+  font-size: 11px;
+  color: #94a3b8;
+  display: block;
+  margin-top: 2px;
+}
+
+.api-modal-close {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.api-modal-close:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.api-modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #080d16;
+}
+
+/* API Stats Bar */
+.api-stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 10px 16px;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.api-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.api-stat-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  font-family: var(--font-mono);
+}
+
+.api-stat-val {
+  font-size: 13px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+}
+
+.api-stat-val.cyan { color: #00f0ff; }
+.api-stat-val.green { color: #10b981; }
+.api-stat-val.purple { color: #c084fc; }
+.api-stat-val.amber { color: #fbbf24; }
+
+.api-btn {
+  background: linear-gradient(135deg, #00f0ff, #0284c7);
+  color: #0b111e;
+  font-weight: 800;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 240, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.api-btn:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+/* Microservices 4-Column Grid */
+.api-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.api-service-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.api-service-card:hover {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(0, 240, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.asc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.asc-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  letter-spacing: 0.4px;
+}
+
+.asc-badge {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+}
+
+.asc-badge.online {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.asc-desc {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.asc-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #64748b;
+  font-family: var(--font-mono);
+}
+
+.asc-meta code {
+  color: #38bdf8;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.asc-lat {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.asc-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.asc-call-btn {
+  flex: 1;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  color: #00f0ff;
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.asc-call-btn:hover {
+  background: #00f0ff;
+  color: #0b111e;
+  border-color: #00f0ff;
+}
+
+.asc-call-btn.red {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+.asc-call-btn.red:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* API Response Console */
+.api-console-section {
+  background: #04070d;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.api-console-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ach-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ach-tag {
+  font-size: 9px;
+  font-weight: 800;
+  color: #00f0ff;
+  font-family: var(--font-mono);
+  background: rgba(0, 240, 255, 0.12);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.ach-endpoint {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #e2e8f0;
+  font-weight: 700;
+}
+
+.ach-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ach-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.ach-status.green {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.ach-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.ach-copy-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ach-copy-btn:hover {
+  background: #00f0ff;
+  color: #000000;
+  border-color: #00f0ff;
+}
+
+.api-console-output {
+  padding: 12px 16px;
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #38bdf8;
+  background: #030712;
+  overflow-y: auto;
+  max-height: 220px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.api-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: rgba(13, 20, 36, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+  color: #64748b;
+  font-family: var(--font-mono);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTOMATED THREAT ALERTS & MOBILE BUS NPU MESH
+   ═══════════════════════════════════════════════════════════════ */
+.alerts-panel-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 18px;
+  height: calc(100% - 32px);
+  overflow-y: auto;
+  background: #070c14;
+}
+
+/* Stats Ribbon */
+.alerts-stats-ribbon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.08);
+  border-radius: 6px;
+  padding: 10px 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.asr-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.asr-lbl {
+  font-size: 9px;
+  font-weight: 800;
+  color: #64748b;
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+}
+
+.asr-val {
+  font-size: 13px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+}
+
+.asr-val.red { color: #f87171; }
+.asr-val.cyan { color: #00f0ff; }
+.asr-val.green { color: #10b981; }
+.asr-val.purple { color: #c084fc; }
+.asr-val.amber { color: #fbbf24; }
+
+/* Toolbar */
+.alerts-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 8px 12px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.at-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.at-lbl {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94a3b8;
+  font-family: var(--font-mono);
+  margin-right: 4px;
+}
+
+.at-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.at-btn:hover {
+  background: rgba(0, 240, 255, 0.15);
+  color: #00f0ff;
+  border-color: rgba(0, 240, 255, 0.4);
+}
+
+.at-btn.active {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+.at-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.at-act-btn {
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.at-act-btn.primary {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #ffffff;
+  border: 1px solid #f87171;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+}
+
+.at-act-btn.primary:hover {
+  filter: brightness(1.15);
+}
+
+.at-act-btn.amber {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.at-act-btn.amber:hover {
+  background: #f59e0b;
+  color: #000;
+}
+
+.at-act-btn.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+}
+
+/* Main Grid */
+.alerts-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 1024px) {
+  .alerts-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.alerts-stream-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.asc-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+.asc-stream-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: #00f0ff;
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+}
+
+.asc-stream-status {
+  font-size: 9px;
+  font-weight: 800;
+  color: #10b981;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.threat-alerts-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
+}
+
+/* Individual Threat Alert Card */
+.threat-alert-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(9, 14, 23, 0.98));
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-left: 4px solid #ef4444;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(239, 68, 68, 0.1);
+  border-radius: 6px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: threatSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s ease;
+}
+
+@keyframes threatSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.threat-alert-card:hover {
+  border-color: #ef4444;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
+}
+
+.tac-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tac-plate-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tac-plate {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 900;
+  color: #fbbf24;
+  background: #000000;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #fbbf24;
+  letter-spacing: 0.8px;
+}
+
+.tac-veh-desc {
+  font-size: 11px;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.tac-threat-badge {
+  font-size: 9px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.tac-threat-badge.critical {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+.tac-threat-badge.wanted {
+  background: rgba(168, 85, 247, 0.2);
+  color: #d8b4fe;
+  border: 1px solid #a855f7;
+}
+
+.tac-threat-badge.violator {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fde68a;
+  border: 1px solid #f59e0b;
+}
+
+.tac-bad-past-box {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tbp-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: #f87171;
+  font-family: var(--font-mono);
+}
+
+.tbp-desc {
+  font-size: 11px;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.tac-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #94a3b8;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 6px 10px;
+  border-radius: 4px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tac-sensor-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.tac-sensor-tag.bus {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.tac-sensor-tag.fixed {
+  background: rgba(0, 240, 255, 0.2);
+  color: #00f0ff;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+}
+
+.tac-actions-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tac-act-btn {
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #00f0ff;
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tac-act-btn:hover {
+  background: #00f0ff;
+  color: #0b111e;
+}
+
+.tac-act-btn.red {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+.tac-act-btn.red:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* Side Column Cards */
+.alerts-side-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alert-side-card {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.as-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 6px;
+}
+
+.as-card-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+}
+
+.as-bus-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.as-bus-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 4px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.abi-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+}
+
+.abi-id {
+  font-weight: 900;
+  color: #fbbf24;
+  font-size: 11px;
+}
+
+.abi-route {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.abi-fps {
+  font-size: 9px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.abi-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: #64748b;
+}
+
+.as-rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.as-rule-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 11px;
+}
+
+.as-rule-tag {
+  font-size: 8px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  padding: 2px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.as-rule-tag.red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+.as-rule-tag.amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+.as-rule-tag.purple { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
+.as-rule-tag.blue { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid #3b82f6; }
+
+.as-rule-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.as-rule-item strong {
+  color: #f1f5f9;
+  font-size: 11px;
+}
+
+.as-rule-item span {
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.3;
+}
+

@@ -31,16 +31,16 @@ assert(app.includes('btn-gis-close'), 'btn-gis-close event handler wired in app.
 assert(app.includes('switchWindow(\'home\')'), 'closeOrCollapseWindow switches to home window');
 
 // 3. Main page contrast & alignment
-assert(css.includes('.section-title-large') && css.includes('color: #213d77 !important;'), 'section-title-large styled with IRCTC Navy #213d77 (not white)');
+assert(css.includes('.section-title-large') && css.includes('color: #213d77 !important;'), 'section-title-large styled with Royal Navy #213d77 (not white)');
 assert(css.includes('.pc-list strong') && css.includes('color: #172b4d !important;'), 'pc-list strong styled with dark color #172b4d (not white)');
 assert(css.includes('margin: 20px 32px 0 32px !important;'), 'home-hero aligned with 32px margins');
 assert(css.includes('margin: 18px 32px 0 32px !important;'), 'hero-api-banner aligned with 32px margins');
 assert(css.includes('padding: 24px 32px 0 32px !important;'), 'home-guide-section aligned with 32px padding');
 assert(css.includes('padding: 20px 32px 36px 32px !important;'), 'home-problem-section aligned with 32px padding');
 
-// 4. Hero buttons IRCTC theme
-assert(css.includes('#btn-launch-ops') && css.includes('#fb792b'), 'btn-launch-ops has IRCTC Orange');
-assert(css.includes('#btn-hero-split-launch') && css.includes('#213d77'), 'btn-hero-split-launch has IRCTC Navy');
+// 4. Hero buttons GOVT COMMAND theme
+assert(css.includes('#btn-launch-ops') && css.includes('#fb792b'), 'btn-launch-ops has Saffron Accent');
+assert(css.includes('#btn-hero-split-launch') && css.includes('#213d77'), 'btn-hero-split-launch has Royal Navy');
 assert(css.includes('#btn-demo-stolen-alert') && css.includes('#dc2626'), 'btn-demo-stolen-alert has Emergency Crimson');
 
 // 5. Check no "TO" remaining in guide steps

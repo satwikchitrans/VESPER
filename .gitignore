@@ -16,3 +16,4 @@ yarn-error.log*
 # Temporary test / inspection outputs
 tmp/
 scratch/
+backups/

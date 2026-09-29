@@ -40,7 +40,7 @@ Certified court-admissible under **Section 63 of the Bharatiya Sakshya Adhiniyam
      - Environmental PM2.5 / PM10 mobile air quality telemetry mesh.
 
 5. **Design System & Aesthetics**:
-   - Styled under the official **IRCTC Government Portal Palette** (`#213d77` National Navy, `#fb792b` IRCTC Orange, `#f0f4f8` / `#ffffff` high-contrast cards).
+   - Styled under the official **GOVT COMMAND Government Portal Palette** (`#213d77` National Navy, `#fb792b` Saffron Accent, `#f0f4f8` / `#ffffff` high-contrast cards).
    - High-accessibility font sizing (`A-`, `A`, `A+`) and bilingual Hindi/English header branding.
    - 100% text-based UI with zero emojis or non-standard symbols for strict administrative compliance.
 
@@ -106,7 +106,7 @@ node verify_godseye.js
 ```
 ├── index.html                           # Main Command Center Single Page Application
 ├── app.js                              # Simulation Engine, Trajectory Matching, Navigation & Analytics
-├── style.css                            # IRCTC Portal Theme, 50:25:25 Grid & Tactical GIS Overlays
+├── style.css                            # Government Portal Theme, 50:25:25 Grid & Tactical GIS Overlays
 ├── server.js                            # Local HTTP Static Server (port 8080)
 ├── .gitignore                           # Git ignore rules
 ├── README.md                            # System documentation
