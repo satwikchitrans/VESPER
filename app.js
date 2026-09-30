@@ -11,7 +11,7 @@ const CONFIG = {
   TELEMETRY_INTERVAL: 2000,
   MAX_TELEMETRY: 30,
   MAX_ANOMALIES: 6,
-  CAMERA_TRIGGER_DISTANCE_M: 40,
+  CAMERA_TRIGGER_DISTANCE_M: 35,
   CAMERA_DEBOUNCE_MS: 15000,
   SOUND_COOLDOWN_MS: 400,
   SOUND_GLOBAL_COOLDOWN_MS: 120,
@@ -31,6 +31,18 @@ const FIXED_CAMERAS = [
   { id: 'CAM-JNC-10', name: 'Pragati Maidan',          lat: 28.61545, lng: 77.24843, heading: 110 },
   { id: 'CAM-JNC-11', name: 'India Gate Circle',       lat: 28.61296, lng: 77.22766, heading: 180 },
   { id: 'CAM-JNC-12', name: 'Saket Select City',       lat: 28.52440, lng: 77.21670, heading: 270 },
+  { id: 'CAM-JNC-13', name: 'Kashmere Gate ISBT',      lat: 28.66750, lng: 77.22850, heading: 180 },
+  { id: 'CAM-JNC-14', name: 'Red Fort Crossing',       lat: 28.65620, lng: 77.24100, heading: 90 },
+  { id: 'CAM-JNC-15', name: 'Delhi Gate Intersection', lat: 28.64100, lng: 77.24150, heading: 180 },
+  { id: 'CAM-JNC-16', name: 'Barakhamba Road Radial',  lat: 28.62950, lng: 77.22850, heading: 90 },
+  { id: 'CAM-JNC-17', name: 'Mandi House Circle',      lat: 28.62580, lng: 77.23400, heading: 135 },
+  { id: 'CAM-JNC-18', name: 'Khan Market Outer Ring',  lat: 28.60020, lng: 77.22700, heading: 210 },
+  { id: 'CAM-JNC-19', name: 'South Extension Flyover', lat: 28.57200, lng: 77.22200, heading: 90 },
+  { id: 'CAM-JNC-20', name: 'Lodhi Road Junction',     lat: 28.59100, lng: 77.22400, heading: 270 },
+  { id: 'CAM-JNC-21', name: 'Sardar Patel Marg Cor',   lat: 28.59900, lng: 77.18500, heading: 45 },
+  { id: 'CAM-JNC-22', name: 'Pusa Road Roundabout',    lat: 28.64400, lng: 77.19800, heading: 0 },
+  { id: 'CAM-JNC-23', name: 'Laxmi Nagar Vikas Marg',  lat: 28.63050, lng: 77.27600, heading: 270 },
+  { id: 'CAM-JNC-24', name: 'Akshardham Interchange',  lat: 28.61800, lng: 77.27900, heading: 180 },
 ];
 
 const BUS_ROUTES = [
@@ -3105,15 +3117,71 @@ function initGridMap() {
   });
 }
 
+// ========================= CAMERA INTERCONNECTION MESH =========================
+function updateCameraInterconnectionMesh(map) {
+  if (!map) return;
+  if (STATE.cameraMeshLayer) {
+    map.removeLayer(STATE.cameraMeshLayer);
+  }
+
+  const lines = [];
+  const connectedPairs = new Set();
+
+  for (let i = 0; i < FIXED_CAMERAS.length; i++) {
+    const camA = FIXED_CAMERAS[i];
+    const neighbors = [];
+    for (let j = 0; j < FIXED_CAMERAS.length; j++) {
+      if (i === j) continue;
+      const camB = FIXED_CAMERAS[j];
+      const dist = haversine(camA.lat, camA.lng, camB.lat, camB.lng);
+      if (dist <= 4.2) {
+        neighbors.push({ cam: camB, dist });
+      }
+    }
+
+    neighbors.sort((a, b) => a.dist - b.dist);
+    neighbors.slice(0, 3).forEach(n => {
+      const pairKey = [camA.id, n.cam.id].sort().join('--');
+      if (!connectedPairs.has(pairKey)) {
+        connectedPairs.add(pairKey);
+        const poly = L.polyline([[camA.lat, camA.lng], [n.cam.lat, n.cam.lng]], {
+          color: '#213d77',
+          weight: 1.5,
+          opacity: 0.5,
+          dashArray: '4 4'
+        });
+        poly.bindTooltip(`ANPR MESH TRUNK: ${camA.id} <-> ${n.cam.id} (${n.dist.toFixed(2)} km) · 10Gbps SECURE RELAY`, { sticky: true });
+        lines.push(poly);
+      }
+    });
+  }
+
+  STATE.cameraMeshLayer = L.layerGroup(lines).addTo(map);
+}
+
 // ========================= FIXED CAMERAS =========================
 function initFixedCameras(map) {
   FIXED_CAMERAS.forEach(cam => {
     const html = `<div class="cam-marker-body"><span class="cam-marker-icon">📷</span></div><div class="cam-marker-label">${cam.id}</div>`;
     const icon = L.divIcon({ className: 'marker-fixed-anpr-wrap', html: html, iconSize: [26, 26], iconAnchor: [13, 13] });
     const marker = L.marker([cam.lat, cam.lng], { icon }).addTo(map);
-    marker.bindPopup(`<div style="padding:6px;min-width:180px;"><div style="font-weight:900;color:#102447;font-size:12px">${cam.id}</div><div style="font-size:11px;font-weight:700;color:#223c63">${cam.name}</div><div style="font-size:9.5px;color:#d4601f;margin:4px 0 6px;font-weight:800">ONLINE · 45 FPS · 1080p</div><button class="map-popup-live-btn" onclick="openLiveCameraModal(\'${cam.id}\')"> Watch Live Feed</button></div>`);
+    
+    // Tight, realistic 35m calibrated optical detection field-of-view zone
+    const fovCircle = L.circle([cam.lat, cam.lng], {
+      radius: 35,
+      color: '#213d77',
+      fillColor: '#38bdf8',
+      fillOpacity: 0.16,
+      weight: 1,
+      dashArray: '3 3'
+    }).addTo(map);
+    fovCircle.bindTooltip(`ANPR OPTICAL ZONE: ${cam.id} · Range: 35m · DeepStream TRT INT8`, { sticky: true });
+
+    marker.bindPopup(`<div style="padding:6px;min-width:180px;"><div style="font-weight:900;color:#102447;font-size:12px">${cam.id}</div><div style="font-size:11px;font-weight:700;color:#223c63">${cam.name}</div><div style="font-size:9.5px;color:#d4601f;margin:4px 0 6px;font-weight:800">ONLINE · 45 FPS · 1080p · Optical Zone: 35m</div><button class="map-popup-live-btn" onclick="openLiveCameraModal(\'${cam.id}\')"> Watch Live Feed</button></div>`);
     STATE.markers.fixed[cam.id] = marker;
   });
+
+  updateCameraInterconnectionMesh(map);
 }
 
 // ========================= BUSES =========================
@@ -3436,7 +3504,7 @@ function drawTrajectory(veh) {
 
     // Dynamic Reachability Horizon Circle (Speed-Distance Horizon from last known sighting)
     if (activeStep) {
-      const radiusM = Math.max(350, Math.min(1800, 350 + (veh._roadIndex || 0) * 12));
+      const radiusM = Math.max(200, Math.min(800, 200 + (veh._roadIndex || 0) * 4));
       if (STATE.reachabilityCircles['cone']) {
         STATE.reachabilityCircles['cone'].setLatLng([activeStep.lat, activeStep.lng]);
         STATE.reachabilityCircles['cone'].setRadius(radiusM);
@@ -3733,7 +3801,7 @@ function _doCameraCaptureRender(veh, stepIndex, step) {
     const midLat = (prev.lat + step.lat) / 2;
     const midLng = (prev.lng + step.lng) / 2;
     const dist = haversine(prev.lat, prev.lng, step.lat, step.lng);
-    const radius = Math.max(dist * 600, 400);
+    const radius = Math.max(dist * 300, 200);
     if (STATE.reachabilityCircles['cone']) {
       STATE.reachabilityCircles['cone'].setLatLng([midLat, midLng]);
       STATE.reachabilityCircles['cone'].setRadius(radius);
