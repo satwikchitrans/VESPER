@@ -1,0 +1,1858 @@
+
+/* =================================================================== */
+/* DEFINITIVE POLAR CONTRAST & RELAXED BLUE SURFACE SYSTEM             */
+/* =================================================================== */
+
+/* --- 1. GLOBAL BASE & SURFACE BLUE HIERARCHY (NO HARSH WHITE BOXES) --- */
+:root {
+  --bg-primary: #edf3fa !important;
+  --bg-secondary: #213d77 !important;
+  --bg-tertiary: #162a52 !important;
+  --bg-surface: #e2edf8 !important;
+  --bg-surface-alt: #d6e6f6 !important;
+  --bg-card: #ebf3fc !important;
+  --bg-card-alt: #dbe8f6 !important;
+  --bg-card-highlight: #cce2f5 !important;
+  --bg-glass: rgba(235, 243, 252, 0.96) !important;
+  --border-subtle: rgba(33, 61, 119, 0.22) !important;
+  --border-medium: rgba(33, 61, 119, 0.38) !important;
+  --border-accent: #ec6e2a !important;
+  --text-primary: #0a1a36 !important;
+  --text-secondary: #1e3a6a !important;
+  --text-muted: #2b4c7e !important;
+  --accent-cyan: #ec6e2a !important;
+  --accent-blue: #213d77 !important;
+  --accent-orange: #ec6e2a !important;
+}
+
+body, html {
+  background: #edf3fa !important;
+  color: #0a1a36 !important;
+}
+
+#windows-container {
+  background: #edf3fa !important;
+}
+
+.window-panel {
+  background: #edf3fa !important;
+  color: #0a1a36 !important;
+}
+
+/* Window Folder Header */
+.window-folder-header {
+  background: #213d77 !important;
+  border-bottom: 2px solid #ec6e2a !important;
+  color: #ffffff !important;
+}
+
+.wfh-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px !important;
+}
+
+.wfh-tag {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border: 1px solid #ffffff !important;
+}
+
+.wfh-btn {
+  background: #162a52 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  font-weight: 800 !important;
+}
+
+.wfh-btn:hover {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border-color: #ec6e2a !important;
+}
+
+/* --- 2. SIDEBARS & PANELS (RELAXED ELEGANT SLATE-BLUE TONES) --- */
+.gis-sidebar,
+.gis-right-sidebar {
+  background: #e2edf8 !important;
+  border-color: rgba(33, 61, 119, 0.25) !important;
+}
+
+.panel-section {
+  background: #ebf3fc !important;
+  border: 1.5px solid #bdd5ed !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.08) !important;
+}
+
+.panel-title {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px !important;
+}
+
+.section-header-row {
+  border-bottom: 1.5px solid rgba(33, 61, 119, 0.18) !important;
+  padding-bottom: 6px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Badges on light surfaces: Dark, rich, high-contrast colors */
+.badge-mini {
+  font-weight: 900 !important;
+  font-size: 8.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+}
+
+.badge-mini.cyan {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border: 1px solid #162a52 !important;
+}
+
+.badge-mini.red {
+  background: #991b1b !important;
+  color: #ffffff !important;
+  border: 1px solid #7f1d1d !important;
+}
+
+.badge-mini.warning,
+.badge-mini.orange {
+  background: #b84c10 !important;
+  color: #ffffff !important;
+  border: 1px solid #9a3412 !important;
+}
+
+.badge-mini.green {
+  background: #166534 !important;
+  color: #ffffff !important;
+  border: 1px solid #14532d !important;
+}
+
+.badge-mini.purple {
+  background: #1e3a6a !important;
+  color: #ffffff !important;
+  border: 1px solid #172554 !important;
+}
+
+/* --- 3. ACQUISITION TABS & FORM INPUTS --- */
+.acq-tabs {
+  background: #d6e6f6 !important;
+  border: 1px solid #bdd5ed !important;
+  border-radius: 6px !important;
+  padding: 2px !important;
+}
+
+.acq-tab {
+  color: #1e3a6a !important;
+  font-weight: 800 !important;
+  background: transparent !important;
+}
+
+.acq-tab.active {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 2px 6px rgba(33, 61, 119, 0.3) !important;
+}
+
+.acq-input,
+.acq-select,
+.global-plate-input {
+  background: #ffffff !important;
+  color: #0a1a36 !important;
+  border: 1.5px solid #213d77 !important;
+  font-weight: 800 !important;
+  border-radius: 5px !important;
+}
+
+.acq-input::placeholder,
+.global-plate-input::placeholder {
+  color: #4b668d !important;
+  font-weight: 600 !important;
+}
+
+.acq-field label {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 10px !important;
+}
+
+.acq-hint {
+  color: #1e3a6a !important;
+  font-weight: 800 !important;
+  font-size: 9.5px !important;
+}
+
+.acq-btn.primary,
+.global-plate-btn {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border: none !important;
+  border-radius: 5px !important;
+  box-shadow: 0 2px 6px rgba(236, 110, 42, 0.35) !important;
+}
+
+.acq-btn.primary:hover,
+.global-plate-btn:hover {
+  background: #d4601f !important;
+}
+
+.acq-btn.secondary {
+  background: #d6e6f6 !important;
+  color: #0a1a36 !important;
+  border: 1.5px solid #213d77 !important;
+  font-weight: 800 !important;
+}
+
+.acq-btn.secondary:hover {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+.acq-chip {
+  background: #dbe8f6 !important;
+  color: #0a1a36 !important;
+  border: 1.5px solid #a9c7e8 !important;
+  font-weight: 800 !important;
+  font-size: 9px !important;
+}
+
+.acq-chip:hover {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border-color: #213d77 !important;
+}
+
+.acq-chip.active {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border-color: #ec6e2a !important;
+}
+
+.acq-chip.stolen {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #ef4444 !important;
+  font-weight: 900 !important;
+}
+
+.acq-chip.hotlist {
+  background: #ffedd5 !important;
+  color: #9a3412 !important;
+  border-color: #f97316 !important;
+  font-weight: 900 !important;
+}
+
+/* Sighting Summary Card */
+.acq-sighting-summary-card {
+  background: #dbe8f6 !important;
+  border: 1.5px solid #213d77 !important;
+  border-radius: 6px !important;
+}
+
+.assc-header {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+.assc-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.assc-badge {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.assc-lbl {
+  color: #1e3a6a !important;
+  font-weight: 800 !important;
+}
+
+.assc-row strong.cyan {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+.assc-row span {
+  color: #0a1a36 !important;
+  font-weight: 800 !important;
+}
+
+.assc-row span.amber {
+  color: #9a3412 !important;
+  font-weight: 900 !important;
+}
+
+.assc-btn.primary {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border: none !important;
+}
+
+.assc-btn.secondary {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border: none !important;
+}
+
+/* --- 4. VEHICLE CARDS, HOTLIST & ANOMALIES --- */
+.vehicle-card {
+  background: #dbe8f6 !important;
+  border: 1.5px solid #a9c7e8 !important;
+  border-radius: 6px !important;
+  color: #0a1a36 !important;
+  margin-bottom: 6px !important;
+}
+
+.vehicle-card:hover {
+  background: #ffffff !important;
+  border-color: #213d77 !important;
+  box-shadow: 0 3px 10px rgba(33, 61, 119, 0.15) !important;
+}
+
+.vehicle-card.active {
+  background: #cce2f5 !important;
+  border: 2px solid #213d77 !important;
+  box-shadow: 0 0 10px rgba(33, 61, 119, 0.25) !important;
+}
+
+.vehicle-card.stolen {
+  background: #fee2e2 !important;
+  border: 2px solid #ef4444 !important;
+}
+
+.vc-plate {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 11.5px !important;
+  font-family: var(--font-mono, monospace) !important;
+}
+
+.vehicle-card.stolen .vc-plate {
+  color: #991b1b !important;
+}
+
+.vc-tag {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 8.5px !important;
+  border-radius: 3px !important;
+  padding: 1px 5px !important;
+}
+
+.vc-tag.type {
+  background: #1e3a6a !important;
+  color: #ffffff !important;
+}
+
+.vc-tag.color {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+.vc-tag.speed {
+  background: #b84c10 !important;
+  color: #ffffff !important;
+}
+
+.vc-tag.stolen {
+  background: #991b1b !important;
+  color: #ffffff !important;
+}
+
+.vc-detail {
+  color: #1e3a6a !important;
+  font-weight: 700 !important;
+  font-size: 9px !important;
+}
+
+.vc-detail span {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+/* Hotlist Cards */
+.hotlist-card {
+  background: #dbe8f6 !important;
+  border: 1.5px solid #a9c7e8 !important;
+  border-radius: 6px !important;
+  padding: 6px 8px !important;
+  margin-bottom: 5px !important;
+}
+
+.hl-plate {
+  color: #991b1b !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+  font-family: var(--font-mono, monospace) !important;
+}
+
+.hl-reason {
+  color: #1e3a6a !important;
+  font-weight: 700 !important;
+  font-size: 9.5px !important;
+}
+
+.hl-status {
+  font-weight: 900 !important;
+  font-size: 8.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+}
+
+.hl-status.matched {
+  background: #991b1b !important;
+  color: #ffffff !important;
+}
+
+.hl-status.scanned {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+/* --- 5. RIGHT SIDEBAR: CAMERA VIEWER, NEARBY ANPR & CONFIDENCE --- */
+.gis-camera-viewer {
+  border: 2px solid #213d77 !important;
+  border-radius: 8px !important;
+  background: #000000 !important;
+}
+
+.gis-cam-info {
+  background: rgba(10, 26, 54, 0.92) !important;
+  border-top: 1px solid #ec6e2a !important;
+}
+
+#gis-cam-id {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+}
+
+#gis-cam-type {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.btn-popout-cam {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 2px 8px !important;
+  font-size: 9px !important;
+}
+
+.btn-popout-cam:hover {
+  background: #ec6e2a !important;
+}
+
+/* Nearby ANPR Cards & Rows */
+.nearby-card {
+  background: #dbe8f6 !important;
+  border: 1.5px solid #213d77 !important;
+  border-radius: 6px !important;
+  padding: 6px 8px !important;
+}
+
+.nearby-card.active-card {
+  background: #cce2f5 !important;
+  border: 2px solid #213d77 !important;
+}
+
+.nc-role {
+  color: #213d77 !important;
+  font-weight: 900 !important;
+  font-size: 9px !important;
+}
+
+.nc-status.active {
+  background: #166534 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 8px !important;
+  padding: 1px 5px !important;
+  border-radius: 3px !important;
+}
+
+.nc-main .nc-name {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 12.5px !important;
+}
+
+.nc-main .nc-detail {
+  color: #1e3a6a !important;
+  font-weight: 700 !important;
+  font-size: 10px !important;
+}
+
+.subgroup-label {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 9.5px !important;
+  letter-spacing: 0.5px !important;
+  margin-top: 6px !important;
+}
+
+.nearby-row {
+  background: #dbe8f6 !important;
+  border: 1.5px solid #a9c7e8 !important;
+  border-radius: 5px !important;
+  padding: 5px 8px !important;
+  margin-bottom: 4px !important;
+}
+
+.nearby-row:hover {
+  background: #ffffff !important;
+  border-color: #213d77 !important;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.18) !important;
+}
+
+.nr-name {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+  font-family: var(--font-mono, monospace) !important;
+}
+
+.nr-dist {
+  color: #b84c10 !important;
+  font-weight: 900 !important;
+  font-size: 10px !important;
+}
+
+.nr-badge.fixed {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 8px !important;
+}
+
+.nr-badge.mobile {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 8px !important;
+}
+
+.nearby-intercept-box {
+  background: #fef3c7 !important;
+  border: 1.5px solid #d97706 !important;
+  border-radius: 6px !important;
+  padding: 6px 8px !important;
+  margin-top: 6px !important;
+}
+
+.nib-label {
+  color: #78350f !important;
+  font-weight: 900 !important;
+  font-size: 9px !important;
+}
+
+.nib-val {
+  color: #9a3412 !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+}
+
+/* Confidence Panel */
+.conf-overall {
+  background: #dbe8f6 !important;
+  border: 1.5px solid #a9c7e8 !important;
+  border-radius: 6px !important;
+  padding: 8px !important;
+}
+
+.conf-ring-val {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 16px !important;
+}
+
+.conf-tier {
+  font-weight: 900 !important;
+  font-size: 10px !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
+}
+
+.conf-tier.high {
+  background: #166534 !important;
+  color: #ffffff !important;
+}
+
+.conf-desc {
+  color: #1e3a6a !important;
+  font-weight: 700 !important;
+  font-size: 9.5px !important;
+}
+
+.factor-label {
+  color: #0a1a36 !important;
+  font-weight: 800 !important;
+  font-size: 9.5px !important;
+}
+
+.factor-val {
+  color: #213d77 !important;
+  font-weight: 900 !important;
+  font-size: 10px !important;
+}
+
+.factor-fill {
+  background: #213d77 !important;
+}
+
+/* Telemetry Feed */
+#gis-telemetry-feed {
+  background: #dbe8f6 !important;
+  border: 1px solid #a9c7e8 !important;
+  border-radius: 6px !important;
+  padding: 6px !important;
+}
+
+.telem-item {
+  background: #ffffff !important;
+  border: 1px solid #bdd5ed !important;
+  border-radius: 4px !important;
+  padding: 3px 6px !important;
+  color: #0a1a36 !important;
+}
+
+.telem-ts {
+  color: #1e3a6a !important;
+  font-weight: 700 !important;
+}
+
+.telem-node {
+  color: #213d77 !important;
+  font-weight: 900 !important;
+}
+
+.telem-plate {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+/* --- 6. GIS TIMELINE STRIP --- */
+.gis-timeline {
+  background: #e2edf8 !important;
+  border-top: 2px solid #213d77 !important;
+}
+
+.timeline-title {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+}
+
+#gis-timeline-plate {
+  color: #ec6e2a !important;
+  font-weight: 900 !important;
+}
+
+.target-sub-badge {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 9px !important;
+  padding: 1px 6px !important;
+  border-radius: 3px !important;
+}
+
+.tl-action-btn {
+  background: #ebf3fc !important;
+  color: #0a1a36 !important;
+  border: 1.5px solid #213d77 !important;
+  font-weight: 800 !important;
+  border-radius: 4px !important;
+}
+
+.tl-action-btn:hover {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+.tl-action-btn.active,
+.tl-action-btn.primary {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border-color: #ec6e2a !important;
+  font-weight: 900 !important;
+}
+
+.tl-speed-btn {
+  background: #ebf3fc !important;
+  color: #0a1a36 !important;
+  border: 1px solid #213d77 !important;
+  font-weight: 800 !important;
+}
+
+.tl-speed-btn.active {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+/* --- 7. DEFINITIVE IN-MAP MARKER LABELS & VISIBILITY FIXES --- */
+
+/* Fixed Camera Marker Body & Label */
+.marker-fixed-anpr-wrap {
+  background: transparent !important;
+  border: none !important;
+  overflow: visible !important;
+}
+
+.cam-marker-body {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  background: #102447 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 10px rgba(16, 36, 71, 0.9), 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  cursor: pointer !important;
+}
+
+.cam-marker-body:hover {
+  transform: scale(1.2) !important;
+  background: #213d77 !important;
+  border-color: #ec6e2a !important;
+}
+
+/* Polar-Opposite Fixed Camera Name Tag: Deep Navy background with crisp pure White text */
+.cam-marker-label,
+.marker-fixed-anpr-wrap .cam-marker-label {
+  position: absolute !important;
+  top: -19px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: #0a1a36 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #3b6bb0 !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 9.5px !important;
+  font-weight: 900 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+  letter-spacing: 0.5px !important;
+  z-index: 1000 !important;
+}
+
+.cam-marker-label *,
+.marker-fixed-anpr-wrap .cam-marker-label * {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+/* Sighting Node Marker on Map */
+.sighting-node-marker {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.sighting-node-marker .sn-core {
+  background: #102447 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
+}
+
+.sn-label,
+.sighting-node-marker .sn-label {
+  position: absolute !important;
+  top: -20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: #0a1a36 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #ec6e2a !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 9.5px !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6) !important;
+  letter-spacing: 0.5px !important;
+  z-index: 1000 !important;
+}
+
+.sn-label *,
+.sighting-node-marker .sn-label * {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.sighting-node-marker.active .sn-label {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border: 2px solid #213d77 !important;
+  box-shadow: 0 0 14px rgba(236, 110, 42, 0.8) !important;
+}
+
+.sighting-node-marker.active .sn-label * {
+  color: #ffffff !important;
+}
+
+/* Tactical Bus Marker Label */
+.tactical-bus-marker,
+.marker-bus-wrapper {
+  overflow: visible !important;
+}
+
+.tbm-label,
+.tactical-bus-marker .tbm-label {
+  position: absolute !important;
+  top: -19px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: #0a1a36 !important;
+  color: #fb923c !important;
+  border: 1.5px solid #ec6e2a !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 9.5px !important;
+  font-weight: 900 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.65) !important;
+  z-index: 1000 !important;
+}
+
+.tbm-label *,
+.tactical-bus-marker .tbm-label * {
+  color: #fb923c !important;
+  font-weight: 900 !important;
+}
+
+/* Vehicle Marker Tag */
+.tactical-vehicle-marker,
+.leaflet-tactical-vehicle-icon {
+  overflow: visible !important;
+}
+
+.tvm-tag,
+.tactical-vehicle-marker .tvm-tag {
+  position: absolute !important;
+  bottom: 38px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  white-space: nowrap !important;
+  background: #0a1a36 !important;
+  color: #ffffff !important;
+  border: 2px solid #ec6e2a !important;
+  border-radius: 5px !important;
+  padding: 3px 8px !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65) !important;
+  pointer-events: none !important;
+  z-index: 2000 !important;
+}
+
+.tvm-tag span,
+.tvm-tag span:first-child,
+.tactical-vehicle-marker .tvm-tag span {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+}
+
+.tvm-tag .tvm-speed,
+.tactical-vehicle-marker .tvm-tag .tvm-speed {
+  color: #34d399 !important;
+  background: #162a52 !important;
+  font-weight: 900 !important;
+  font-size: 9.5px !important;
+  padding: 1px 5px !important;
+  border-radius: 3px !important;
+  border: 1px solid #3b82f6 !important;
+}
+
+.tvm-estimate-badge,
+.tactical-vehicle-marker .tvm-estimate-badge {
+  position: absolute !important;
+  top: 38px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  white-space: nowrap !important;
+  background: #102447 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #ec6e2a !important;
+  border-radius: 4px !important;
+  padding: 2px 7px !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 2000 !important;
+}
+
+.tvm-estimate-badge span,
+.tvm-estimate-badge *,
+.tactical-vehicle-marker .tvm-estimate-badge span {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+/* Map Top Overlay Chips & Shader Buttons */
+#gis-map-overlay-top > * {
+  background: #ebf3fc !important;
+  border: 1.5px solid #213d77 !important;
+  color: #0a1a36 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.25) !important;
+  border-radius: 5px !important;
+}
+
+.overlay-chip-btn {
+  background: #ebf3fc !important;
+  border: 1.5px solid #213d77 !important;
+  color: #0a1a36 !important;
+  font-weight: 800 !important;
+}
+
+.overlay-chip-btn:hover {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+.overlay-chip-btn.active {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border-color: #ec6e2a !important;
+  font-weight: 900 !important;
+}
+
+.overlay-chip-btn.accent-cyan {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border-color: #ec6e2a !important;
+  font-weight: 900 !important;
+}
+
+.shader-chip-btn {
+  background: #ebf3fc !important;
+  border: 1.5px solid #213d77 !important;
+  color: #0a1a36 !important;
+  font-weight: 800 !important;
+}
+
+.shader-chip-btn:hover {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+.shader-chip-btn.active {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border-color: #ec6e2a !important;
+  font-weight: 900 !important;
+}
+
+.overlay-chip {
+  background: #ebf3fc !important;
+  border: 1.5px solid #213d77 !important;
+  color: #0a1a36 !important;
+}
+
+.chip-label {
+  color: #1e3a6a !important;
+  font-weight: 800 !important;
+}
+
+.chip-val {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+.overlay-chip.accent .chip-val {
+  color: #b84c10 !important;
+  font-weight: 900 !important;
+}
+
+/* Map Legend */
+#gis-map-legend {
+  background: #ebf3fc !important;
+  border: 1.5px solid #213d77 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(33, 61, 119, 0.25) !important;
+}
+
+.legend-item {
+  color: #0a1a36 !important;
+  font-weight: 800 !important;
+  font-size: 9.5px !important;
+}
+
+/* In-Map Switching HUD & Sighting Chain HUD */
+#gis-switching-hud {
+  background: #102447 !important;
+  border: 1.5px solid #ec6e2a !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
+}
+
+.hud-tag {
+  color: #fb923c !important;
+  font-weight: 900 !important;
+}
+
+.hud-node {
+  background: #162a52 !important;
+  color: #ffffff !important;
+  border: 1px solid #3b82f6 !important;
+  font-weight: 800 !important;
+}
+
+.hud-node.active {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.hud-node.next {
+  background: #1e3a6a !important;
+  color: #ffffff !important;
+  border-color: #60a5fa !important;
+}
+
+.hud-arrow {
+  color: #93c5fd !important;
+  font-weight: 900 !important;
+}
+
+.hud-zone {
+  color: #fbbf24 !important;
+  font-weight: 800 !important;
+}
+
+.hm-lbl {
+  color: #93c5fd !important;
+  font-weight: 800 !important;
+}
+
+.hm-val {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.gis-sighting-chain-hud {
+  background: #102447 !important;
+  border: 2px solid #ec6e2a !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7) !important;
+}
+
+.gsch-tag {
+  color: #fb923c !important;
+  font-weight: 900 !important;
+}
+
+.gsch-plate {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.gsch-stat-lbl {
+  color: #93c5fd !important;
+  font-weight: 800 !important;
+}
+
+.gsch-stat-val {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.gsch-stat-val.cyan {
+  color: #67e8f9 !important;
+}
+
+.gsch-stat-val.green {
+  color: #34d399 !important;
+}
+
+.gsch-stat-val.amber {
+  color: #fbbf24 !important;
+}
+
+/* Sighting Inspector Drawer */
+.gis-sighting-inspector {
+  background: #ebf3fc !important;
+  border: 2px solid #213d77 !important;
+  color: #0a1a36 !important;
+  box-shadow: 0 8px 30px rgba(16, 36, 71, 0.4) !important;
+}
+
+.gsi-header {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+.gsi-badge {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.gsi-plate-banner {
+  background: #dbe8f6 !important;
+  border: 1.5px solid #213d77 !important;
+}
+
+.gsi-plate-text {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+.gsi-target-desc {
+  color: #1e3a6a !important;
+  font-weight: 700 !important;
+}
+
+.gsi-sec-lbl {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+.gsi-telemetry-grid {
+  background: #dbe8f6 !important;
+  border: 1px solid #bdd5ed !important;
+  border-radius: 6px !important;
+}
+
+.gt-lbl {
+  color: #1e3a6a !important;
+  font-weight: 800 !important;
+}
+
+.gt-val {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+.gt-val.cyan {
+  color: #213d77 !important;
+  font-weight: 900 !important;
+}
+
+.gt-val.green {
+  color: #166534 !important;
+  font-weight: 900 !important;
+}
+
+.glb-street {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+.glb-gps {
+  color: #1e3a6a !important;
+  font-weight: 800 !important;
+}
+
+/* --- 8. EXECUTIVE DASHBOARD & COLLAPSIBLE DRAWERS --- */
+.dash-hero-banner {
+  background: linear-gradient(135deg, #213d77 0%, #162a52 100%) !important;
+  border: 2px solid #ec6e2a !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(33, 61, 119, 0.2) !important;
+}
+
+.dash-hero-banner h2 {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.dash-hero-banner p {
+  color: #dbeafe !important;
+  font-weight: 600 !important;
+}
+
+.dash-hero-banner strong {
+  color: #fbbf24 !important;
+}
+
+.dash-kpi-card {
+  background: #ebf3fc !important;
+  border: 1.5px solid #bdd5ed !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 10px rgba(33, 61, 119, 0.08) !important;
+}
+
+.dash-kpi-card:hover {
+  border-color: #213d77 !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(33, 61, 119, 0.16) !important;
+}
+
+.dkc-title {
+  color: #1e3a6a !important;
+  font-weight: 900 !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.5px !important;
+}
+
+.dkc-badge.green {
+  background: #166534 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.dkc-badge.orange {
+  background: #b84c10 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.dkc-value {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 26px !important;
+  letter-spacing: -0.5px !important;
+}
+
+.dkc-subtext {
+  color: #1e3a6a !important;
+  font-weight: 700 !important;
+  font-size: 10px !important;
+}
+
+.collapsible-card {
+  background: #ebf3fc !important;
+  border: 1.5px solid #bdd5ed !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 10px rgba(33, 61, 119, 0.08) !important;
+}
+
+.collapsible-header {
+  background: #dbe8f6 !important;
+  border-bottom: 1.5px solid #bdd5ed !important;
+}
+
+.collapsible-header:hover {
+  background: #cce2f5 !important;
+}
+
+.ch-title {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+  font-size: 12.5px !important;
+}
+
+.ch-pill.green {
+  background: #166534 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.ch-pill.cyan {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.ch-pill.orange {
+  background: #b84c10 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.ch-toggle-btn {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border-radius: 4px !important;
+  padding: 2px 8px !important;
+}
+
+/* --- 9. DUAL SURVEILLANCE & COMMAND GRID --- */
+.surv-feed-card,
+.surv-video-panel,
+.grid-cell,
+.grid-panel {
+  background: #ebf3fc !important;
+  border: 1.5px solid #bdd5ed !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.08) !important;
+}
+
+.surv-feed-header {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+.surv-cam-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.surv-badge {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+/* --- 10. EVIDENCE DOSSIER & LEGAL PROOF --- */
+.dossier-card,
+.dossier-section,
+.dossier-table-wrap {
+  background: #ebf3fc !important;
+  border: 1.5px solid #bdd5ed !important;
+  border-radius: 8px !important;
+  color: #0a1a36 !important;
+}
+
+.dossier-header {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+.dossier-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.dossier-meta-lbl {
+  color: #1e3a6a !important;
+  font-weight: 800 !important;
+}
+
+.dossier-meta-val {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+table th {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+table td {
+  background: #ebf3fc !important;
+  color: #0a1a36 !important;
+  border-bottom: 1px solid #bdd5ed !important;
+  font-weight: 700 !important;
+}
+
+table tr:nth-child(even) td {
+  background: #dbe8f6 !important;
+}
+
+/* --- 11. URBAN ANALYTICS & MISSION BRIEF --- */
+.ps124-card,
+.stat-card,
+.brief-card,
+.brief-section,
+.alert-card {
+  background: #ebf3fc !important;
+  border: 1.5px solid #bdd5ed !important;
+  border-radius: 8px !important;
+  color: #0a1a36 !important;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.08) !important;
+}
+
+.brief-section-title,
+.alert-title {
+  color: #0a1a36 !important;
+  font-weight: 900 !important;
+}
+
+.brief-body p,
+.alert-body p {
+  color: #1e3a6a !important;
+  font-weight: 600 !important;
+}
+
+/* =================================================================== */
+
+
+
+/* =================================================================== */
+/* TRACK BUTTON & TARGET ACQUISITION CENTERING & CONTAINMENT FIX       */
+/* =================================================================== */
+
+.target-acquisition-suite,
+.panel-section,
+.acq-content,
+.acq-content.active {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Input group: Stack input and Track button neatly with 100% centering and zero overflow */
+.acq-input-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 8px !important;
+}
+
+.acq-input-group .acq-input,
+#acq-plate-input {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 8px 10px !important;
+  font-size: 11.5px !important;
+  text-align: center !important;
+  border: 1.5px solid #213d77 !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+  color: #0a1a36 !important;
+  font-weight: 800 !important;
+}
+
+.acq-input-group .acq-btn,
+#btn-acq-track-plate {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 8px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  font-size: 11.5px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 6px !important;
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(236, 110, 42, 0.4) !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+}
+
+#btn-acq-track-plate:hover {
+  background: #d4601f !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Deploy AI Match & Track button */
+.acq-btn.feature-btn,
+#btn-acq-track-features {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 9px 14px !important;
+  font-size: 11.5px !important;
+  font-weight: 900 !important;
+  border-radius: 6px !important;
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.35) !important;
+  margin-top: 8px !important;
+  cursor: pointer !important;
+}
+
+#btn-acq-track-features:hover {
+  background: #162a52 !important;
+}
+
+/* Sighting Chain & GPS Ledger button */
+#btn-acq-open-chain-modal {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 7px 10px !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  border-radius: 5px !important;
+  background: #dbe8f6 !important;
+  color: #0a1a36 !important;
+  border: 1.5px solid #213d77 !important;
+  margin-top: 6px !important;
+}
+
+#btn-acq-open-chain-modal:hover {
+  background: #213d77 !important;
+  color: #ffffff !important;
+}
+
+/* Summary card actions */
+.assc-actions {
+  display: flex !important;
+  gap: 6px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 6px !important;
+}
+
+.assc-btn {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 8px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  border-radius: 4px !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+/* Quick plates list */
+.acq-quick-plates {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 8px !important;
+}
+
+.acq-chip {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 5px 8px !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  border-radius: 4px !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: block !important;
+}
+
+
+
+/* =================================================================== */
+/* CONNECT SIGHTINGS & BUILD TRAJECTORY BUTTON STYLING & CONTAINMENT   */
+/* =================================================================== */
+
+.acq-sighting-summary-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.assc-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 8px !important;
+}
+
+.assc-btn {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 8px 12px !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 5px !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+/* Primary Button: Connect Sightings (Vibrant Saffron-Orange) */
+.assc-btn.primary,
+#btn-assc-connect-map {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(236, 110, 42, 0.4) !important;
+}
+
+.assc-btn.primary:hover,
+#btn-assc-connect-map:hover {
+  background: #d4601f !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Secondary Button: Build Trajectory (Deep IRCTC Navy Blue) */
+.assc-btn.secondary,
+#btn-assc-build-trajectory {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #162a52 !important;
+  box-shadow: 0 2px 8px rgba(33, 61, 119, 0.3) !important;
+}
+
+.assc-btn.secondary:hover,
+#btn-assc-build-trajectory:hover {
+  background: #162a52 !important;
+  border-color: #ec6e2a !important;
+  transform: translateY(-1px) !important;
+}
+
+
+
+/* =================================================================== */
+/* CRITICAL FIX: HIGH-CONTRAST VISIBILITY FOR IN-MAP SWITCHING HUD     */
+/* =================================================================== */
+
+#gis-switching-hud,
+#surv-switching-hud {
+  background: #0a1a36 !important;
+  border: 2px solid #ec6e2a !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.85) !important;
+  color: #ffffff !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
+}
+
+#gis-switching-hud .hud-tag,
+#surv-switching-hud .hud-tag,
+.hud-tag {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 8.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  border: 1px solid #ffffff !important;
+  letter-spacing: 0.5px !important;
+}
+
+#gis-switching-hud .hud-node,
+#surv-switching-hud .hud-node,
+.hud-node {
+  background: #162a52 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #3b82f6 !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  padding: 3px 8px !important;
+  border-radius: 4px !important;
+}
+
+#gis-switching-hud .hud-node.active,
+#surv-switching-hud .hud-node.active,
+.hud-node.active {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border: 1.5px solid #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 10px !important;
+  box-shadow: 0 0 12px rgba(236, 110, 42, 0.8) !important;
+}
+
+#gis-switching-hud .hud-node.next,
+#surv-switching-hud .hud-node.next,
+.hud-node.next {
+  background: #1e3a6a !important;
+  color: #93c5fd !important;
+  border: 1.5px solid #60a5fa !important;
+  font-weight: 900 !important;
+}
+
+#gis-switching-hud .hud-arrow,
+#surv-switching-hud .hud-arrow,
+.hud-arrow {
+  color: #fb923c !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+}
+
+#gis-switching-hud .hud-zone,
+#surv-switching-hud .hud-zone,
+.hud-zone,
+#gis-hud-gap,
+#surv-hud-gap {
+  background: #162a52 !important;
+  color: #fbbf24 !important;
+  border: 1.5px dashed #fb923c !important;
+  font-weight: 900 !important;
+  font-size: 10px !important;
+  padding: 3px 10px !important;
+  border-radius: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+#gis-switching-hud .hud-zone *,
+#surv-switching-hud .hud-zone *,
+.hud-zone *,
+#gis-hud-gap *,
+#surv-hud-gap * {
+  color: #fbbf24 !important;
+  font-weight: 900 !important;
+}
+
+#gis-switching-hud .hm-lbl,
+#surv-switching-hud .hm-lbl,
+.hm-lbl {
+  color: #93c5fd !important;
+  font-weight: 900 !important;
+  font-size: 8px !important;
+  letter-spacing: 0.8px !important;
+}
+
+#gis-switching-hud .hm-val,
+#surv-switching-hud .hm-val,
+.hm-val,
+#gis-cone-val,
+#gis-proto-val,
+#surv-cone,
+#surv-proto {
+  color: #ffffff !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+}
+
+
+
+/* =================================================================== */
+/* CRITICAL FIX: MISSION BRIEF HERO ACTION BUTTONS CONTRAST            */
+/* =================================================================== */
+
+.hero-cta-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin-top: 14px !important;
+}
+
+.hero-cta {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 10px 20px !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* Button 1: Launch Live Operations (Vibrant Saffron-Orange with Bold White Text) */
+#btn-launch-ops,
+.hero-cta-primary,
+.hero-cta:first-child {
+  background: #ec6e2a !important;
+  color: #ffffff !important;
+  border: 1.5px solid #d4601f !important;
+  box-shadow: 0 4px 14px rgba(236, 110, 42, 0.4) !important;
+}
+
+#btn-launch-ops:hover,
+.hero-cta-primary:hover,
+.hero-cta:first-child:hover {
+  background: #d4601f !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(236, 110, 42, 0.6) !important;
+}
+
+#btn-launch-ops *,
+.hero-cta-primary *,
+.hero-cta:first-child * {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+/* Button 2: 50:25:25 Command Center (Deep IRCTC Navy with Bold White Text) */
+#btn-hero-split-launch,
+.hero-cta.accent-split {
+  background: #213d77 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #162a52 !important;
+  box-shadow: 0 4px 14px rgba(33, 61, 119, 0.35) !important;
+}
+
+#btn-hero-split-launch:hover,
+.hero-cta.accent-split:hover {
+  background: #162a52 !important;
+  border-color: #ec6e2a !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(33, 61, 119, 0.55) !important;
+}
+
+#btn-hero-split-launch *,
+.hero-cta.accent-split * {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+/* Button 3: Broadcast Pursuit Alert (Emergency Crimson Red with Bold White Text) */
+#btn-demo-stolen-alert,
+.hero-cta.secondary {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #b91c1c !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35) !important;
+}
+
+#btn-demo-stolen-alert:hover,
+.hero-cta.secondary:hover {
+  background: #b91c1c !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.55) !important;
+}
+
+#btn-demo-stolen-alert *,
+.hero-cta.secondary * {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}

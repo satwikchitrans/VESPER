@@ -504,11 +504,11 @@ function updateSightingChainUI(veh) {
             <span class="sc-sensor-tag ${step.mobile ? 'bus' : 'fixed'}">
               ${step.mobile ? 'DTC Mobile Bus' : 'Fixed CCTV ANPR'}
             </span>
-            <div style="font-size:9px;color:#94a3b8;margin-top:2px">${step.cam}</div>
+            <div style="font-size:9px;color:#4a5568;margin-top:2px">${step.cam}</div>
           </td>
           <td>
             <div style="font-weight:700;color:#fff">${step.street}</div>
-            <div style="font-size:9px;color:#64748b">Sensor Node Coordinates Verified</div>
+            <div style="font-size:9px;color:#718096">Sensor Node Coordinates Verified</div>
           </td>
           <td>
             <span class="sc-gps-coord">${step.lat.toFixed(5)}, ${step.lng.toFixed(5)}</span>
@@ -650,6 +650,7 @@ function closeSightingChainModal() {
 
 async function connectSightingsOnMap(vehId) {
   const veh = VEHICLES.find(v => v.id === (vehId || STATE.selectedVehicle)) || VEHICLES[0];
+  STATE.selectedVehicle = veh.id;
   switchWindow('gis');
   closeSightingChainModal();
   
@@ -669,27 +670,37 @@ async function connectSightingsOnMap(vehId) {
     console.warn('[OSRM ROUTE API FALLBACK]', e);
   }
 
+  selectVehicle(veh.id);
   drawTrajectory(veh);
   openSightingChainHUD();
   updateSightingChainUI(veh);
+  fitCurrentRoute();
   playSound('lock');
-  showToast(' SIGHTING CHAIN CONNECTED (OSRM KINEMATICS)', `Linked ${veh.trajectory.length} discrete ANPR camera coordinates for plate ${veh.plate}. High-precision road corridor active.`);
+  showToast(' SIGHTING CHAIN CONNECTED', `Linked ${veh.trajectory.length} discrete ANPR camera coordinates for plate ${veh.plate}.`);
 }
 
 function buildExpectedTrajectory(vehId) {
   const veh = VEHICLES.find(v => v.id === (vehId || STATE.selectedVehicle)) || VEHICLES[0];
+  STATE.selectedVehicle = veh.id;
   switchWindow('gis');
   closeSightingChainModal();
+  selectVehicle(veh.id);
   drawTrajectory(veh);
+  openSightingChainHUD();
+  updateSightingChainUI(veh);
+  fitCurrentRoute();
 
   // Highlight downstream intercept node
   const lastStep = veh.trajectory[veh.trajectory.length - 1];
   if (lastStep && STATE.maps.gis) {
-    STATE.maps.gis.flyTo([lastStep.lat, lastStep.lng], 14, { animate: true, duration: 1.2 });
+    STATE.maps.gis.flyTo([lastStep.lat, lastStep.lng], 14, { animate: true, duration: 1.0 });
   }
   playSound('chirp');
-  showToast(' EXPECTED TRAJECTORY BUILT', `Projected downstream blind corridor along ${veh.corridorName}. Dynamic reachability cone active.`);
+  showToast(' EXPECTED TRAJECTORY BUILT', `Projected downstream blind corridor along ${veh.corridorName}.`);
 }
+
+window.connectSightingsOnMap = connectSightingsOnMap;
+window.buildExpectedTrajectory = buildExpectedTrajectory;
 
 function replaySightingChronology(vehId) {
   const veh = VEHICLES.find(v => v.id === (vehId || STATE.selectedVehicle)) || VEHICLES[0];
@@ -759,7 +770,7 @@ function openSightingInspector(veh, stepIdx) {
     let chipsHtml = '';
     chars.forEach((ch, cIdx) => {
       if (ch === ' ') {
-        chipsHtml += '<span style="color:#64748b;margin:0 2px;align-self:center;">•</span>';
+        chipsHtml += '<span style="color:#718096;margin:0 2px;align-self:center;">•</span>';
       } else {
         const confVal = Math.min(99.9, Math.max(91.0, (step.conf * 100) - ((cIdx % 3) * 1.4) + Math.cos(cIdx) * 0.8)).toFixed(1);
         chipsHtml += `
@@ -862,7 +873,7 @@ function renderSightingSnapshot(canvas, veh, step, stepIdx) {
   const cy = h * 0.52;
 
   // Vehicle Body
-  ctx.fillStyle = veh.color === 'White' ? '#e2e8f0' : (veh.color === 'Black' ? '#213d77' : (veh.color === 'Red' ? '#dc2626' : '#64748b'));
+  ctx.fillStyle = veh.color === 'White' ? '#e2e8f0' : (veh.color === 'Black' ? '#213d77' : (veh.color === 'Red' ? '#dc2626' : '#718096'));
   ctx.beginPath();
   ctx.roundRect(cx - carW/2, cy, carW, carH, 4);
   ctx.fill();
@@ -1805,7 +1816,7 @@ function renderThreatAlertsStream() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="padding:24px;text-align:center;color:#64748b;font-family:var(--font-mono);font-size:12px;background:rgba(15,23,42,0.5);border:1px dashed rgba(255,255,255,0.1);border-radius:6px;">
+      <div style="padding:24px;text-align:center;color:#718096;font-family:var(--font-mono);font-size:12px;background:rgba(255,255,255,0.5);border:1px dashed rgba(255,255,255,0.1);border-radius:6px;">
         No active threat alerts matching filter "${ACTIVE_ALERT_FILTER.toUpperCase()}". Click "TRIGGER TEST WANTED VEHICLE" to simulate.
       </div>
     `;
@@ -2316,7 +2327,7 @@ function drawGISCameraFOVCones() {
     }
     arcPoints.push([cam.lat, cam.lng]);
     const arc = L.polygon(arcPoints, {
-      color: '#213d77', fillColor: '#00e5ff', fillOpacity: 0.12, weight: 1.5, opacity: 0.6
+      color: '#213d77', fillColor: '#FB792B', fillOpacity: 0.12, weight: 1.5, opacity: 0.6
     }).addTo(map);
     STATE.godsEyeCoverageArcs.push(arc);
 
@@ -2362,7 +2373,7 @@ function startGISRadarSweep() {
       bctx.setLineDash([]);
     });
     // Crosshairs
-    bctx.strokeStyle = 'rgba(0,229,255,0.08)';
+    bctx.strokeStyle = 'rgba(251,121,43,0.08)';
     bctx.lineWidth = 0.4;
     bctx.beginPath();
     bctx.moveTo(cx - maxR, cy); bctx.lineTo(cx + maxR, cy);
@@ -3088,7 +3099,8 @@ function initGridMap() {
 
   // Add fixed cameras to grid map too
   FIXED_CAMERAS.forEach(cam => {
-    const icon = L.divIcon({ className: 'marker-fixed-anpr', html: '', iconSize: [18,18], iconAnchor: [9,9] });
+    const html = `<div class="cam-marker-body"><span class="cam-marker-icon">📷</span></div><div class="cam-marker-label">${cam.id}</div>`;
+    const icon = L.divIcon({ className: 'marker-fixed-anpr-wrap', html: html, iconSize: [22, 22], iconAnchor: [11, 11] });
     L.marker([cam.lat, cam.lng], { icon }).addTo(map);
   });
 }
@@ -3096,9 +3108,10 @@ function initGridMap() {
 // ========================= FIXED CAMERAS =========================
 function initFixedCameras(map) {
   FIXED_CAMERAS.forEach(cam => {
-    const icon = L.divIcon({ className: 'marker-fixed-anpr', html: '', iconSize: [20,20], iconAnchor: [10,10] });
+    const html = `<div class="cam-marker-body"><span class="cam-marker-icon">📷</span></div><div class="cam-marker-label">${cam.id}</div>`;
+    const icon = L.divIcon({ className: 'marker-fixed-anpr-wrap', html: html, iconSize: [26, 26], iconAnchor: [13, 13] });
     const marker = L.marker([cam.lat, cam.lng], { icon }).addTo(map);
-    marker.bindPopup(`<div style="padding:4px"><div style="font-weight:700;color:#213d77;font-size:11px">${cam.id}</div><div style="font-size:10px;color:#94a3b8">${cam.name}</div><div style="font-size:9px;color:#ec6e2a;margin:3px 0 6px">ONLINE · 45 FPS</div><button class="map-popup-live-btn" onclick="openLiveCameraModal(\'${cam.id}\')"> Watch Live Feed</button></div>`);
+    marker.bindPopup(`<div style="padding:6px;min-width:180px;"><div style="font-weight:900;color:#102447;font-size:12px">${cam.id}</div><div style="font-size:11px;font-weight:700;color:#223c63">${cam.name}</div><div style="font-size:9.5px;color:#d4601f;margin:4px 0 6px;font-weight:800">ONLINE · 45 FPS · 1080p</div><button class="map-popup-live-btn" onclick="openLiveCameraModal(\'${cam.id}\')"> Watch Live Feed</button></div>`);
     STATE.markers.fixed[cam.id] = marker;
   });
 }
@@ -3121,7 +3134,7 @@ function initBuses(map) {
     `;
     const icon = L.divIcon({ className: 'marker-bus-wrapper', html: html, iconSize: [28, 28], iconAnchor: [14, 14] });
     const marker = L.marker(startPt, { icon, zIndexOffset: 2000 }).addTo(map);
-    marker.bindPopup(`<div style="padding:4px"><div style="font-weight:700;color:#ec6e2a;font-size:11px">${bus.id}</div><div style="font-size:10px;color:#94a3b8">${bus.name}</div><div style="font-size:9px;color:#ec6e2a;margin:3px 0 6px">Hailo-8 NPU · Active Mobile ANPR</div><button class="map-popup-live-btn" onclick="openLiveCameraModal('${bus.id}')"> Watch Live Feed</button></div>`);
+    marker.bindPopup(`<div style="padding:4px"><div style="font-weight:700;color:#ec6e2a;font-size:11px">${bus.id}</div><div style="font-size:10px;color:#4a5568">${bus.name}</div><div style="font-size:9px;color:#ec6e2a;margin:3px 0 6px">Hailo-8 NPU · Active Mobile ANPR</div><button class="map-popup-live-btn" onclick="openLiveCameraModal('${bus.id}')"> Watch Live Feed</button></div>`);
     STATE.markers.buses[bus.id] = marker;
   });
 }
@@ -3288,12 +3301,12 @@ function createVehicleMarkers(veh) {
     const mGis = L.marker(startPt, { icon: customIcon, zIndexOffset: 2500 }).addTo(STATE.maps.gis);
     mGis.bindPopup(`
       <div style="padding:6px;min-width:210px;font-family:var(--font-mono)">
-        <div style="font-weight:800;color:${isStolen ? '#ef4444' : '#00e5ff'};font-size:12px">${veh.plate}</div>
-        <div style="font-size:10px;color:#94a3b8">${veh.make} · ${veh.color} · ${veh.type}</div>
+        <div style="font-weight:800;color:${isStolen ? '#ef4444' : '#FB792B'};font-size:12px">${veh.plate}</div>
+        <div style="font-size:10px;color:#4a5568">${veh.make} · ${veh.color} · ${veh.type}</div>
         <div style="font-size:9px;color:#ec6e2a;margin-top:3px;font-weight:700"> ANPR ESTIMATED TRAJECTORY (NO VEHICLE GPS)</div>
-        <div style="font-size:8.5px;color:#cbd5e1;margin-top:2px">Last Confirmed Sighting: <b style="color:#00e5ff">${lastCam}</b></div>
+        <div style="font-size:8.5px;color:#4a5568;margin-top:2px">Last Confirmed Sighting: <b style="color:#FB792B">${lastCam}</b></div>
         ${isStolen ? '<div style="color:#ef4444;font-weight:800;margin-top:3px"> HOTLIST MATCH (FIR #4482/2026)</div>' : '<div style="color:#ec6e2a;font-weight:700;margin-top:3px">* ACTIVE SIGHTING CHAIN</div>'}
-        <div style="color:#94a3b8;font-size:8px;margin-top:4px"> ${veh.corridorName}</div>
+        <div style="color:#4a5568;font-size:8px;margin-top:4px"> ${veh.corridorName}</div>
       </div>
     `);
     STATE.markers.vehicles.gis = mGis;
@@ -3398,18 +3411,18 @@ function drawTrajectory(veh) {
         const marker = L.marker([step.lat, step.lng], { icon: customIcon, zIndexOffset: 2000 }).addTo(STATE.maps.gis);
         marker.bindPopup(`
           <div style="padding:6px;min-width:220px;font-family:var(--font-mono)">
-            <div style="font-weight:800;color:${step.mobile ? '#ec6e2a' : '#00e5ff'};font-size:11px">
+            <div style="font-weight:800;color:${step.mobile ? '#ec6e2a' : '#FB792B'};font-size:11px">
               ${step.mobile ? ' MOBILE BUS ANPR SIGHTING' : ' FIXED CCTV ANPR SIGHTING'}
             </div>
-            <div style="font-size:10px;color:#cbd5e1;margin-top:2px"> ${step.street}</div>
-            <div style="font-size:9px;color:#94a3b8;margin-top:4px">
-              Sensor Node: <b style="color:#fff">${step.cam}</b><br/>
+            <div style="font-size:10.5px;color:#1e3a6a;margin-top:2px;font-weight:700;"> ${step.street}</div>
+            <div style="font-size:9.5px;color:#223c63;margin-top:4px;font-weight:700;">
+              Sensor Node: <b style="color:#102447;font-weight:900;">${step.cam}</b><br/>
               Optical Re-ID: <b style="color:#ec6e2a">${(step.conf * 100).toFixed(1)}% Match</b><br/>
               Timeline Offset: <b>+${step.time} min</b>
             </div>
-            <div style="margin-top:6px;padding:4px 6px;background:rgba(0,0,0,0.6);border-radius:4px;border:1px solid ${veh.isStolen ? '#ef4444' : '#00e5ff'};display:flex;justify-content:space-between;align-items:center">
-              <span style="font-size:10px;color:#ec6e2a;font-weight:800">${veh.plate}</span>
-              <span style="font-size:8px;color:#ec6e2a;font-weight:700">OCR CONFIRMED</span>
+            <div style="margin-top:6px;padding:4px 6px;background:#102447;border-radius:4px;border:1.5px solid ${veh.isStolen ? '#ef4444' : '#ec6e2a'};display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:11px;color:#ffffff;font-weight:900">${veh.plate}</span>
+              <span style="font-size:8.5px;color:#fbbf24;font-weight:900">OCR CONFIRMED</span>
             </div>
             <button class="map-popup-live-btn" style="margin-top:6px;width:100%" onclick="activateTimelineStep(VEHICLES.find(v => v.id === '${veh.id}'), ${idx})">
                View This Sighting Capture
@@ -3726,7 +3739,7 @@ function _doCameraCaptureRender(veh, stepIndex, step) {
       STATE.reachabilityCircles['cone'].setRadius(radius);
     } else if (STATE.maps.gis) {
       STATE.reachabilityCircles['cone'] = L.circle([midLat, midLng], {
-        radius: radius, color: '#7c4dff', fillColor: '#7c4dff',
+        radius: radius, color: '#213D77', fillColor: '#213D77',
         fillOpacity: 0.06, weight: 2, dashArray: '8 4',
       }).addTo(STATE.maps.gis);
     }
@@ -3853,7 +3866,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
   ctx.setLineDash([]);
   
   // Road Curb
-  ctx.strokeStyle = isBus ? '#ec6e2a' : '#00e5ff'; ctx.lineWidth = 2;
+  ctx.strokeStyle = isBus ? '#ec6e2a' : '#FB792B'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, h * 0.52); ctx.lineTo(w, h * 0.52); ctx.stroke();
 
   // Recorded Mode Offset or Normal Sim Tick
@@ -3937,7 +3950,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
     const bodyColor = item.color === 'White' ? '#e2e8f0' :
                       item.color === 'Black' ? '#2c4f8a' :
                       item.color === 'Red' ? '#dc2626' :
-                      item.color === 'Silver' ? '#94a3b8' :
+                      item.color === 'Silver' ? '#4a5568' :
                       item.color === 'Blue' ? '#213d77' : '#ec6e2a';
 
     // Shadow
@@ -3970,7 +3983,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
     ctx.fillText(item.plate, x + 10, y + vh - 4);
 
     // OCR Bounding Box
-    ctx.strokeStyle = item.isTarget ? '#00e5ff' : 'rgba(255, 255, 255, 0.4)';
+    ctx.strokeStyle = item.isTarget ? '#FB792B' : 'rgba(255, 255, 255, 0.4)';
     ctx.lineWidth = item.isTarget ? 1.5 : 1;
     ctx.strokeRect(x + 6, y + vh - 13, Math.min(52, vw * 0.7), 13);
 
@@ -3992,7 +4005,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
     const isHovered = canvas._hoveredVehicle && canvas._hoveredVehicle.plate === item.plate;
     if (isHovered) {
       // Draw Tactical Lock Reticle
-      ctx.strokeStyle = '#00e5ff';
+      ctx.strokeStyle = '#FB792B';
       ctx.lineWidth = 2;
       const pad = 8;
       const rx = x - pad, ry = y - pad, rw = vw + pad * 2, rh = vh + pad * 2;
@@ -4016,7 +4029,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
   // Top Camera HUD
   ctx.fillStyle = 'rgba(0,0,0,0.7)';
   ctx.fillRect(0, 0, w, 24);
-  ctx.fillStyle = isRecMode ? '#ec6e2a' : (isBus ? '#ec6e2a' : '#00e5ff');
+  ctx.fillStyle = isRecMode ? '#ec6e2a' : (isBus ? '#ec6e2a' : '#FB792B');
   ctx.font = `bold ${Math.max(8, Math.min(10, w * 0.016))}px JetBrains Mono, monospace`;
   ctx.fillText(`${isRecMode ? ' ARCHIVE PLAYBACK' : '* LIVE STREAM'}  ${step.cam}  ${isBus ? 'MOBILE NPU NODE' : 'FIXED ANPR'}`, 8, 15);
 
@@ -4025,7 +4038,7 @@ function renderCameraFeed(canvas, step, veh, forceBus) {
   const ts = isRecMode 
     ? (STATE.liveCamera?.recordedTimestamp || '2026-09-19 10:24:18 IST')
     : `IST ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}  GPS: ${step.lat.toFixed(4)}, ${step.lng.toFixed(4)}`;
-  ctx.fillStyle = isRecMode ? '#ec6e2a' : '#94a3b8';
+  ctx.fillStyle = isRecMode ? '#ec6e2a' : '#4a5568';
   ctx.font = `${Math.max(7, Math.min(8, w * 0.013))}px JetBrains Mono`;
   ctx.fillText(ts, 8, 22);
 
@@ -4126,31 +4139,48 @@ function setHudElements(prevId, currId, nextId, gapId, coneId, protoId, prevStep
   const coneEl = document.getElementById(coneId);
   const protoEl = document.getElementById(protoId);
 
-  if (prevEl) prevEl.textContent = prevStep ? prevStep.cam : 'ORIGIN';
+  if (prevEl) {
+    prevEl.textContent = prevStep ? prevStep.cam : 'ORIGIN';
+    prevEl.style.color = '#ffffff';
+    prevEl.style.background = '#162a52';
+  }
   if (currEl) {
     currEl.textContent = `${currStep.cam} ${currStep.mobile ? '(MOBILE)' : '(FIXED)'}`;
-    currEl.style.background = currStep.mobile ? 'var(--accent-yellow)' : 'var(--accent-cyan)';
-    currEl.style.color = '#000';
+    currEl.style.background = '#ec6e2a';
+    currEl.style.color = '#ffffff';
+    currEl.style.fontWeight = '900';
   }
-  if (nextEl) nextEl.textContent = nextStep ? nextStep.cam : 'EXIT';
+  if (nextEl) {
+    nextEl.textContent = nextStep ? nextStep.cam : 'EXIT';
+    nextEl.style.color = '#93c5fd';
+    nextEl.style.background = '#1e3a6a';
+  }
   if (gapEl) {
     if (currStep.mobile) {
       gapEl.innerHTML = `<span class="pulse-dot-amber"></span> ${currStep.street || 'BLIND ZONE BRIDGED: Bus Mobile'}`;
-      gapEl.style.color = 'var(--accent-yellow)';
+      gapEl.style.color = '#fbbf24';
     } else if (prevStep && prevStep.mobile) {
       gapEl.innerHTML = `[OK] ${currStep.street || 'RE-EMERGED AT JUNCTION'}`;
-      gapEl.style.color = 'var(--accent-green)';
+      gapEl.style.color = '#34d399';
     } else {
       gapEl.innerHTML = ` ${currStep.street || 'OFFICIAL CORRIDOR'}`;
-      gapEl.style.color = 'var(--accent-cyan)';
+      gapEl.style.color = '#fbbf24';
     }
+    gapEl.style.background = '#162a52';
+    gapEl.style.fontWeight = '900';
   }
   if (coneEl) {
     let dist = 2.4;
     if (prevStep) dist = haversine(prevStep.lat, prevStep.lng, currStep.lat, currStep.lng);
     coneEl.textContent = `r = ${(Math.max(dist * 1.3, 2.0)).toFixed(1)} km | dt = ${currStep.time} min`;
+    coneEl.style.color = '#ffffff';
+    coneEl.style.fontWeight = '900';
   }
-  if (protoEl) protoEl.textContent = currStep.mobile ? 'AIS-140 Relay · 180B MQTT' : 'Fixed CCTV · DeepStream';
+  if (protoEl) {
+    protoEl.textContent = currStep.mobile ? 'AIS-140 Relay · 180B MQTT' : 'Fixed CCTV · DeepStream';
+    protoEl.style.color = '#ffffff';
+    protoEl.style.fontWeight = '900';
+  }
 }
 
 // ========================= NEARBY ANPR MATRIX =========================
@@ -4504,8 +4534,8 @@ function drawShotCanvas(canvasId, step, veh) {
   ctx.fillStyle = 'rgba(56,189,248,0.25)'; ctx.fillRect(vx + 42, vy + 3, 16, vh - 10);
   ctx.fillStyle = '#f8fafc'; ctx.fillRect(vx + 8, vy + vh - 10, 38, 8);
   ctx.fillStyle = '#000'; ctx.font = '5px JetBrains Mono'; ctx.fillText(veh.plate, vx + 10, vy + vh - 4);
-  ctx.strokeStyle = step.mobile ? '#ec6e2a' : '#00e5ff'; ctx.lineWidth = 1.5; ctx.strokeRect(vx - 2, vy - 2, vw + 4, vh + 4);
-  ctx.fillStyle = step.mobile ? 'rgba(251,191,36,0.9)' : 'rgba(0,229,255,0.9)';
+  ctx.strokeStyle = step.mobile ? '#ec6e2a' : '#FB792B'; ctx.lineWidth = 1.5; ctx.strokeRect(vx - 2, vy - 2, vw + 4, vh + 4);
+  ctx.fillStyle = step.mobile ? 'rgba(251,191,36,0.9)' : 'rgba(251,121,43,0.9)';
   ctx.fillRect(vx - 2, vy - 13, 55, 11);
   ctx.fillStyle = '#000'; ctx.font = 'bold 7px Inter'; ctx.fillText(`${veh.type} ${(step.conf * 100).toFixed(0)}%`, vx, vy - 4);
 }
@@ -4585,7 +4615,7 @@ function addPS124Log(containerId, text, type) {
     if (!log) return;
     const item = document.createElement('div');
     item.className = `psm-log-item ${type}`;
-    item.innerHTML = `<span style="color:#00e5ff">[${ts}]</span> ${text}`;
+    item.innerHTML = `<span style="color:#FB792B">[${ts}]</span> ${text}`;
     log.insertBefore(item, log.firstChild);
     while (log.children.length > 8) log.removeChild(log.lastChild);
   });
@@ -4601,7 +4631,7 @@ function drawAccelChart(targetId) {
     ctx.clearRect(0, 0, w, h);
 
     // Background
-    ctx.fillStyle = 'rgba(10,14,23,0.9)'; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(27,48,88,0.9)'; ctx.fillRect(0, 0, w, h);
 
     // Threshold line at 2.5g
     const threshY = h - (2.5 / 6) * h;
@@ -4612,7 +4642,7 @@ function drawAccelChart(targetId) {
     // Draw data
     const data = STATE.ps124.accelHistory;
     if (data.length < 2) return;
-    ctx.strokeStyle = '#00e5ff'; ctx.lineWidth = 1.5;
+    ctx.strokeStyle = '#FB792B'; ctx.lineWidth = 1.5;
     ctx.beginPath();
     data.forEach((val, i) => {
       const x = (i / (data.length - 1)) * w;
@@ -4684,7 +4714,7 @@ function drawAQIChart(targetId) {
     const ctx = canvas.getContext('2d');
     const w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = 'rgba(10,14,23,0.9)'; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(27,48,88,0.9)'; ctx.fillRect(0, 0, w, h);
 
     // AQI bands
     const bands = [
@@ -4727,9 +4757,9 @@ function drawAQIChart(targetId) {
 
     // Legend
     ctx.fillStyle = '#34d399'; ctx.fillRect(w - 80, 5, 8, 3);
-    ctx.fillStyle = '#94a3b8'; ctx.font = '7px Inter'; ctx.fillText('PM2.5', w - 68, 9);
+    ctx.fillStyle = '#4a5568'; ctx.font = '7px Inter'; ctx.fillText('PM2.5', w - 68, 9);
     ctx.fillStyle = '#2c4f8a'; ctx.fillRect(w - 80, 13, 8, 3);
-    ctx.fillStyle = '#94a3b8'; ctx.fillText('PM10', w - 68, 17);
+    ctx.fillStyle = '#4a5568'; ctx.fillText('PM10', w - 68, 17);
   });
 }
 
@@ -4923,7 +4953,7 @@ function initGodsEye() {
   FIXED_CAMERAS.forEach(cam => {
     const icon = L.divIcon({ className: 'ge-marker-cam', iconSize: [12, 12], iconAnchor: [6, 6] });
     const marker = L.marker([cam.lat, cam.lng], { icon }).addTo(map);
-    marker.bindPopup(`<div style="padding:3px;background:#f4f6fb;color:#00e5ff;font-size:10px;font-weight:700">${cam.id}<br><span style="color:#94a3b8;font-size:9px">${cam.name}</span><br><span style="color:#ec6e2a;font-size:8px">Click to inspect feed</span></div>`, { className: 'ge-popup' });
+    marker.bindPopup(`<div style="padding:3px;background:#f4f6fb;color:#FB792B;font-size:10px;font-weight:700">${cam.id}<br><span style="color:#4a5568;font-size:9px">${cam.name}</span><br><span style="color:#ec6e2a;font-size:8px">Click to inspect feed</span></div>`, { className: 'ge-popup' });
     marker.on('click', () => GODSEYE.openSensorPiP(cam));
     GODSEYE.markers.cameras.push(marker);
 
@@ -4937,7 +4967,7 @@ function initGodsEye() {
     }
     arcPoints.push([cam.lat, cam.lng]);
     const arc = L.polygon(arcPoints, {
-      color: '#213d77', fillColor: '#00e5ff', fillOpacity: 0.07, weight: 1, opacity: 0.35
+      color: '#213d77', fillColor: '#FB792B', fillOpacity: 0.07, weight: 1, opacity: 0.35
     }).addTo(map);
     GODSEYE.markers.coverageArcs.push(arc);
   });
@@ -4948,7 +4978,7 @@ function initGodsEye() {
     const icon = L.divIcon({ className: 'ge-marker-bus', iconSize: [12, 12], iconAnchor: [6, 6] });
     const wp = STATE.busPositions[bus.id] || bus.waypoints[0];
     const marker = L.marker([wp.lat, wp.lng], { icon }).addTo(map);
-    marker.bindPopup(`<div style="padding:3px;background:#f4f6fb;color:#ec6e2a;font-size:10px;font-weight:700">${bus.id}<br><span style="color:#94a3b8;font-size:9px">${bus.name}</span><br><span style="color:#ec6e2a;font-size:8px">Click to inspect feed</span></div>`, { className: 'ge-popup' });
+    marker.bindPopup(`<div style="padding:3px;background:#f4f6fb;color:#ec6e2a;font-size:10px;font-weight:700">${bus.id}<br><span style="color:#4a5568;font-size:9px">${bus.name}</span><br><span style="color:#ec6e2a;font-size:8px">Click to inspect feed</span></div>`, { className: 'ge-popup' });
     marker.on('click', () => GODSEYE.openSensorPiP({ id: bus.id, name: bus.name, lat: wp.lat, lng: wp.lng, heading: 90 }));
     GODSEYE.markers.buses.push({ id: bus.id, marker });
   });
@@ -4965,7 +4995,7 @@ function initGodsEye() {
   // ════════════ 4. GODSEYE 1.0 OSINT LAYER: ADS-B LIVE AIRCRAFT ════════════
   GODSEYE.markers.aircraft = [];
   OSINT_AIRCRAFT.forEach(plane => {
-    const planeSvg = `<svg class="ge-plane-icon" style="transform: rotate(${plane.hdg}deg);" viewBox="0 0 24 24" fill="#00e5ff">
+    const planeSvg = `<svg class="ge-plane-icon" style="transform: rotate(${plane.hdg}deg);" viewBox="0 0 24 24" fill="#FB792B">
       <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
     </svg>`;
     const planeIcon = L.divIcon({
@@ -5296,7 +5326,7 @@ GODSEYE.openSensorPiP = function(node) {
 
     // Detected suspect vehicle box
     const bx = w * 0.35, by = h * 0.45, bw = 84, bh = 54;
-    ctx.strokeStyle = '#00e5ff';
+    ctx.strokeStyle = '#FB792B';
     ctx.lineWidth = 1.5;
     ctx.strokeRect(bx, by, bw, bh);
 
@@ -5476,7 +5506,7 @@ function openGodsEye() {
   if (GODSEYE.markers.target) map.removeLayer(GODSEYE.markers.target);
   const targetIcon = L.divIcon({ className: 'ge-marker-target', iconSize: [22, 22], iconAnchor: [11, 11] });
   GODSEYE.markers.target = L.marker([step.lat, step.lng], { icon: targetIcon, zIndexOffset: 2000 }).addTo(map);
-  GODSEYE.markers.target.bindPopup(`<div style="padding:4px;background:#f4f6fb;color:#f87171;font-size:11px;font-weight:800">${veh.plate}<br><span style="color:#94a3b8;font-size:9px">${veh.make} · ${veh.color}</span>${veh.isStolen ? '<br><span style="color:#f87171"> STOLEN VEHICLE</span>' : ''}<br><span style="color:#00e5ff;font-size:8px;font-weight:700"> ${step.street || veh.corridorName}</span></div>`);
+  GODSEYE.markers.target.bindPopup(`<div style="padding:4px;background:#f4f6fb;color:#f87171;font-size:11px;font-weight:800">${veh.plate}<br><span style="color:#4a5568;font-size:9px">${veh.make} · ${veh.color}</span>${veh.isStolen ? '<br><span style="color:#f87171"> STOLEN VEHICLE</span>' : ''}<br><span style="color:#FB792B;font-size:8px;font-weight:700"> ${step.street || veh.corridorName}</span></div>`);
 
   // Telemetry panels
   updateGodsEyePanels(veh, step, stepIdx);
@@ -5571,7 +5601,7 @@ GODSEYE.updateInterceptionMatrix = function(veh, pos) {
         <span class="ge-ii-prob">${cp.probPct}%</span>
       </div>
       <div class="ge-ii-meta">
-        <span>ETA: <strong style="color:#00e5ff">${cp.targetEtaStr}</strong> (${cp.distKm}km)</span>
+        <span>ETA: <strong style="color:#FB792B">${cp.targetEtaStr}</strong> (${cp.distKm}km)</span>
         <span>Unit: <strong style="color:#ec6e2a">${cp.unit}</strong></span>
       </div>
     `;
@@ -5603,7 +5633,7 @@ GODSEYE.updateInterceptionMatrix = function(veh, pos) {
       marker.bindPopup(`
         <div style="padding:4px;background:#f4f6fb;color:#f87171;font-size:10px;font-weight:800">
            STRATEGIC CHOKEPOINT: ${cp.name}<br>
-          <span style="color:#00e5ff;font-size:9px">Target ETA: ${cp.targetEtaStr} · Dist: ${cp.distKm} km</span><br>
+          <span style="color:#FB792B;font-size:9px">Target ETA: ${cp.targetEtaStr} · Dist: ${cp.distKm} km</span><br>
           <span style="color:#ec6e2a;font-size:9px">Interceptor: ${cp.unit} · Match: ${cp.probPct}%</span><br>
           <span style="color:#ec6e2a;font-size:8px;font-weight:700">Action: ${cp.action}</span>
         </div>
@@ -5793,7 +5823,7 @@ function buildStaticRadarBuffer(w, h) {
   // Concentric range rings
   const ringLabels = ['0.5 km', '1.0 km', '1.5 km', '2.0 km'];
   [0.25, 0.5, 0.75, 1.0].forEach((pct, idx) => {
-    ctx.strokeStyle = `rgba(0,229,255,${0.07 + pct * 0.04})`;
+    ctx.strokeStyle = `rgba(251,121,43,${0.07 + pct * 0.04})`;
     ctx.lineWidth = 0.6;
     ctx.setLineDash([3, 7]);
     ctx.beginPath();
@@ -5803,12 +5833,12 @@ function buildStaticRadarBuffer(w, h) {
 
     // Range label
     ctx.font = '7px monospace';
-    ctx.fillStyle = 'rgba(0,229,255,0.4)';
+    ctx.fillStyle = 'rgba(251,121,43,0.4)';
     ctx.fillText(ringLabels[idx], cx + 4, cy - maxR * pct + 9);
   });
 
   // Crosshairs
-  ctx.strokeStyle = 'rgba(0,229,255,0.12)';
+  ctx.strokeStyle = 'rgba(251,121,43,0.12)';
   ctx.lineWidth = 0.5;
   ctx.beginPath();
   ctx.moveTo(cx - maxR * 1.05, cy);
@@ -5822,7 +5852,7 @@ function buildStaticRadarBuffer(w, h) {
     const rad = (deg - 90) * Math.PI / 180;
     const r1 = maxR * 0.98;
     const r2 = maxR * 1.03;
-    ctx.strokeStyle = 'rgba(0,229,255,0.25)';
+    ctx.strokeStyle = 'rgba(251,121,43,0.25)';
     ctx.lineWidth = 0.8;
     ctx.beginPath();
     ctx.moveTo(cx + Math.cos(rad) * r1, cy + Math.sin(rad) * r1);
@@ -5833,7 +5863,7 @@ function buildStaticRadarBuffer(w, h) {
   // Military Corner Brackets
   const bracketLen = 28;
   const bracketOffset = 20;
-  ctx.strokeStyle = 'rgba(0,229,255,0.28)';
+  ctx.strokeStyle = 'rgba(251,121,43,0.28)';
   ctx.lineWidth = 1.2;
 
   // Top-left
@@ -5926,8 +5956,8 @@ function startRadarSweep() {
     const sweepWidth = 0.38;
     const grad = ctx.createConicGradient(GODSEYE.radarAngle, cx, cy);
     grad.addColorStop(0, 'transparent');
-    grad.addColorStop(0.01, 'rgba(0,229,255,0.09)');
-    grad.addColorStop(sweepWidth / (Math.PI * 2), 'rgba(0,229,255,0.025)');
+    grad.addColorStop(0.01, 'rgba(251,121,43,0.09)');
+    grad.addColorStop(sweepWidth / (Math.PI * 2), 'rgba(251,121,43,0.025)');
     grad.addColorStop(sweepWidth / (Math.PI * 2) + 0.01, 'transparent');
     grad.addColorStop(1, 'transparent');
 
@@ -5937,7 +5967,7 @@ function startRadarSweep() {
     ctx.fill();
 
     // 4. Sweep leading edge line
-    ctx.strokeStyle = 'rgba(0,229,255,0.45)';
+    ctx.strokeStyle = 'rgba(251,121,43,0.45)';
     ctx.lineWidth = 1.2;
     ctx.beginPath();
     ctx.moveTo(cx, cy);
@@ -6764,7 +6794,7 @@ function renderODMatrixTable() {
         html += `<td class="${cls}" data-r="${r}" data-c="${c}" title="Click to view transit modal split">${val.toLocaleString()}</td>`;
       }
     }
-    html += `<td style="font-weight:900;color:var(--accent-cyan);background:rgba(0,229,255,0.06)">${rowTotal.toLocaleString()}</td></tr>`;
+    html += `<td style="font-weight:900;color:var(--accent-cyan);background:rgba(251,121,43,0.06)">${rowTotal.toLocaleString()}</td></tr>`;
   }
   tbody.innerHTML = html;
 
@@ -7441,7 +7471,7 @@ function renderDashboardTrafficChart() {
     ctx.stroke();
 
     // Axis Labels (Speed km/h)
-    ctx.fillStyle = isGov ? '#5e6e82' : '#64748b';
+    ctx.fillStyle = isGov ? '#5e6e82' : '#718096';
     ctx.font = 'bold 9px Inter, sans-serif';
     ctx.textAlign = 'right';
     const val = 60 - r * 10;
@@ -7453,7 +7483,7 @@ function renderDashboardTrafficChart() {
   const colW = (w - 50) / (hours.length - 1);
   for (let i = 0; i < hours.length; i++) {
     const x = 35 + i * colW;
-    ctx.fillStyle = isGov ? '#5e6e82' : '#64748b';
+    ctx.fillStyle = isGov ? '#5e6e82' : '#718096';
     ctx.font = 'bold 9px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(hours[i], x, h - 8);

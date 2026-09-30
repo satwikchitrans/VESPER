@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="custom-theme.css" id="vesper-custom-theme-link">
+  <script src="theme-loader.js"></script>
 <style id="antigravity-scroll-lock-style">
   html:root body.antigravity-scroll-lock {
     overflow: hidden !important;
@@ -765,8 +767,8 @@
                 <div class="assc-row"><span class="assc-lbl">Expected Corridor:</span> <span id="assc-corridor">Mathura Rd - Ring Road</span></div>
               </div>
               <div class="assc-actions">
-                <button class="assc-btn primary" id="btn-assc-connect-map">Connect Sightings</button>
-                <button class="assc-btn secondary" id="btn-assc-build-trajectory">Build Trajectory</button>
+                <button class="assc-btn primary" id="btn-assc-connect-map" onclick="connectSightingsOnMap()" title="Connect all ANPR sightings on map">Connect Sightings</button>
+                <button class="assc-btn secondary" id="btn-assc-build-trajectory" onclick="buildExpectedTrajectory()" title="Build expected corridor trajectory">Build Trajectory</button>
               </div>
             </div>
             <div class="acq-quick-plates">
